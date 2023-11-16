@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "Project_Cube",
+			"Path": "..\\Source\\Project_Cube.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "Project_CubeEditor",
+			"Path": "..\\Source\\Project_CubeEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}

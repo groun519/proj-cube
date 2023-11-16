@@ -1,0 +1,23 @@
+{
+	"version": 1,
+	"changelists": [
+		{
+			"guid": "00000000000000000000000000000000",
+			"description": "Default Uncontrolled Changelist",
+			"files": [
+				"C:/Users/groun/Documents/Unreal Projects/Project_Cube/Content/Maps/TestMap.umap",
+				"C:/Users/groun/Documents/Unreal Projects/Project_Cube/Content/Characters/Maneq/MeshEcts/Maneq.uasset",
+				"C:/Users/groun/Documents/Unreal Projects/Project_Cube/Content/Characters/Maneq/MeshEcts/Maneq_PhysicsAsset.uasset",
+				"C:/Users/groun/Documents/Unreal Projects/Project_Cube/Content/Characters/Maneq/MeshEcts/Maneq_Skeleton.uasset",
+				"C:/Users/groun/Documents/Unreal Projects/Project_Cube/Content/Characters/Maneq/Materials/Textures/Ch36_1001_Specular.uasset",
+				"C:/Users/groun/Documents/Unreal Projects/Project_Cube/Content/Characters/Maneq/Materials/Textures/Ch36_1001_Diffuse.uasset",
+				"C:/Users/groun/Documents/Unreal Projects/Project_Cube/Content/Characters/Maneq/Materials/Textures/Ch36_1001_Glossiness.uasset",
+				"C:/Users/groun/Documents/Unreal Projects/Project_Cube/Content/Characters/Maneq/Materials/Textures/Ch36_1001_Normal.uasset",
+				"C:/Users/groun/Documents/Unreal Projects/Project_Cube/Content/Characters/Maneq/Materials/Ch36_Body.uasset",
+				"C:/Users/groun/Documents/Unreal Projects/Project_Cube/Content/Input/IMC_Default.uasset",
+				"C:/Users/groun/Documents/Unreal Projects/Project_Cube/Content/Input/Actions/IA_Click.uasset",
+				"C:/Users/groun/Documents/Unreal Projects/Project_Cube/Content/Input/Actions/IA_RightClick.uasset"
+			]
+		}
+	]
+}
