@@ -1,11 +1,11 @@
-"C:\Users\groun\Documents\Unreal Projects\Project_Cube\Source\Project_Cube\Project_Cube.cpp"
-/FI"C:\Users\groun\Documents\Unreal Projects\Project_Cube\Intermediate\Build\Win64\x64\Project_CubeEditor\Development\Engine\SharedPCH.Engine.Cpp20.h"
-/FI"C:\Users\groun\Documents\Unreal Projects\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\Definitions.Project_Cube.h"
-/Yu"C:\Users\groun\Documents\Unreal Projects\Project_Cube\Intermediate\Build\Win64\x64\Project_CubeEditor\Development\Engine\SharedPCH.Engine.Cpp20.h"
-/Fp"C:\Users\groun\Documents\Unreal Projects\Project_Cube\Intermediate\Build\Win64\x64\Project_CubeEditor\Development\Engine\SharedPCH.Engine.Cpp20.h.pch"
-/Fo"C:\Users\groun\Documents\Unreal Projects\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\Project_Cube.cpp.obj"
-/sourceDependencies "C:\Users\groun\Documents\Unreal Projects\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\Project_Cube.cpp.dep.json"
-@"C:\Users\groun\Documents\Unreal Projects\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\Project_Cube.Shared.rsp"
+"C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Source\Project_Cube\Project_Cube.cpp"
+/FI"C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\Project_CubeEditor\Development\Engine\SharedPCH.Engine.Cpp20.h"
+/FI"C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\Definitions.Project_Cube.h"
+/Yu"C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\Project_CubeEditor\Development\Engine\SharedPCH.Engine.Cpp20.h"
+/Fp"C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\Project_CubeEditor\Development\Engine\SharedPCH.Engine.Cpp20.h.pch"
+/Fo"C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\Project_Cube.cpp.obj"
+/sourceDependencies "C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\Project_Cube.cpp.dep.json"
+@"C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\Project_Cube.Shared.rsp"
 /Zc:inline
 /nologo
 /Oi
