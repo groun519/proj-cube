@@ -30,6 +30,12 @@
     <Filter Include="Source\Project_Cube">
       <UniqueIdentifier>{BC7A3C6E-FF1A-3967-BC31-1F505351C1D6}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\Project_Cube\ClickMovePlayerController.cpp">
+      <Filter>Source\Project_Cube</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\Project_Cube\ClickMovePlayerController.h">
+      <Filter>Source\Project_Cube</Filter>
+    </ClInclude>
     <ClCompile Include="..\..\Source\Project_Cube\ProjectCube_GameModeBase.cpp">
       <Filter>Source\Project_Cube</Filter>
     </ClCompile>

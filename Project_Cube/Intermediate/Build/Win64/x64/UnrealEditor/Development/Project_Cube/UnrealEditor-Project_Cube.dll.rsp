@@ -35,10 +35,12 @@
 /NODEFAULTLIB:"LIBCPD"
 /FUNCTIONPADMIN:6
 "C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\Project_CubeEditor\Development\Engine\SharedPCH.Engine.Cpp20.h.obj"
+"C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\ClickMovePlayerController.gen.cpp.obj"
 "C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\ProjectCube_GameModeBase.gen.cpp.obj"
 "C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\Project_Cube.init.gen.cpp.obj"
 "C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\ProjectCube_GameModeBase.cpp.obj"
 "C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\Project_Cube.cpp.obj"
+"C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\ClickMovePlayerController.cpp.obj"
 "C:\Users\groun\Documents\github-repositorys\proj-cube\Project_Cube\Intermediate\Build\Win64\x64\UnrealEditor\Development\Project_Cube\Default.rc2.res"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Engine\UnrealEditor-Engine.lib"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Core\UnrealEditor-Core.lib"
