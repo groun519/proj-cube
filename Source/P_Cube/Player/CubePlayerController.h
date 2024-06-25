@@ -9,6 +9,8 @@
 #include "P_Cube/InputConfigData.h"
 #include "CubePlayerController.generated.h"
 
+class IEnemyInterface;
+
 /**
  *
  */
@@ -17,13 +19,11 @@ class P_CUBE_API ACubePlayerController : public APlayerController
 {
 	GENERATED_BODY()
 public:
-	ACubePlayerController(const FObjectInitializer& ObjectInitalizer =	FObjectInitializer::Get());
+	ACubePlayerController();
 
-public:
 	void MouseRightPressed(const FInputActionValue& Value);
 	void MouseRightCompleted(const FInputActionValue& Value);
 
-public:
 	/* Reference to the UMG asset in the editor */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 		TSubclassOf<class UUserWidget> HUDOverlayAsset;
@@ -32,7 +32,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 		UUserWidget* HUDOverlay;
 
-protected:
+	virtual void PlayerTick(float DeltaTime) override;
+
 	bool bClickRightMouse;
 
 	bool HaveTarget;
@@ -42,8 +43,6 @@ protected:
 
 	class ACubeCharacter* Character; // <<
 
-	virtual void BeginPlay();
-
 	//void SetNewDestination(const FVector Destionation);
 
 	void MoveToMouseCursor();
@@ -52,15 +51,20 @@ protected:
 
 	void SetTarget();
 
+protected:
+	virtual void BeginPlay();
 	virtual void SetupInputComponent() override;
 
-	virtual void PlayerTick(float DeltaTime) override;
-
-protected:
+private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
-		UInputMappingContext* InputMapping;
+	TObjectPtr<UInputMappingContext> CubeContext;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
-		UInputAction* InputMouseRight;
+	TObjectPtr<UInputAction> InputMouseRight;
+
+	void CursorTrace();
+
+	TScriptInterface<IEnemyInterface> LastActor;
+	TScriptInterface<IEnemyInterface> ThisActor;
 };

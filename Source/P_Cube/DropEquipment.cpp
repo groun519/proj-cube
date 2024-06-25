@@ -81,7 +81,7 @@ void ADropEquipment::TriggerBeginOverlap(
 {
 	//UE_LOG(LogTemp, Warning, TEXT("콜리전 발생!"));
 
-	UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Choongdol SeongGong!"), true, true, FLinearColor::Green, 2.0f);
+	//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Choongdol SeongGong!"), true, true, FLinearColor::Green, 2.0f);
 
 
 	ACubeCharacter* OtherActorAsSpecificType = Cast<ACubeCharacter>(OtherActor);
@@ -98,8 +98,7 @@ void ADropEquipment::TriggerBeginOverlap(
 
 			// Now you can do additional logic if needed
 
-			// 예: 로그 출력
-			UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Moo-Gi Oiisii!"), true, true, FLinearColor::Green, 2.0f);
+			//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Moo-Gi Oiisii!"), true, true, FLinearColor::Green, 2.0f);
 			Destroy();
 		}
 	}

@@ -96,9 +96,9 @@ void ACubeCharacter::Attack()
 	{
 		float PlayRate = 0.7f;
 		PlayAnimMontage(BagicAttackMontages[n], PlayRate);
-		UE_LOG(LogTemp, Warning, TEXT("Attack success"));
-		UE_LOG(LogTemp, Warning, TEXT("Montage Name: %s"), *BagicAttackMontages[n]->GetName());
-		UE_LOG(LogTemp, Warning, TEXT("AnimNum: %d"), n);
+		//UE_LOG(LogTemp, Warning, TEXT("Attack success"));
+		//UE_LOG(LogTemp, Warning, TEXT("Montage Name: %s"), *BagicAttackMontages[n]->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("AnimNum: %d"), n);
 	}
 
 	// For example, play attack animation, apply damage to the target, etc.
