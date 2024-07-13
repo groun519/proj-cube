@@ -12,6 +12,11 @@ ACubeCharacterBase::ACubeCharacterBase()
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+UAbilitySystemComponent* ACubeCharacterBase::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
 void ACubeCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();

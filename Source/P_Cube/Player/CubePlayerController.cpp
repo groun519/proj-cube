@@ -1,8 +1,6 @@
 #include "CubePlayerController.h"
 
 #include "P_Cube/Character/CubeCharacter.h"
-#include "Blueprint/UserWidget.h"
-#include "InputActionValue.h"
 
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -14,14 +12,34 @@ ACubePlayerController::ACubePlayerController()
     bShowMouseCursor = true;
 }
 
+void ACubePlayerController::PlayerTick(float DeltaTime)
+{
+    Super::PlayerTick(DeltaTime);
+
+    CursorTrace();
+
+    if (bClickRightMouse)
+    {
+        SetTarget();
+        MoveToMouseCursor();
+    }
+
+    if (HaveTarget)
+    {
+        TraceHitTarget();
+    }
+}
+
 void ACubePlayerController::BeginPlay()
 {
     Super::BeginPlay();
     check(CubeContext);
 
     UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-    check(Subsystem);
-    Subsystem->AddMappingContext(CubeContext, 0);
+    if (Subsystem)
+    {
+        Subsystem->AddMappingContext(CubeContext, 0);
+    }
 
     bShowMouseCursor = true;
     DefaultMouseCursor = EMouseCursor::Default;
@@ -32,40 +50,12 @@ void ACubePlayerController::BeginPlay()
     SetInputMode(InputModeData); // 위의 인풋 세팅을 활성화함.
 
     Character = Cast<ACubeCharacter>(GetPawn());
-
-    if (HUDOverlayAsset)
-    {
-        HUDOverlay = CreateWidget<UUserWidget>(this, HUDOverlayAsset);
-    }
-
-    HUDOverlay->AddToViewport(); // 뷰포트에 생성
-    HUDOverlay->SetVisibility(ESlateVisibility::Visible); // HUD 보이게
-}
-
-void ACubePlayerController::PlayerTick(float DeltaTime)
-{
-    Super::PlayerTick(DeltaTime);
-
-    CursorTrace();
-    
-    if (bClickRightMouse)
-    {
-        SetTarget();
-        MoveToMouseCursor();
-    }
-
-    if (HaveTarget)
-    {
-        TraceHitTarget();
-        //UE_LOG(LogTemp, Warning, TEXT("success"));
-    }
 }
 
 void ACubePlayerController::CursorTrace()
 {
     FHitResult CursorHit;
     GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
-
     if (!CursorHit.bBlockingHit) return;
 
     LastActor = ThisActor;
@@ -107,34 +97,31 @@ void ACubePlayerController::SetupInputComponent()
 {
     Super::SetupInputComponent();
 
-    UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(InputComponent);
+    UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 
-    if (PEI)
+    if (EnhancedInputComponent)
     {
-        PEI->BindAction(InputMouseRight, ETriggerEvent::Triggered, this, &ACubePlayerController::MouseRightPressed);
-        PEI->BindAction(InputMouseRight, ETriggerEvent::Completed, this, &ACubePlayerController::MouseRightCompleted);
+        EnhancedInputComponent->BindAction(InputMouseRight, ETriggerEvent::Triggered, this, &ACubePlayerController::MouseRightPressed);
+        EnhancedInputComponent->BindAction(InputMouseRight, ETriggerEvent::Completed, this, &ACubePlayerController::MouseRightCompleted);
     }
     else
     {
-        // Handle the case when the input component is null
-        //UE_LOG(LogTemp, Error, TEXT("Enhanced Input Component is null!"));
+        UE_LOG(LogTemp, Error, TEXT("Enhanced Input Component is null!"));
     }
 }
 
 void ACubePlayerController::MouseRightPressed(const FInputActionValue& Value) // mouse right click down
 {
     bClickRightMouse = true;
-    //UE_LOG(LogTemp, Error, TEXT("Mouse Right Pressed!"));
 }
 void ACubePlayerController::MouseRightCompleted(const FInputActionValue& Value) // mouse right click up
 {
     bClickRightMouse = false;
-    //UE_LOG(LogTemp, Error, TEXT("Mouse Right Pressed!"));
 }
 
 
 
-void ACubePlayerController::MoveToMouseCursor() // mouse cursor
+void ACubePlayerController::MoveToMouseCursor() // mouse cursor 
 {
     FHitResult Hit;
     GetHitResultUnderCursor(ECC_Visibility, false, Hit);

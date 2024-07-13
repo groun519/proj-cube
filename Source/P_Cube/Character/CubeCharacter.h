@@ -16,20 +16,12 @@ public:
 	// Sets default values for this character's properties
 	ACubeCharacter();
 
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+
 	UPROPERTY(EditAnywhere)
 	bool HaveWeapon;
 	int32 WeaponNum;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void SetWeaponVisibility();
 
@@ -39,7 +31,11 @@ public:
 	bool IsPlayingMontage(int _n);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animations")
-		TArray<UAnimMontage*> BagicAttackMontages;
+	TArray<UAnimMontage*> BagicAttackMontages;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -53,6 +49,8 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCapsuleComponent* WeaponCol;
+
+	void InitAbilityActorInfo();
 
 	AWeapon* CurWeapon;
 	int n;

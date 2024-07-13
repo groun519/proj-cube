@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "InputActionValue.h"
-#include "InputMappingContext.h"
-#include "P_Cube/InputConfigData.h"
 #include "CubePlayerController.generated.h"
 
+class UInputMappingContext; // 전방선언
+class UInputAction;
+struct FInputActionValue;
 class IEnemyInterface;
 
 /**
@@ -20,19 +20,10 @@ class P_CUBE_API ACubePlayerController : public APlayerController
 	GENERATED_BODY()
 public:
 	ACubePlayerController();
+	virtual void PlayerTick(float DeltaTime) override;
 
 	void MouseRightPressed(const FInputActionValue& Value);
 	void MouseRightCompleted(const FInputActionValue& Value);
-
-	/* Reference to the UMG asset in the editor */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-		TSubclassOf<class UUserWidget> HUDOverlayAsset;
-
-	/* Variable to hold the widget after creating it */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-		UUserWidget* HUDOverlay;
-
-	virtual void PlayerTick(float DeltaTime) override;
 
 	bool bClickRightMouse;
 
@@ -42,8 +33,6 @@ public:
 	FVector TargetVec;
 
 	class ACubeCharacter* Character; // <<
-
-	//void SetNewDestination(const FVector Destionation);
 
 	void MoveToMouseCursor();
 

@@ -2,10 +2,17 @@
 
 
 #include "CubeCharacter.h"
+
+#include "AbilitySystemComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "P_Cube/Player/CubePlayerController.h"
+#include "P_Cube/Player/CubePlayerState.h"
+#include "P_Cube/UI/HUD/CubeHUD.h"
+
+
 #include "P_Cube/Weapon.h"
 #include <Components/CapsuleComponent.h>
 #include <Camera/CameraComponent.h>
-#include <GameFramework/CharacterMovementComponent.h>
 #include <GameFramework/SpringArmComponent.h>
 
 #include <Blueprint/AIBlueprintHelperLibrary.h>
@@ -19,14 +26,17 @@ ACubeCharacter::ACubeCharacter()
 
 	GetCapsuleComponent()->InitCapsuleSize(42.0f, 96.0f);
 
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationRoll = false;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 640.0f, 0.0f);
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
+
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+
+
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	SpringArmComponent->SetupAttachment(RootComponent);
@@ -40,15 +50,44 @@ ACubeCharacter::ACubeCharacter()
 	CameraComponent->bUsePawnControlRotation = false;
 
 
-
-
-
 	HaveWeapon = false;
 	WeaponNum = 0;
 	n = 0;
 }
 
-// Called when the game starts or when spawned
+void ACubeCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	// 서버의 ability actor 정보 초기화 (AbilitySystemComponent, AttributeSet)
+	InitAbilityActorInfo();
+}
+
+void ACubeCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	// 클라이언트의 ability actor 정보 초기화 (AbilitySystemComponent, AttributeSet)
+	InitAbilityActorInfo();
+}
+
+void ACubeCharacter::InitAbilityActorInfo() // 어빌리티 시스템 컴포넌트, 어트리뷰트셋 초기화
+{
+	ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>();
+	check(CubePlayerState); // 잘 가져왔는지 체크
+	CubePlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(CubePlayerState, this);
+	AbilitySystemComponent = CubePlayerState->GetAbilitySystemComponent();
+	AttributeSet = CubePlayerState->GetAttributeSet();
+
+	if (ACubePlayerController* CubePlayerController = Cast<ACubePlayerController>(GetController()))
+	{
+		if (ACubeHUD* CubeHUD = Cast<ACubeHUD>(CubePlayerController->GetHUD()))
+		{
+			CubeHUD->InitOverlay(CubePlayerController, CubePlayerState, AbilitySystemComponent, AttributeSet);
+		}
+	}
+}
+
 void ACubeCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -67,20 +106,6 @@ void ACubeCharacter::BeginPlay()
 	/*WeaponMesh->SetupAttachment(RootComponent);
 	WeaponMesh->SetCanEverAffectNavigation(false);
 	WeaponMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);*/
-}
-
-// Called every frame
-void ACubeCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	//UE_LOG(LogTemp, Warning, TEXT("Yaw: %f, Pitch: %f, Roll: %f"), GetActorRotation().Yaw, GetActorRotation().Pitch, GetActorRotation().Roll);
-}
-
-// Called to bind functionality to input
-void ACubeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void ACubeCharacter::SetWeaponVisibility()
