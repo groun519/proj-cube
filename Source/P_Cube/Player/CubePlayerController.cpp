@@ -1,33 +1,26 @@
 #include "CubePlayerController.h"
 
-#include "P_Cube/Character/CubeCharacter.h"
-
+#include "AbilitySystemBlueprintLibrary.h"
+#include "P_Cube/CubeGameplayTags.h"
 #include "EnhancedInputSubsystems.h"
-#include "EnhancedInputComponent.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
+#include "P_Cube/AbilitySystem/CubeAbilitySystemComponent.h"
+#include "Components/SplineComponent.h"
+#include "P_Cube/Input/CubeInputComponent.h"
 #include "P_Cube/Interaction/EnemyInterface.h"
 
 ACubePlayerController::ACubePlayerController()
 {
     bReplicates = true;
-    bShowMouseCursor = true;
+    Spline = CreateDefaultSubobject<USplineComponent>("Spline");
 }
 
 void ACubePlayerController::PlayerTick(float DeltaTime)
 {
     Super::PlayerTick(DeltaTime);
-
     CursorTrace();
-
-    if (bClickRightMouse)
-    {
-        SetTarget();
-        MoveToMouseCursor();
-    }
-
-    if (HaveTarget)
-    {
-        TraceHitTarget();
-    }
+    AutoRun();
 }
 
 void ACubePlayerController::BeginPlay()
@@ -48,47 +41,114 @@ void ACubePlayerController::BeginPlay()
     InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock); // 뷰포트에 마우스를 고정시키지 않게 함.
     InputModeData.SetHideCursorDuringCapture(false); // 뷰포트를 클릭하면 커서 사라지는 현상을 방지함.
     SetInputMode(InputModeData); // 위의 인풋 세팅을 활성화함.
-
-    Character = Cast<ACubeCharacter>(GetPawn());
 }
 
 void ACubePlayerController::CursorTrace()
 {
-    FHitResult CursorHit;
     GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
     if (!CursorHit.bBlockingHit) return;
 
     LastActor = ThisActor;
     ThisActor = CursorHit.GetActor();
 
-    if (LastActor == nullptr)
+    if (LastActor != ThisActor)
     {
-        if (ThisActor != nullptr)
-        {
-            ThisActor->HighlightActor();
-        }
-        else
-        {
+        if (LastActor) LastActor->UnHighlightActor();
+        if (ThisActor) ThisActor->HighlightActor();
+    }
+}
 
-        }
+void ACubePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+    if (InputTag.MatchesTagExact(FCubeGameplayTags::Get().InputTag_RMB)) // RMB와 키가 일치하면, 태그 부여
+    {
+        bTargeting = ThisActor ? true : false; // ThisActor가 존재하면 T, 아니면 F 를 bTargeting에 할당.
+        bAutoRunning = false;
+    }
+}
+
+void ACubePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+    if (!InputTag.MatchesTagExact(FCubeGameplayTags::Get().InputTag_RMB))
+    {
+        if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
+        return;
+    }
+
+    if (bTargeting)
+    {
+        if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
     }
     else
     {
-        if (ThisActor == nullptr)
+        const APawn* ControlledPawn = GetPawn();
+        if (FollowTime <= ShortPressThreshold && ControlledPawn)
         {
-            LastActor->UnHighlightActor();
+            if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
+            {
+                Spline->ClearSplinePoints();
+                for (const FVector& PointLoc : NavPath->PathPoints)
+                {
+                    Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
+                    //DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
+                }
+                CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
+                bAutoRunning = true;
+            }
         }
-        else
-        {
-            if (LastActor != ThisActor)
-            {
-                LastActor->UnHighlightActor();
-                ThisActor->HighlightActor();
-            }
-            else
-            {
+        FollowTime = 0.f;
+        bTargeting = false;
+    }
+}
 
-            }
+void ACubePlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+    if (!InputTag.MatchesTagExact(FCubeGameplayTags::Get().InputTag_RMB)) // RMB가 아닐 경우
+    {
+        if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
+        return; // 나가
+    }
+
+    if (bTargeting) // 아까 Pressed에서 받은 bTargeting bool이 T면, (대상 클릭 안하고 대상 위로 마우스 누른 채 호버링 하는 것 방지)
+    {
+        if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
+    }
+    else // F면
+    {
+        FollowTime += GetWorld()->GetDeltaSeconds(); // 이동
+
+        if (CursorHit.bBlockingHit) CachedDestination = CursorHit.ImpactPoint; // 목표지점을 마우스 아래 벡터로 설정.
+
+        if (APawn* ControlledPawn = GetPawn()) // ControlledPawn에 본인을 넣음.
+        {
+            const FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+            ControlledPawn->AddMovementInput(WorldDirection); // WorldDirection 방향으로 이동
+        }
+    }
+}
+
+UCubeAbilitySystemComponent* ACubePlayerController::GetASC()
+{
+    if (CubeAbilitySystemComponent == nullptr)
+    {
+        CubeAbilitySystemComponent = Cast<UCubeAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+    }
+    return CubeAbilitySystemComponent;
+}
+
+void ACubePlayerController::AutoRun()
+{
+    if (!bAutoRunning) return;
+    if (APawn* ControlledPawn = GetPawn())
+    {
+        const FVector LocationOnSpline = Spline->FindLocationClosestToWorldLocation(ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
+        const FVector Direction = Spline->FindDirectionClosestToWorldLocation(LocationOnSpline, ESplineCoordinateSpace::World);
+        ControlledPawn->AddMovementInput(Direction);
+
+        const float DistanceToDestination = (LocationOnSpline - CachedDestination).Length();
+        if (DistanceToDestination <= AutoRunAcceptanceRadius)
+        {
+            bAutoRunning = false;
         }
     }
 }
@@ -97,111 +157,9 @@ void ACubePlayerController::SetupInputComponent()
 {
     Super::SetupInputComponent();
 
-    UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
-
-    if (EnhancedInputComponent)
-    {
-        EnhancedInputComponent->BindAction(InputMouseRight, ETriggerEvent::Triggered, this, &ACubePlayerController::MouseRightPressed);
-        EnhancedInputComponent->BindAction(InputMouseRight, ETriggerEvent::Completed, this, &ACubePlayerController::MouseRightCompleted);
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("Enhanced Input Component is null!"));
-    }
-}
-
-void ACubePlayerController::MouseRightPressed(const FInputActionValue& Value) // mouse right click down
-{
-    bClickRightMouse = true;
-}
-void ACubePlayerController::MouseRightCompleted(const FInputActionValue& Value) // mouse right click up
-{
-    bClickRightMouse = false;
-}
-
-
-
-void ACubePlayerController::MoveToMouseCursor() // mouse cursor 
-{
-    FHitResult Hit;
-    GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-
-    if (Hit.bBlockingHit)
-    {
-        Character->MoveDest(Hit.ImpactPoint);
-
-        AActor* HitActor = Hit.GetActor();
-        if (HitActor)
-        {
-            TArray<FName> ActorTags = HitActor->Tags;
-            if (ActorTags.Num() > 0)
-            {
-                FName ActorTag = ActorTags[0];
-                //UE_LOG(LogTemp, Warning, TEXT("Hit Actor Tag: %s"), *ActorTag.ToString());
-            }
-            else
-            {
-                //UE_LOG(LogTemp, Warning, TEXT("Hit Actor has no tags"));
-            }
-        }
-        else
-        {
-            //UE_LOG(LogTemp, Warning, TEXT("Hit Actor is null"));
-        }
-    }
-    else
-    {
-        //UE_LOG(LogTemp, Warning, TEXT("No blocking hit detected"));
-    }
-}
-
-
-
-
-
-void ACubePlayerController::SetTarget()
-{
-    FHitResult Hit;
-    GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-
-    if (Hit.bBlockingHit) {
-        if (Hit.GetActor()->Tags.Contains("Monster"))
-        {
-            Target = Hit.GetActor();
-            TargetVec = Hit.GetActor()->GetActorLocation();
-            Character-> MoveDest(TargetVec);
-            HaveTarget = true;
-            //UE_LOG(LogTemp, Warning, TEXT("TargetVec: %s"), *TargetVec.ToString());
-            //UE_LOG(LogTemp, Warning, TEXT("that's monster!!!"));
-        }
-        else {
-            HaveTarget = false;
-            //UE_LOG(LogTemp, Warning, TEXT("That's not monster TT"));
-        }
-    }
-}
-
-void ACubePlayerController::TraceHitTarget()
-{
-    //UE_LOG(LogTemp, Warning, TEXT("Trace start"));
-    //AClickMoveCharacter* MyCharacter = Cast<AClickMoveCharacter>(GetPawn());
-
-    TargetVec = Target->GetActorLocation();
-    //UE_LOG(LogTemp, Warning, TEXT("Target Actor Vec: %s"), *TargetVec.ToString());
-
-    Character->MoveDest(TargetVec);
-
-    if (Character && HaveTarget)
-    {
-
-        FVector PlayerLocation = Character->GetActorLocation();
-
-        //UE_LOG(LogTemp, Warning, TEXT("dist: %f"), FVector::Dist(TargetVec, PlayerLocation));
-
-        // 타겟과의 거리가 90 이하일 때
-        if (FVector::Dist(TargetVec, PlayerLocation) <= 90.0f)
-        {
-            Character->Attack();
-        }
-    }
+    UCubeInputComponent* CubeInputComponent = CastChecked<UCubeInputComponent>(InputComponent);
+       
+    //CubeInputComponent->BindAction(InputMouseRight, ETriggerEvent::Triggered, this, &ACubePlayerController::MouseRightPressed);
+    //CubeInputComponent->BindAction(InputMouseRight, ETriggerEvent::Completed, this, &ACubePlayerController::MouseRightCompleted);
+    CubeInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 }

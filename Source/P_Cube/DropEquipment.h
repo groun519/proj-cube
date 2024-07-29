@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 //#include "Engine/DataTable.h"
-#include "WeaponDefaultStats.h"
+//#include "WeaponDefaultStats.h"
 #include "DropEquipment.generated.h"
 
 /*

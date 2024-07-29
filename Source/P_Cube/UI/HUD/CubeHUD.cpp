@@ -4,6 +4,7 @@
 #include "P_Cube/UI/HUD/CubeHUD.h"
 
 #include "P_Cube/UI/Widget/CubeUserWidget.h"
+#include "P_Cube/UI/WidgetController/AttributeMenuWidgetController.h"
 #include "P_Cube/UI/WidgetController/OverlayWidgetController.h"
 
 UOverlayWidgetController* ACubeHUD::GetOverlayWidgetController(const FWidgetControllerParams& WCParams)
@@ -14,9 +15,19 @@ UOverlayWidgetController* ACubeHUD::GetOverlayWidgetController(const FWidgetCont
 		OverlayWidgetController->SetWidgetControllerParams(WCParams); // 플레이어 컨트롤러, 플레이어 스테이트, 어빌리티 시스템, 어트리뷰트셋의 정보대로 위젯을 설정함.
 
 		OverlayWidgetController->BindCallbacksToDependencies();
-		return OverlayWidgetController;
 	}
 	return OverlayWidgetController;
+}
+
+UAttributeMenuWidgetController* ACubeHUD::GetAttributeMenuWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if (AttributeMenuWidgetController == nullptr)
+	{
+		AttributeMenuWidgetController = NewObject<UAttributeMenuWidgetController>(this, AttributeMenuWidgetControllerClass);
+		AttributeMenuWidgetController->SetWidgetControllerParams(WCParams);
+		AttributeMenuWidgetController->BindCallbacksToDependencies();
+	}
+	return AttributeMenuWidgetController;
 }
 
 void ACubeHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)

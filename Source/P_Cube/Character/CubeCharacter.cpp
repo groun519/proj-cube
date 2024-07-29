@@ -4,6 +4,7 @@
 #include "CubeCharacter.h"
 
 #include "AbilitySystemComponent.h"
+#include "P_Cube/AbilitySystem/CubeAbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "P_Cube/Player/CubePlayerController.h"
 #include "P_Cube/Player/CubePlayerState.h"
@@ -16,6 +17,8 @@
 #include <GameFramework/SpringArmComponent.h>
 
 #include <Blueprint/AIBlueprintHelperLibrary.h>
+
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 ACubeCharacter::ACubeCharacter()
@@ -49,6 +52,10 @@ ACubeCharacter::ACubeCharacter()
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
 	CameraComponent->bUsePawnControlRotation = false;
 
+	
+	// 머리 위 위젯.
+	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidget"));
+	OverheadWidget->SetupAttachment(RootComponent);
 
 	HaveWeapon = false;
 	WeaponNum = 0;
@@ -59,8 +66,11 @@ void ACubeCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	// 서버의 ability actor 정보 초기화 (AbilitySystemComponent, AttributeSet)
+	// InitAbilityActorInfo() : 서버의 ability actor 정보 초기화 (AbilitySystemComponent, AttributeSet)
 	InitAbilityActorInfo();
+
+	// 캐릭터 어빌리티 추가
+	AddCharacterAbilities();
 }
 
 void ACubeCharacter::OnRep_PlayerState()
@@ -71,11 +81,19 @@ void ACubeCharacter::OnRep_PlayerState()
 	InitAbilityActorInfo();
 }
 
+int32 ACubeCharacter::GetPlayerLevel()
+{
+	const ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>(); // state를 가져오고,
+	check(CubePlayerState);
+	return CubePlayerState->GetPlayerLevel(); // state에서 레벨 얻은 후 리턴.
+}
+
 void ACubeCharacter::InitAbilityActorInfo() // 어빌리티 시스템 컴포넌트, 어트리뷰트셋 초기화
 {
 	ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>();
 	check(CubePlayerState); // 잘 가져왔는지 체크
 	CubePlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(CubePlayerState, this);
+	Cast<UCubeAbilitySystemComponent>(CubePlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
 	AbilitySystemComponent = CubePlayerState->GetAbilitySystemComponent();
 	AttributeSet = CubePlayerState->GetAttributeSet();
 
@@ -86,6 +104,7 @@ void ACubeCharacter::InitAbilityActorInfo() // 어빌리티 시스템 컴포넌트, 어트리�
 			CubeHUD->InitOverlay(CubePlayerController, CubePlayerState, AbilitySystemComponent, AttributeSet);
 		}
 	}
+	InitializeDefaultAttributes();
 }
 
 void ACubeCharacter::BeginPlay()

@@ -19,8 +19,14 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
+	/** Combat Interface */
+	virtual int32 GetPlayerLevel() override;
+	/** end Combat Interface */
+
+
 	UPROPERTY(EditAnywhere)
 	bool HaveWeapon;
+	UPROPERTY(EditAnywhere)
 	int32 WeaponNum;
 
 	void SetWeaponVisibility();
@@ -39,19 +45,23 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCameraComponent* CameraComponent;
+	class UCameraComponent* CameraComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class USpringArmComponent* SpringArmComponent;
+	class USpringArmComponent* SpringArmComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UStaticMeshComponent* WeaponMesh;
+	class UStaticMeshComponent* WeaponMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCapsuleComponent* WeaponCol;
+	class UCapsuleComponent* WeaponCol;
 
-	void InitAbilityActorInfo();
+	virtual void InitAbilityActorInfo() override;
 
 	AWeapon* CurWeapon;
 	int n;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UWidgetComponent* OverheadWidget;
 };

@@ -4,12 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "GameplayTagContainer.h"
 #include "CubePlayerController.generated.h"
 
 class UInputMappingContext; // 전방선언
 class UInputAction;
 struct FInputActionValue;
 class IEnemyInterface;
+class UCubeInputConfig;
+class UCubeAbilitySystemComponent;
+class USplineComponent;
 
 /**
  *
@@ -22,23 +26,12 @@ public:
 	ACubePlayerController();
 	virtual void PlayerTick(float DeltaTime) override;
 
-	void MouseRightPressed(const FInputActionValue& Value);
-	void MouseRightCompleted(const FInputActionValue& Value);
-
 	bool bClickRightMouse;
 
 	bool HaveTarget;
 
 	AActor* Target;
 	FVector TargetVec;
-
-	class ACubeCharacter* Character; // <<
-
-	void MoveToMouseCursor();
-
-	void TraceHitTarget();
-
-	void SetTarget();
 
 protected:
 	virtual void BeginPlay();
@@ -56,4 +49,33 @@ private:
 
 	TScriptInterface<IEnemyInterface> LastActor;
 	TScriptInterface<IEnemyInterface> ThisActor;
+	FHitResult CursorHit;
+
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UCubeInputConfig> InputConfig;
+
+	UPROPERTY()
+	TObjectPtr<UCubeAbilitySystemComponent> CubeAbilitySystemComponent;
+
+	UCubeAbilitySystemComponent* GetASC();
+
+
+	// 클릭 이동 변수
+	FVector CachedDestination = FVector::ZeroVector; // 목표 벡터
+	float FollowTime = 0.f; //
+	float ShortPressThreshold = 0.5f; 
+	bool bAutoRunning = false; // 
+	bool bTargeting = false; 
+
+	UPROPERTY(EditDefaultsOnly)
+	float AutoRunAcceptanceRadius = 50.f;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USplineComponent> Spline; // 경로 곡선
+
+	void AutoRun();
 };

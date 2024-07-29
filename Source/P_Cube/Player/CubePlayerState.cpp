@@ -2,8 +2,10 @@
 
 
 #include "CubePlayerState.h"
+
 #include "P_Cube/AbilitySystem/CubeAbilitySystemComponent.h"
 #include "P_Cube/AbilitySystem/CubeAttributeSet.h"
+#include "Net/UnrealNetwork.h"
 
 ACubePlayerState::ACubePlayerState()
 {
@@ -16,7 +18,19 @@ ACubePlayerState::ACubePlayerState()
 	NetUpdateFrequency = 100.f; // 객체 상태 업데이트 주기 (초당 100)
 }
 
+void ACubePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACubePlayerState, Level);
+}
+
 UAbilitySystemComponent* ACubePlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+void ACubePlayerState::OnRep_Level(int32 OldLevel)
+{
+
 }

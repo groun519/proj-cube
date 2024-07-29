@@ -19,7 +19,44 @@
 - GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName) : 속성의 초기값을 설정하는 초기화 함수를 생성. (Init~~())
 */
 
+USTRUCT()
+struct FEffectProperties // 이펙트의 속성을 담는 구조체.
+{
+	GENERATED_BODY()
 
+	FEffectProperties() {}
+
+	FGameplayEffectContextHandle EffectContextHandle;
+
+	UPROPERTY()
+	UAbilitySystemComponent* SourceASC = nullptr;
+
+	UPROPERTY()
+	AActor* SourceAvatarActor = nullptr;
+
+	UPROPERTY()
+	AController* SourceController = nullptr;
+
+	UPROPERTY()
+	ACharacter* SourceCharacter = nullptr;
+
+	UPROPERTY()
+	UAbilitySystemComponent* TargetASC = nullptr;
+
+	UPROPERTY()
+	AActor* TargetAvatarActor = nullptr;
+
+	UPROPERTY()
+	AController* TargetController = nullptr; 
+
+	UPROPERTY()
+	ACharacter* TargetCharacter = nullptr; 
+};
+
+// typedef is specific to the FGameplayAttribute() signature, but TStaticFunPtr is generic to any signature chosen
+//typedef TBaseStaticDelegateInstance<FGameplayAttribute(), FDefaultDelegateUserPolicy>::FFuncPtr FAttributeFuncPtr;
+template<class T>
+using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateUserPolicy>::FFuncPtr;
 
 /**
  * 
@@ -33,6 +70,82 @@ public:
 	UCubeAttributeSet();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+
+	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> TagsToAttributes;
+
+	// Primary
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_PhysicalPower, Category = "Primary Attributes")
+	FGameplayAttributeData PhysicalPower;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, PhysicalPower);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MagicalPower, Category = "Primary Attributes")
+	FGameplayAttributeData MagicalPower;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, MagicalPower);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Armor, Category = "Primary Attributes")
+	FGameplayAttributeData Armor;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, Armor);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MagicResistance, Category = "Primary Attributes")
+	FGameplayAttributeData MagicResistance;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, MagicResistance);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MovementSpeed, Category = "Primary Attributes")
+	FGameplayAttributeData MovementSpeed;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, MovementSpeed);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CriticalChance, Category = "Primary Attributes")
+	FGameplayAttributeData CriticalChance;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, CriticalChance);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CriticalDamage, Category = "Primary Attributes")
+	FGameplayAttributeData CriticalDamage;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, CriticalDamage);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_AttackSpeed, Category = "Primary Attributes")
+	FGameplayAttributeData AttackSpeed;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, AttackSpeed);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ArmorPenetration, Category = "Primary Attributes")
+	FGameplayAttributeData ArmorPenetration;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, ArmorPenetration);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ArmorPenetrationRate, Category = "Primary Attributes")
+	FGameplayAttributeData ArmorPenetrationRate;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, ArmorPenetrationRate);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MagicResistancePenetration, Category = "Primary Attributes")
+	FGameplayAttributeData MagicResistancePenetration;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, MagicResistancePenetration);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MagicResistancePenetrationRate, Category = "Primary Attributes")
+	FGameplayAttributeData MagicResistancePenetrationRate;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, MagicResistancePenetrationRate);
+
+	// Secondary
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ArmorRate, Category = "Secondary Attributes")
+	FGameplayAttributeData ArmorRate;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, ArmorRate);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MagicResistanceRate, Category = "Secondary Attributes")
+	FGameplayAttributeData MagicResistanceRate;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, MagicResistanceRate);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MovementSpeedIncreaseRate, Category = "Secondary Attributes")
+	FGameplayAttributeData MovementSpeedIncreaseRate;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, MovementSpeedIncreaseRate);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_HealthRegeneration, Category = "Secondary Attributes")
+	FGameplayAttributeData HealthRegeneration;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, HealthRegeneration);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ManaRegeneration, Category = "Secondary Attributes")
+	FGameplayAttributeData ManaRegeneration;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, ManaRegeneration);
+
+	// Vital
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Vital Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, Health); // Health 속성에 대한 접근자들을 정의함.
@@ -49,6 +162,8 @@ public:
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, MaxMana);
 
+
+	// Vital
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 
@@ -60,4 +175,62 @@ public:
 
 	UFUNCTION()
 	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
+
+	// Primary
+	UFUNCTION()
+	void OnRep_PhysicalPower(const FGameplayAttributeData& OldPhysicalPower) const;
+
+	UFUNCTION()
+	void OnRep_MagicalPower(const FGameplayAttributeData& OldMagicalPower) const;
+
+	UFUNCTION()
+	void OnRep_Armor(const FGameplayAttributeData& OldArmor) const;
+
+	UFUNCTION()
+	void OnRep_MagicResistance(const FGameplayAttributeData& OldMagicResistance) const;
+
+	UFUNCTION()
+	void OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed) const;
+
+	UFUNCTION()
+	void OnRep_CriticalChance(const FGameplayAttributeData& OldCriticalChance) const;
+
+	UFUNCTION()
+	void OnRep_CriticalDamage (const FGameplayAttributeData& OldCriticalDamage) const;
+
+	UFUNCTION()
+	void OnRep_AttackSpeed(const FGameplayAttributeData& OldAttackSpeed) const;
+
+	UFUNCTION()
+	void OnRep_ArmorPenetration(const FGameplayAttributeData& OldArmorPenetration) const;
+
+	UFUNCTION()
+	void OnRep_ArmorPenetrationRate(const FGameplayAttributeData& OldArmorPenetrationRate) const;
+
+	UFUNCTION()
+	void OnRep_MagicResistancePenetration(const FGameplayAttributeData& OldMagicResistancePenetration) const;
+
+	UFUNCTION()
+	void OnRep_MagicResistancePenetrationRate(const FGameplayAttributeData& OldMagicResistancePenetrationRate) const;
+
+	// Secondary
+
+	UFUNCTION()
+	void OnRep_ArmorRate(const FGameplayAttributeData& OldArmorRate) const;
+
+	UFUNCTION()
+	void OnRep_MagicResistanceRate(const FGameplayAttributeData& OldMagicResistanceRate) const;
+
+	UFUNCTION()
+	void OnRep_MovementSpeedIncreaseRate(const FGameplayAttributeData& OldMovementSpeedIncreaseRate) const;
+
+	UFUNCTION()
+	void OnRep_HealthRegeneration(const FGameplayAttributeData& OldHealthRegeneration) const;
+
+	UFUNCTION()
+	void OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const;
+
+private:
+
+	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 };
