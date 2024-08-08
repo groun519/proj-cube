@@ -9,6 +9,8 @@
 #include "Components/SplineComponent.h"
 #include "P_Cube/Input/CubeInputComponent.h"
 #include "P_Cube/Interaction/EnemyInterface.h"
+#include "GameFramework/Character.h"
+#include "P_Cube/UI/Widget/DamageTextComponent.h"
 
 ACubePlayerController::ACubePlayerController()
 {
@@ -21,6 +23,18 @@ void ACubePlayerController::PlayerTick(float DeltaTime)
     Super::PlayerTick(DeltaTime);
     CursorTrace();
     AutoRun();
+}
+
+void ACubePlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit)
+{
+    if (IsValid(TargetCharacter) && DamageTextComponentClass && IsLocalController())
+    {
+        UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass); // 데미지 텍스트 컴포넌트 생성
+        DamageText->RegisterComponent(); // 컴포넌트를 게임 월드에 등록
+        DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); // 컴포넌트를 루트 컴포넌트 자식으로 설정. 루트 컴포넌트의 트랜스폼으로 위치가 수정됨.
+        DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); // 월드 좌표를 유지한 상태로, 컴포넌트를 분리.
+        DamageText->SetDamageText(DamageAmount, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit); // 데미지 양을 표시하도록 데미지 텍스트 설정
+    }
 }
 
 void ACubePlayerController::BeginPlay()

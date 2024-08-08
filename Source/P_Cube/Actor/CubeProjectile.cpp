@@ -39,7 +39,13 @@ void ACubeProjectile::BeginPlay()
 	SetLifeSpan(LifeSpan);
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACubeProjectile::OnSphereOverlap);
 
-	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
+	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(
+		LoopingSound, 
+		GetRootComponent(), 
+		NAME_None, 
+		FVector::ZeroVector, 
+		EAttachLocation::KeepRelativeOffset, 
+		true);
 }
 
 void ACubeProjectile::Destroyed()
@@ -48,7 +54,8 @@ void ACubeProjectile::Destroyed()
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-		LoopingSoundComponent->Stop();
+		if (LoopingSoundComponent) LoopingSoundComponent->Stop();
+		// if (GetLifeSpan() > 0)
 	}
 	Super::Destroyed();
 }
@@ -57,8 +64,16 @@ void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 {
 	if (OtherActor != LastOtherActor)
 	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+		if (DamageEffectSpecHandle.Data.IsValid() && DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor)
+		{
+			return;
+		}
+		if (!bHit)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator); // 임팩트 사운드도 가끔가다 클라이언트에서 제거된 이후 들리는데, 테스트 후 수정할 것.
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+			if (LoopingSoundComponent) LoopingSoundComponent->Stop();
+		}
 
 		if (HasAuthority())
 		{
@@ -70,7 +85,7 @@ void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 			if (bDestroyOnOverlap)
 			{
 				Destroy();
-				LoopingSoundComponent->Stop();
+				if (GetLifeSpan() > 0) LoopingSoundComponent->Stop();
 			}
 
 			// false <- 제거를 안 함으로서 관통되게 함.

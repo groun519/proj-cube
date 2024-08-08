@@ -75,7 +75,10 @@ public:
 
 	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> TagsToAttributes;
 
-	// Primary
+	/*
+	 * Primary Attributes
+	 */
+
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_PhysicalPower, Category = "Primary Attributes")
 	FGameplayAttributeData PhysicalPower;
 	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, PhysicalPower);
@@ -124,7 +127,10 @@ public:
 	FGameplayAttributeData MagicResistancePenetrationRate;
 	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, MagicResistancePenetrationRate);
 
-	// Secondary
+	/*
+	 * Secondary Attributes
+	 */
+
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ArmorRate, Category = "Secondary Attributes")
 	FGameplayAttributeData ArmorRate;
 	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, ArmorRate);
@@ -145,7 +151,10 @@ public:
 	FGameplayAttributeData ManaRegeneration;
 	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, ManaRegeneration);
 
-	// Vital
+	/*
+	 * Vital Attributes
+	 */
+
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Vital Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, Health); // Health 속성에 대한 접근자들을 정의함.
@@ -161,6 +170,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxMana, Category = "Vital Attributes")
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, MaxMana);
+
+	/*
+	 * Meta Attributes
+	 */
+
+	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, IncomingDamage);
 
 
 	// Vital
@@ -233,4 +250,5 @@ public:
 private:
 
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
+	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit) const;
 };

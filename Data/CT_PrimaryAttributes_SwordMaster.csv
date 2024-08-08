@@ -1,0 +1,7 @@
+---,1,11,16,26
+Attributes.Primary.PhysicalDamage,50,200,250,300
+Attributes.Primary.MagicalDamage,0,11,16,25
+Attributes.Primary.Armor,20,50,60,70
+Attributes.Primary.MagicResistance,10,20,25,35
+Attributes.Primary.MovementSpeed,150,200,220,250
+Attributes.Primary.AttackSpeed,0.8,1.1,1.2,1.3

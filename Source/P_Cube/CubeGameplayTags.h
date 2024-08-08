@@ -47,6 +47,14 @@ public:
 	FGameplayTag InputTag_D;
 	FGameplayTag InputTag_F;
 
+	FGameplayTag Damage;
+	FGameplayTag Damage_Physical;
+	FGameplayTag Damage_Magical;
+	FGameplayTag Damage_Pure;
+
+	TArray<FGameplayTag> DamageTypes;
+
+	FGameplayTag Effects_HitReact;
 private:
 	static FCubeGameplayTags GameplayTags;
 };

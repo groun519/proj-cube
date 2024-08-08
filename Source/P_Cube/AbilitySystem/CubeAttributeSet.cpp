@@ -8,6 +8,10 @@
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
 #include "P_Cube/CubeGameplayTags.h"
+#include "P_Cube/AbilitySystem/CubeAbilitySystemLibrary.h"
+#include "P_Cube/Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "P_Cube/Player/CubePlayerController.h"
 
 UCubeAttributeSet::UCubeAttributeSet()
 {
@@ -31,8 +35,7 @@ UCubeAttributeSet::UCubeAttributeSet()
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_MovementSpeed, GetMovementSpeedAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MovementSpeedIncreaseRate, GetMovementSpeedIncreaseRateAttribute);
 	//TagsToAttributes.Add(GameplayTags.Attributes_Primary_CriticalDamage, GetCriticalChanceAttribute); <- 쿨감 추가할것.
-	//쿨감값 / 쿨감퍼도 있어야겠네 ;; 아 그리고 마저rate도 그래프 만들어야한다. <- 토요일까지 이거랑, 추가로 스킬 하나 만들어보자.
-	//그다음주에 이제 서버 구현.
+	//쿨감값 / 쿨감퍼도 있어야겠네 ;; 아 그리고 마저rate도 그래프 만들어야한다.
 
 	// 얘네들은 나중에 체젠 마젠 각각 체력바 마나바 오른쪽 끝에 텍스트로 표시할 것. 당연히 그전에 텍스트로 maxhealth maxmana 받아와 중앙에 표시하고.
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MaxHealth, GetMaxHealthAttribute);
@@ -107,7 +110,7 @@ void UCubeAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 		}
 		if (Props.SourceController)
 		{
-			ACharacter* SourceCharacter = Cast<ACharacter>(Props.SourceController->GetPawn());
+			Props.SourceCharacter = Cast<ACharacter>(Props.SourceController->GetPawn());
 		}
 	}
 
@@ -135,6 +138,49 @@ void UCubeAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
 		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
+	}
+	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
+	{
+		const float LocalIncomingDamage = GetIncomingDamage();
+		SetIncomingDamage(0.f);
+		if (LocalIncomingDamage > 0.f)
+		{
+			const float NewHealth = GetHealth() - LocalIncomingDamage;
+			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+
+			const bool bFatal = NewHealth <= 0.f;
+			if (bFatal) // 죽을 정도의 피해를 받았는가?
+			{
+				ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
+				if (CombatInterface) // 유효성 확인
+				{
+					CombatInterface->Die(); // 사망
+				}
+			}
+			else // 살만한가?
+			{
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FCubeGameplayTags::Get().Effects_HitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
+
+			const bool bCriticalHit = UCubeAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+			const bool bPhysicalHit = UCubeAbilitySystemLibrary::IsPhysicalHit(Props.EffectContextHandle);
+			const bool bMagicalHit = UCubeAbilitySystemLibrary::IsMagicalHit(Props.EffectContextHandle);
+			const bool bPureHit = UCubeAbilitySystemLibrary::IsPureHit(Props.EffectContextHandle);
+			ShowFloatingText(Props, LocalIncomingDamage, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit);
+		}
+	}
+}
+
+void UCubeAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit) const
+{
+	if (Props.SourceCharacter != Props.TargetCharacter) // 스스로 때린게 아니면
+	{
+		if (ACubePlayerController* PC = Cast<ACubePlayerController>(Props.SourceCharacter->Controller))
+		{
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit); // 대상 위치에 데미지 텍스트 표시
+		}
 	}
 }
 

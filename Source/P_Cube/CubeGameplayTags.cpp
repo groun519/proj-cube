@@ -155,4 +155,43 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FName("InputTag.F"),
 		FString("Input Tag for F key")
 	);
+
+	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage"),
+		FString("Damage")
+	);
+
+	/*
+	 * Damage Types
+	 */
+
+	GameplayTags.Damage_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Physical"),
+		FString("Physical Damage Type")
+	);
+	GameplayTags.Damage_Magical = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Magical"),
+		FString("Magical Damage Type")
+	);
+	GameplayTags.Damage_Pure = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Pure"),
+		FString("Pure Damage Type")
+	);
+
+	/*
+	 * Array of Damage Types
+	 */
+
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Physical);
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Magical);
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Pure);
+
+	/*
+	 * Effects
+	 */
+
+	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Effects.HitReact"),
+		FString("Tag granted when Hit Reacting")
+	);
 }

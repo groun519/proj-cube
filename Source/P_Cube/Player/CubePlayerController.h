@@ -7,7 +7,9 @@
 #include "GameplayTagContainer.h"
 #include "CubePlayerController.generated.h"
 
-class UInputMappingContext; // 전방선언
+// 전방선언
+class UDamageTextComponent;
+class UInputMappingContext; 
 class UInputAction;
 struct FInputActionValue;
 class IEnemyInterface;
@@ -32,6 +34,9 @@ public:
 
 	AActor* Target;
 	FVector TargetVec;
+
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit);
 
 protected:
 	virtual void BeginPlay();
@@ -78,4 +83,7 @@ private:
 	TObjectPtr<USplineComponent> Spline; // 경로 곡선
 
 	void AutoRun();
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 };

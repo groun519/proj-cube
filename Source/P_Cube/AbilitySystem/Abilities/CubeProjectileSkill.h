@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CubeGameplayAbility.h"
+#include "CubeDamageGameplayAbility.h"
 #include "CubeProjectileSkill.generated.h"
 
 class ACubeProjectile;
@@ -13,7 +13,7 @@ class UGameplayEffect;
  * 
  */
 UCLASS()
-class P_CUBE_API UCubeProjectileSkill : public UCubeGameplayAbility
+class P_CUBE_API UCubeProjectileSkill : public UCubeDamageGameplayAbility
 {
 	GENERATED_BODY()
 protected:
@@ -25,7 +25,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<ACubeProjectile> ProjectileClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UGameplayEffect> DamageEffectClass;
 };

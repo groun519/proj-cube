@@ -15,4 +15,7 @@ class P_CUBE_API ALobbyGameMode : public AGameMode
 	GENERATED_BODY()
 public:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MaxTravelPlayers = 3;
 };

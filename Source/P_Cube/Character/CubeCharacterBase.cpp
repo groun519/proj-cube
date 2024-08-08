@@ -28,6 +28,32 @@ UAbilitySystemComponent* ACubeCharacterBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
+UAnimMontage* ACubeCharacterBase::GetHitReactMontage_Implementation()
+{
+	return HitReactMontage;
+}
+
+void ACubeCharacterBase::Die()
+{
+	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true)); // 부모에서 분리
+	MulticastHandleDeath();
+}
+
+void ACubeCharacterBase::MulticastHandleDeath_Implementation() // 래그돌  함수
+{
+	Weapon->SetSimulatePhysics(true);
+	Weapon->SetEnableGravity(true);
+	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+
+	GetMesh()->SetSimulatePhysics(true); // 캐릭터 메쉬 물리 시뮬레이션 활성화
+	GetMesh()->SetEnableGravity(true); // 캐릭터 메쉬 중력 활성화
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Dissolve(); // 사라지는 이펙트
+}
+
 void ACubeCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -67,4 +93,20 @@ void ACubeCharacterBase::AddCharacterAbilities()
 	if (!HasAuthority()) return;
 
 	CubeASC->AddCharacterAbilities(StartupAbilities);
+}
+
+void ACubeCharacterBase::Dissolve()
+{
+	if (IsValid(DissolveMaterialInstance)) // 캐릭터 메쉬 디졸브 이펙트 적용
+	{
+		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
+		GetMesh()->SetMaterial(0, DynamicMatInst);
+		StartDissolveTimeline(DynamicMatInst);
+	}
+	if (IsValid(WeaponDissolveMaterialInstance)) // 무기 메쉬 디졸브 이펙트 적용
+	{
+		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
+		Weapon->SetMaterial(0, DynamicMatInst);
+		StartWeaponDissolveTimeline(DynamicMatInst);
+	}
 }
