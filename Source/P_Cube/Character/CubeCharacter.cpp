@@ -5,9 +5,11 @@
 
 #include "AbilitySystemComponent.h"
 #include "P_Cube/AbilitySystem/CubeAbilitySystemComponent.h"
+#include "P_Cube/AbilitySystem/Data/LevelUpInfo.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "P_Cube/Player/CubePlayerController.h"
 #include "P_Cube/Player/CubePlayerState.h"
+#include "NiagaraComponent.h"
 #include "P_Cube/UI/HUD/CubeHUD.h"
 
 
@@ -30,6 +32,21 @@ ACubeCharacter::ACubeCharacter()
 	GetCapsuleComponent()->InitCapsuleSize(42.0f, 96.0f);
 
 
+
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
+	CameraBoom->SetupAttachment(GetRootComponent());
+	CameraBoom->SetUsingAbsoluteRotation(true);
+	CameraBoom->bDoCollisionTest = false;
+	CameraBoom->bEnableCameraLag = true;
+
+	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>("TopDownCameraComponent");
+	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	TopDownCameraComponent->bUsePawnControlRotation = false;
+
+	LevelUpNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("LevelUpNiagaraComponent");
+	LevelUpNiagaraComponent->SetupAttachment(GetRootComponent());
+	LevelUpNiagaraComponent->bAutoActivate = false;
+
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 640.0f, 0.0f);
 	GetCharacterMovement()->bConstrainToPlane = true;
@@ -39,18 +56,10 @@ ACubeCharacter::ACubeCharacter()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
+	CharacterClass = ECharacterClass::Berserker;
 
 
-	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
-	SpringArmComponent->SetupAttachment(RootComponent);
-	SpringArmComponent->SetUsingAbsoluteRotation(true);
-	SpringArmComponent->TargetArmLength = 800.0f;
-	SpringArmComponent->SetRelativeRotation(FRotator(-60.0f, 45.0f, 0.0f));
-	SpringArmComponent->bDoCollisionTest = false;
 
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
-	CameraComponent->bUsePawnControlRotation = false;
 
 	
 	// 머리 위 위젯.
@@ -81,11 +90,82 @@ void ACubeCharacter::OnRep_PlayerState()
 	InitAbilityActorInfo();
 }
 
-int32 ACubeCharacter::GetPlayerLevel()
+void ACubeCharacter::AddToXP_Implementation(int32 InXP)
+{
+	ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>();
+	check(CubePlayerState);
+	CubePlayerState->AddToXP(InXP);
+}
+
+void ACubeCharacter::LevelUp_Implementation()
+{
+	MulticastLevelUpParticles();
+}
+
+int32 ACubeCharacter::GetXP_Implementation() const
+{
+	const ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>();
+	check(CubePlayerState);
+	return CubePlayerState->GetXP();
+}
+
+int32 ACubeCharacter::FindLevelForXP_Implementation(int32 InXP) const
+{
+	const ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>();
+	check(CubePlayerState);
+	return CubePlayerState->LevelUpInfo->FindLevelForXP(InXP);
+}
+
+int32 ACubeCharacter::GetMoneyReward_Implementation(int32 Level) const
+{
+	const ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>();
+	check(CubePlayerState);
+	return CubePlayerState->LevelUpInfo->LevelUpInformation[Level].MoneyAward;
+}
+
+int32 ACubeCharacter::GetSkillPointsReward_Implementation(int32 Level) const
+{
+	const ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>();
+	check(CubePlayerState);
+	return CubePlayerState->LevelUpInfo->LevelUpInformation[Level].SkillPointAward;
+}
+
+void ACubeCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
+{
+	ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>();
+	check(CubePlayerState);
+	CubePlayerState->AddToLevel(InPlayerLevel);
+}
+
+void ACubeCharacter::AddToMoney_Implementation(int32 InMoney)
+{
+	ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>();
+	check(CubePlayerState);
+	CubePlayerState->AddToMoney(InMoney);
+}
+
+void ACubeCharacter::AddToSkillPoints_Implementation(int32 InSkillPoints)
+{
+	ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>();
+	check(CubePlayerState);
+	CubePlayerState->AddToSkillPoints(InSkillPoints);
+}
+
+int32 ACubeCharacter::GetPlayerLevel_Implementation()
 {
 	const ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>(); // state를 가져오고,
 	check(CubePlayerState);
 	return CubePlayerState->GetPlayerLevel(); // state에서 레벨 얻은 후 리턴.
+}
+
+void ACubeCharacter::SetCombatTarget_Implementation(AActor* InCombatTarget)
+{
+	CombatTarget = InCombatTarget;
+}
+
+AActor* ACubeCharacter::GetCombatTarget_Implementation() const
+{
+	return CombatTarget;
 }
 
 void ACubeCharacter::InitAbilityActorInfo() // 어빌리티 시스템 컴포넌트, 어트리뷰트셋 초기화
@@ -105,6 +185,14 @@ void ACubeCharacter::InitAbilityActorInfo() // 어빌리티 시스템 컴포넌트, 어트리�
 		}
 	}
 	InitializeDefaultAttributes();
+}
+
+void ACubeCharacter::MulticastLevelUpParticles_Implementation() const
+{
+	if (IsValid(LevelUpNiagaraComponent))
+	{
+		LevelUpNiagaraComponent->Activate(true);
+	}
 }
 
 void ACubeCharacter::BeginPlay()

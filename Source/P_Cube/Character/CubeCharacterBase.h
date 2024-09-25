@@ -5,9 +5,11 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
+#include "P_Cube/AbilitySystem/Data/CharacterClassInfo.h"
 #include "P_Cube/Interaction/CombatInterface.h"
 #include "CubeCharacterBase.generated.h"
 
+class UNiagaraSystem;
 class UAbilitySystemComponent;
 class UAttributeSet;
 class UGameplayEffect;
@@ -25,21 +27,49 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override; // AbilitySytem getter.
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; } // AttributeSet getter.
 
+	/** Combat Interface */
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	virtual void Die() override;
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
+	virtual bool IsDead_Implementation() const override;
+	virtual AActor* GetAvatar_Implementation() override;
+	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
+	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
+	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag) override;
+	virtual int32 GetMinionCount_Implementation() override;
+	virtual void IncremenetMinionCount_Implementation(int32 Amount) override;
+	virtual ECharacterClass GetCharacterClass_Implementation() override;
+	/** end Combat Interface */
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TArray<FTaggedMontage> AttackMontages;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	USoundBase* DeathSound;
+
+	/* Minions */
+
+	int32 MinionCount = 0;
+
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, Category = "Combat")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon; // ¹«±â ½ºÄÌ·¹Å» ¸Þ½Ã
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	FName WeaponTipSocketName; // ÀÌÆåÆ® ¹ß»ç À§Ä¡.
 
-	virtual FVector GetCombatSocketLocation() override;
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName LeftHandSocketName;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName RightHandSocketName;
+
+	bool bDead = false;
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent; // ASC
@@ -79,10 +109,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	UNiagaraSystem* BloodEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
+	ECharacterClass CharacterClass = ECharacterClass::Dummy;
+
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;

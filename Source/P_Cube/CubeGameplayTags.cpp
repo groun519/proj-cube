@@ -179,6 +179,15 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	);
 
 	/*
+	 * Meta Attributes
+	 */
+
+	GameplayTags.Attributes_Meta_IncomingXP = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Meta.IncomingXP"),
+		FString("Incoming XP Meta Attribute")
+	);
+
+	/*
 	 * Array of Damage Types
 	 */
 
@@ -193,5 +202,280 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Effects.HitReact"),
 		FString("Tag granted when Hit Reacting")
+	);
+
+	/*
+	 * Abilities
+	 */
+
+	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Attack"),
+		FString("Attack Ability Tag")
+	);
+
+	GameplayTags.Abilities_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Summon"),
+		FString("Summon Ability Tag")
+	);
+
+
+	GameplayTags.Abilities_FIreStaff_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.FIreStaff.Attack"),
+		FString("FireStaff's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_FIreStaff_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.FIreStaff.Basic"),
+		FString("FireStaff's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_FIreStaff_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.FIreStaff.Unique"),
+		FString("FireStaff's Unique Ability Tag")
+	);
+
+	GameplayTags.Abilities_GravityStaff_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.GravityStaff.Attack"),
+		FString("GravityStaff's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_GravityStaff_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.GravityStaff.Basic"),
+		FString("GravityStaff's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_GravityStaff_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.GravityStaff.Unique"),
+		FString("GravityStaff's Unique Ability Tag")
+	);
+
+	GameplayTags.Abilities_LightStaff_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.LightStaff.Attack"),
+		FString("LightStaff's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_LightStaff_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.LightStaff.Basic"),
+		FString("LightStaff's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_LightStaff_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.LightStaff.Unique"),
+		FString("LightStaff's Unique Ability Tag")
+	);
+
+	GameplayTags.Abilities_MagicShield_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.MagicShield.Attack"),
+		FString("MagicShield's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_MagicShield_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.MagicShield.Basic"),
+		FString("MagicShield's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_MagicShield_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.MagicShield.Unique"),
+		FString("MagicShield's Unique Ability Tag")
+	);
+
+	GameplayTags.Abilities_HugeShield_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.HugeShield.Attack"),
+		FString("HugeShield's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_HugeShield_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.HugeShield.Basic"),
+		FString("HugeShield's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_HugeShield_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.HugeShield.Unique"),
+		FString("HugeShield's Unique Ability Tag")
+	);
+
+	GameplayTags.Abilities_Rappier_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Rappier.Attack"),
+		FString("Rappier's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_Rappier_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Rappier.Basic"),
+		FString("Rappier's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_Rappier_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Rappier.Unique"),
+		FString("Rappier's Unique Ability Tag")
+	);
+
+	GameplayTags.Abilities_ShortBow_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.ShortBow.Attack"),
+		FString("ShortBow's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_ShortBow_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.ShortBow.Basic"),
+		FString("ShortBow's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_ShortBow_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.ShortBow.Unique"),
+		FString("ShortBow's Unique Ability Tag")
+	);
+
+	GameplayTags.Abilities_Revolver_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Revolver.Attack"),
+		FString("Revolver's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_Revolver_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Revolver.Basic"),
+		FString("Revolver's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_Revolver_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Revolver.Unique"),
+		FString("Revolver's Unique Ability Tag")
+	);
+
+	/*
+	 * Cooldown
+	 */
+
+	GameplayTags.Cooldown_FIreStaff_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.FIreStaff.Attack"),
+		FString("FireStaff's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_FIreStaff_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.FIreStaff.Basic"),
+		FString("FireStaff's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_FIreStaff_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.FIreStaff.Unique"),
+		FString("FireStaff's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_GravityStaff_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.GravityStaff.Attack"),
+		FString("GravityStaff's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_GravityStaff_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.GravityStaff.Basic"),
+		FString("GravityStaff's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_GravityStaff_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.GravityStaff.Unique"),
+		FString("GravityStaff's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_LightStaff_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.LightStaff.Attack"),
+		FString("LightStaff's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_LightStaff_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.LightStaff.Basic"),
+		FString("LightStaff's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_LightStaff_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.LightStaff.Unique"),
+		FString("LightStaff's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_MagicShield_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.MagicShield.Attack"),
+		FString("MagicShield's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_MagicShield_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.MagicShield.Basic"),
+		FString("MagicShield's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_MagicShield_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.MagicShield.Unique"),
+		FString("MagicShield's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_HugeShield_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.HugeShield.Attack"),
+		FString("HugeShield's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_HugeShield_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.HugeShield.Basic"),
+		FString("HugeShield's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_HugeShield_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.HugeShield.Unique"),
+		FString("HugeShield's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_Rappier_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Rappier.Attack"),
+		FString("Rappier's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_Rappier_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Rappier.Basic"),
+		FString("Rappier's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_Rappier_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Rappier.Unique"),
+		FString("Rappier's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_ShortBow_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.ShortBow.Attack"),
+		FString("ShortBow's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_ShortBow_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.ShortBow.Basic"),
+		FString("ShortBow's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_ShortBow_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.ShortBow.Unique"),
+		FString("ShortBow's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_Revolver_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Revolver.Attack"),
+		FString("Revolver's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_Revolver_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Revolver.Basic"),
+		FString("Revolver's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_Revolver_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Revolver.Unique"),
+		FString("Revolver's Unique Cooldown Tag")
+	);
+
+	/*
+	 * Combat Sockets
+	 */
+
+	GameplayTags.CombatSocket_ActorLocation = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CombatSocket.ActorLocation"),
+		FString("Actor Location")
+	);
+
+	GameplayTags.CombatSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CombatSocket.Weapon"),
+		FString("Weapon")
+	);
+
+	GameplayTags.CombatSocket_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CombatSocket.RightHand"),
+		FString("Right Hand")
+	);
+
+	GameplayTags.CombatSocket_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CombatSocket.LeftHand"),
+		FString("Left Hand")
+	);
+
+	/*
+	 * Montage Tags
+	 */
+
+	GameplayTags.Montage_Attack_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Montage.Attack.1"),
+		FString("Attack 1")
+	);
+
+	GameplayTags.Montage_Attack_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Montage.Attack.2"),
+		FString("Attack 2")
+	);
+
+	GameplayTags.Montage_Attack_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Montage.Attack.3"),
+		FString("Attack 3")
+	);
+
+	GameplayTags.Montage_Attack_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Montage.Attack.4"),
+		FString("Attack 4")
 	);
 }

@@ -3,9 +3,11 @@
 
 #include "CubeCharacterBase.h"
 #include "AbilitySystemComponent.h"
+#include "P_Cube/CubeGameplayTags.h"
 #include "P_Cube/AbilitySystem/CubeAbilitySystemComponent.h"
 #include "P_Cube/P_Cube.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ACubeCharacterBase::ACubeCharacterBase()
 {
@@ -41,6 +43,8 @@ void ACubeCharacterBase::Die()
 
 void ACubeCharacterBase::MulticastHandleDeath_Implementation() // 래그돌  함수
 {
+	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation(), GetActorRotation());
+
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
@@ -60,10 +64,73 @@ void ACubeCharacterBase::BeginPlay()
 
 }
 
-FVector ACubeCharacterBase::GetCombatSocketLocation()
+FVector ACubeCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
 {
-	check(Weapon);
-	return Weapon->GetSocketLocation(WeaponTipSocketName);
+	const FCubeGameplayTags& GameplayTags = FCubeGameplayTags::Get();
+	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_ActorLocation))
+	{
+		return GetActorLocation();
+	}
+	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Weapon) && IsValid(Weapon))
+	{
+		return Weapon->GetSocketLocation(WeaponTipSocketName);
+	}
+	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_LeftHand))
+	{
+		return GetMesh()->GetSocketLocation(LeftHandSocketName);
+	}
+	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_RightHand))
+	{
+		return GetMesh()->GetSocketLocation(RightHandSocketName);
+	}
+	return FVector();
+}
+
+bool ACubeCharacterBase::IsDead_Implementation() const
+{
+	return bDead;
+}
+
+AActor* ACubeCharacterBase::GetAvatar_Implementation()
+{
+	return this;
+}
+
+TArray<FTaggedMontage> ACubeCharacterBase::GetAttackMontages_Implementation()
+{
+	return AttackMontages;
+}
+
+UNiagaraSystem* ACubeCharacterBase::GetBloodEffect_Implementation()
+{
+	return BloodEffect;
+}
+
+FTaggedMontage ACubeCharacterBase::GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag)
+{
+	for (FTaggedMontage TaggedMontage : AttackMontages)
+	{
+		if (TaggedMontage.MontageTag == MontageTag)
+		{
+			return TaggedMontage;
+		}
+	}
+	return FTaggedMontage();
+}
+
+int32 ACubeCharacterBase::GetMinionCount_Implementation()
+{
+	return MinionCount;
+}
+
+void ACubeCharacterBase::IncremenetMinionCount_Implementation(int32 Amount)
+{
+	MinionCount += Amount;
+}
+
+ECharacterClass ACubeCharacterBase::GetCharacterClass_Implementation()
+{
+	return CharacterClass;
 }
 
 void ACubeCharacterBase::InitAbilityActorInfo()
@@ -93,6 +160,7 @@ void ACubeCharacterBase::AddCharacterAbilities()
 	if (!HasAuthority()) return;
 
 	CubeASC->AddCharacterAbilities(StartupAbilities);
+	CubeASC->AddCharacterPassiveAbilities(StartupPassiveAbilities);
 }
 
 void ACubeCharacterBase::Dissolve()

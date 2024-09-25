@@ -6,6 +6,9 @@
 #include "P_Cube/AbilitySystem/CubeAttributeSet.h"
 #include "P_Cube/AbilitySystem/Data/AttributeInfo.h"
 
+#include "P_Cube/Player/CubePlayerState.h"
+
+
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
 	UCubeAttributeSet* AS = CastChecked<UCubeAttributeSet>(AttributeSet);
@@ -19,6 +22,14 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 			}
 		);
 	}
+
+	ACubePlayerState* CubePlayerState = CastChecked<ACubePlayerState>(PlayerState);
+	CubePlayerState->OnMoneyChangedDelegate.AddLambda(
+		[this](int32 Points)
+		{
+			MoneyChangedDelegate.Broadcast(Points);
+		}
+	);
 }
 
 void UAttributeMenuWidgetController::BroadcastInitialValues()
@@ -30,6 +41,9 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	{
 		BroadcastAttributeInfo(Pair.Key, Pair.Value());
 	}
+
+	ACubePlayerState* CubePlayerState = CastChecked<ACubePlayerState>(PlayerState);
+	MoneyChangedDelegate.Broadcast(CubePlayerState->GetMoney());
 }
 
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) const

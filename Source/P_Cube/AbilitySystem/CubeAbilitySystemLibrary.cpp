@@ -5,6 +5,7 @@
 
 #include "P_Cube/CubeAbilityTypes.h"
 #include "P_Cube/CubeGameModeBase.h"
+#include "P_Cube/Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "P_Cube/UI/WidgetController/CubeWidgetController.h"
 #include "P_Cube/Player/CubePlayerState.h"
@@ -75,13 +76,23 @@ void UCubeAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 	ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributesSpecHandle.Data.Get());
 }
 
-void UCubeAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC)
+void UCubeAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass)
 {
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
+	if (CharacterClassInfo == nullptr) return;
 	for (TSubclassOf<UGameplayAbility> AbilityClass : CharacterClassInfo->CommonAbilities)
 	{
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
 		ASC->GiveAbility(AbilitySpec);
+	}
+	const FCharacterClassDefaultInfo& DefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
+	for (TSubclassOf<UGameplayAbility> AbilityClass : DefaultInfo.StartupAbilities)
+	{
+		if (ASC->GetAvatarActor()->Implements<UCombatInterface>())
+		{
+			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, ICombatInterface::Execute_GetPlayerLevel(ASC->GetAvatarActor()));
+			ASC->GiveAbility(AbilitySpec);
+		}
 	}
 }
 
@@ -158,4 +169,42 @@ void UCubeAbilitySystemLibrary::SetIsPureHit(UPARAM(ref)FGameplayEffectContextHa
 	{
 		CubeEffectContext->SetIsPureHit(bInIsPureHit);
 	}
+}
+
+void UCubeAbilitySystemLibrary::GetLivePlayersWithinSphere(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin)
+{ // 원형 메시 기반 플레이어 탐색
+	FCollisionQueryParams SphereParams;
+	SphereParams.AddIgnoredActors(ActorsToIgnore);
+
+	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		TArray<FOverlapResult> Overlaps;
+		World->OverlapMultiByObjectType(Overlaps, SphereOrigin, FQuat::Identity, FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects), FCollisionShape::MakeSphere(Radius), SphereParams);
+		for (FOverlapResult& Overlap : Overlaps)
+		{
+			if (Overlap.GetActor()->Implements<UCombatInterface>() && !ICombatInterface::Execute_IsDead(Overlap.GetActor()))
+			{
+				OutOverlappingActors.AddUnique(ICombatInterface::Execute_GetAvatar(Overlap.GetActor()));
+			}
+		}
+	}
+}
+
+bool UCubeAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondActor)
+{
+	const bool bBothArePlayers = false; //FirstActor->ActorHasTag(FName("Player")) && SecondActor->ActorHasTag(FName("Player"));
+	const bool bBothAreEnemies = FirstActor->ActorHasTag(FName("Enemy")) && SecondActor->ActorHasTag(FName("Enemy"));
+	const bool bFriends = bBothArePlayers || bBothAreEnemies;
+	return !bFriends;
+}
+
+int32 UCubeAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel)
+{
+	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
+	if (CharacterClassInfo == nullptr) return 0;
+
+	const FCharacterClassDefaultInfo& Info = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
+	const float XPReward = Info.XPReward.GetValueAtLevel(CharacterLevel);
+
+	return static_cast<int32>(XPReward);
 }

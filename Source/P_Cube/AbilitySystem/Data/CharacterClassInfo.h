@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "ScalableFloat.h"
 #include "CharacterClassInfo.generated.h"
 
 class UGameplayEffect;
@@ -12,12 +13,18 @@ class UGameplayAbility;
 UENUM(BlueprintType)
 enum class ECharacterClass : uint8 // 클래스 종류
 {
+	Default,
+	Berserker,
 	Elementalist,
 	SwordMaster,
 	Assassin,
 
 
-	Dummy
+	Dummy,
+	MeleeEnemy,
+	RangedEnemy,
+	TankEnemy,
+	MagicEnemy
 };
 
 USTRUCT(BlueprintType)
@@ -27,6 +34,12 @@ struct FCharacterClassDefaultInfo
 
 	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults")
 	TSubclassOf<UGameplayEffect> PrimaryAttributes;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults")
+	FScalableFloat XPReward = FScalableFloat();
 };
 
 /**

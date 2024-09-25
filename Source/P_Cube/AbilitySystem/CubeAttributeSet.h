@@ -179,6 +179,10 @@ public:
 	FGameplayAttributeData IncomingDamage;
 	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, IncomingDamage);
 
+	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+	FGameplayAttributeData IncomingXP;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, IncomingXP);
+
 
 	// Vital
 	UFUNCTION()
@@ -251,4 +255,5 @@ private:
 
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit) const;
+	void SendXPEvent(const FEffectProperties& Props);
 };

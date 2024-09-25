@@ -10,7 +10,7 @@
 #include "P_Cube/CubeGameplayTags.h"
 #include "P_Cube/AbilitySystem/CubeAbilitySystemLibrary.h"
 #include "P_Cube/Interaction/CombatInterface.h"
-#include "Kismet/GameplayStatics.h"
+#include "P_Cube/Interaction/PlayerInterface.h"
 #include "P_Cube/Player/CubePlayerController.h"
 
 UCubeAttributeSet::UCubeAttributeSet()
@@ -133,7 +133,6 @@ void UCubeAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
-		UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s, Health: %f"), *Props.TargetAvatarActor->GetName(), GetHealth());
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
@@ -156,6 +155,7 @@ void UCubeAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				{
 					CombatInterface->Die(); // 사망
 				}
+				SendXPEvent(Props);
 			}
 			else // 살만한가?
 			{
@@ -171,6 +171,53 @@ void UCubeAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			ShowFloatingText(Props, LocalIncomingDamage, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit);
 		}
 	}
+	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
+	{
+		const float LocalIncomingXP = GetIncomingXP();
+		SetIncomingXP(0.f);
+
+		// Source Character is the owner, since GA_ListenForEvents applies GE_EventBasedEffect, adding to IncomingXP
+		if (Props.SourceCharacter->Implements<UPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>())
+		{
+			const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(Props.SourceCharacter);
+			const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceCharacter);
+
+			const int32 NewLevel = IPlayerInterface::Execute_FindLevelForXP(Props.SourceCharacter, CurrentXP + LocalIncomingXP);
+			const int32 NumLevelUps = NewLevel - CurrentLevel;
+			if (NumLevelUps > 0)
+			{
+				const int32 MoneyReward = IPlayerInterface::Execute_GetMoneyReward(Props.SourceCharacter, CurrentLevel);
+				const int32 SkillPointsReward = IPlayerInterface::Execute_GetSkillPointsReward(Props.SourceCharacter, CurrentLevel);
+
+				IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelUps);
+				IPlayerInterface::Execute_AddToMoney(Props.SourceCharacter, MoneyReward);
+				IPlayerInterface::Execute_AddToSkillPoints(Props.SourceCharacter, SkillPointsReward);
+
+				SetHealth(GetMaxHealth());
+				SetMana(GetMaxMana());
+
+				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
+			}
+
+			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
+		}
+	}
+}
+
+void UCubeAttributeSet::SendXPEvent(const FEffectProperties& Props)
+{
+	if (Props.TargetCharacter->Implements<UCombatInterface>())
+	{
+		const int32 TargetLevel = ICombatInterface::Execute_GetPlayerLevel(Props.TargetCharacter);
+		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
+		const int32 XPReward = UCubeAbilitySystemLibrary::GetXPRewardForClassAndLevel(Props.TargetCharacter, TargetClass, TargetLevel);
+
+		const FCubeGameplayTags& GameplayTags = FCubeGameplayTags::Get();
+		FGameplayEventData Payload;
+		Payload.EventTag = GameplayTags.Attributes_Meta_IncomingXP;
+		Payload.EventMagnitude = XPReward;
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, GameplayTags.Attributes_Meta_IncomingXP, Payload);
+	}
 }
 
 void UCubeAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit) const
@@ -178,6 +225,11 @@ void UCubeAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 	if (Props.SourceCharacter != Props.TargetCharacter) // 스스로 때린게 아니면
 	{
 		if (ACubePlayerController* PC = Cast<ACubePlayerController>(Props.SourceCharacter->Controller))
+		{
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit);
+			return;
+		}
+		if (ACubePlayerController* PC = Cast<ACubePlayerController>(Props.TargetCharacter->Controller))
 		{
 			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit); // 대상 위치에 데미지 텍스트 표시
 		}

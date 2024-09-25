@@ -29,7 +29,7 @@ public:
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC);
 
 	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|CharacterClassDefaults")
-	static void GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC);
+	static void GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass);
 
 	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|CharacterClassDefaults")
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
@@ -59,4 +59,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayEffects")
 	static void SetIsPureHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsPureHit);
+
+	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayMechanics")
+	static void GetLivePlayersWithinSphere(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);
+
+	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayMechanics")
+	static bool IsNotFriend(AActor* FirstActor, AActor* SecondActor);
+
+	static int32 GetXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel);
 };

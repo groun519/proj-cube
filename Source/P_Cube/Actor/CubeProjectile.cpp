@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "P_Cube/AbilitySystem/CubeAbilitySystemLibrary.h"
 #include "P_Cube/P_Cube.h"
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
@@ -56,6 +57,7 @@ void ACubeProjectile::Destroyed()
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 		if (LoopingSoundComponent) LoopingSoundComponent->Stop();
 		// if (GetLifeSpan() > 0)
+		bHit = true;
 	}
 	Super::Destroyed();
 }
@@ -64,7 +66,11 @@ void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 {
 	if (OtherActor != LastOtherActor)
 	{
-		if (DamageEffectSpecHandle.Data.IsValid() && DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor)
+		if (!DamageEffectSpecHandle.Data.IsValid() || DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor)
+		{
+			return;
+		}
+		if (!UCubeAbilitySystemLibrary::IsNotFriend(DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser(), OtherActor))
 		{
 			return;
 		}
@@ -73,6 +79,7 @@ void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 			UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator); // 임팩트 사운드도 가끔가다 클라이언트에서 제거된 이후 들리는데, 테스트 후 수정할 것.
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 			if (LoopingSoundComponent) LoopingSoundComponent->Stop();
+			bHit = true;
 		}
 
 		if (HasAuthority())
