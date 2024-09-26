@@ -11,7 +11,7 @@ public class P_Cube : ModuleRules
 
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "NavigationSystem", "AIModule", "EnhancedInput", "UMG", "GameplayAbilities" });
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "GameplayTags", "GameplayTasks", "NavigationSystem", "Niagara" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "GameplayTags", "GameplayTasks", "NavigationSystem", "Niagara", "AIModule" });
 
         #if WITH_EDITOR
         PrivateDependencyModuleNames.AddRange(new string[] { "DataprepCore" });

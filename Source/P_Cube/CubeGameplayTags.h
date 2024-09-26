@@ -38,6 +38,8 @@ public:
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
 
+	FGameplayTag Attributes_Meta_IncomingXP;
+
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;
 	FGameplayTag InputTag_Q;
@@ -51,6 +53,69 @@ public:
 	FGameplayTag Damage_Physical;
 	FGameplayTag Damage_Magical;
 	FGameplayTag Damage_Pure;
+
+	FGameplayTag Abilities_Attack;
+	FGameplayTag Abilities_Summon;
+
+	FGameplayTag Abilities_FIreStaff_Attack;
+	FGameplayTag Abilities_FIreStaff_Basic;
+	FGameplayTag Abilities_FIreStaff_Unique;
+	FGameplayTag Abilities_GravityStaff_Attack;
+	FGameplayTag Abilities_GravityStaff_Basic;
+	FGameplayTag Abilities_GravityStaff_Unique;
+	FGameplayTag Abilities_LightStaff_Attack;
+	FGameplayTag Abilities_LightStaff_Basic;
+	FGameplayTag Abilities_LightStaff_Unique;
+	FGameplayTag Abilities_MagicShield_Attack;
+	FGameplayTag Abilities_MagicShield_Basic;
+	FGameplayTag Abilities_MagicShield_Unique;
+	FGameplayTag Abilities_HugeShield_Attack;
+	FGameplayTag Abilities_HugeShield_Basic;
+	FGameplayTag Abilities_HugeShield_Unique;
+	FGameplayTag Abilities_Rappier_Attack;
+	FGameplayTag Abilities_Rappier_Basic;
+	FGameplayTag Abilities_Rappier_Unique;
+	FGameplayTag Abilities_ShortBow_Attack;
+	FGameplayTag Abilities_ShortBow_Basic;
+	FGameplayTag Abilities_ShortBow_Unique;
+	FGameplayTag Abilities_Revolver_Attack;
+	FGameplayTag Abilities_Revolver_Basic;
+	FGameplayTag Abilities_Revolver_Unique;
+
+	FGameplayTag Cooldown_FIreStaff_Attack;
+	FGameplayTag Cooldown_FIreStaff_Basic;
+	FGameplayTag Cooldown_FIreStaff_Unique;
+	FGameplayTag Cooldown_GravityStaff_Attack;
+	FGameplayTag Cooldown_GravityStaff_Basic;
+	FGameplayTag Cooldown_GravityStaff_Unique;
+	FGameplayTag Cooldown_LightStaff_Attack;
+	FGameplayTag Cooldown_LightStaff_Basic;
+	FGameplayTag Cooldown_LightStaff_Unique;
+	FGameplayTag Cooldown_MagicShield_Attack;
+	FGameplayTag Cooldown_MagicShield_Basic;
+	FGameplayTag Cooldown_MagicShield_Unique;
+	FGameplayTag Cooldown_HugeShield_Attack;
+	FGameplayTag Cooldown_HugeShield_Basic;
+	FGameplayTag Cooldown_HugeShield_Unique;
+	FGameplayTag Cooldown_Rappier_Attack;
+	FGameplayTag Cooldown_Rappier_Basic;
+	FGameplayTag Cooldown_Rappier_Unique;
+	FGameplayTag Cooldown_ShortBow_Attack;
+	FGameplayTag Cooldown_ShortBow_Basic;
+	FGameplayTag Cooldown_ShortBow_Unique;
+	FGameplayTag Cooldown_Revolver_Attack;
+	FGameplayTag Cooldown_Revolver_Basic;
+	FGameplayTag Cooldown_Revolver_Unique;
+
+	FGameplayTag CombatSocket_ActorLocation;
+	FGameplayTag CombatSocket_Weapon;
+	FGameplayTag CombatSocket_RightHand;
+	FGameplayTag CombatSocket_LeftHand;
+
+	FGameplayTag Montage_Attack_1;
+	FGameplayTag Montage_Attack_2;
+	FGameplayTag Montage_Attack_3;
+	FGameplayTag Montage_Attack_4;
 
 	TArray<FGameplayTag> DamageTypes;
 

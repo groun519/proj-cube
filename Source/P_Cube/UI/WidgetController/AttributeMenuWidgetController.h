@@ -24,6 +24,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FAttributeInfoSignature AttributeInfoDelegate;
 
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
+	FOnPlayerStatChangedSignature MoneyChangedDelegate;
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly)

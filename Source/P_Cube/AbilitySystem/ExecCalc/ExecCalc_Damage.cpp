@@ -101,7 +101,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	int32 DamageType = 0;
 	for (FGameplayTag DamageTypeTag : FCubeGameplayTags::Get().DamageTypes)
 	{
-		const float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTypeTag);
+		const float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTypeTag, false);
 
 		if (DamageTypeValue == 0) continue;
 

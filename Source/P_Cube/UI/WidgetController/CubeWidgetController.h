@@ -7,6 +7,8 @@
 #include "UObject/NoExportTypes.h"
 #include "CubeWidgetController.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32, NewValue);
+
 class UAttributeSet;
 class UAbilitySystemComponent;
 

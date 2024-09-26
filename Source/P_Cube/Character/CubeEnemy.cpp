@@ -10,6 +10,9 @@
 #include "P_Cube/P_Cube.h"
 #include "P_Cube/UI/Widget/CubeUserWidget.h"
 #include "P_Cube/CubeGameplayTags.h"
+#include "P_Cube/AI/CubeAIController.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 ACubeEnemy::ACubeEnemy()
@@ -20,10 +23,27 @@ ACubeEnemy::ACubeEnemy()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationRoll = false;
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+
 	AttributeSet = CreateDefaultSubobject<UCubeAttributeSet>("AttributeSet");
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar"); // 체력바 위젯 생성
 	HealthBar->SetupAttachment(GetRootComponent()); 
+}
+
+void ACubeEnemy::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (!HasAuthority()) return;
+	CubeAIController = Cast<ACubeAIController>(NewController);
+	CubeAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	CubeAIController->RunBehaviorTree(BehaviorTree);
+	CubeAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), false);
+	CubeAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), CharacterClass != ECharacterClass::MeleeEnemy || CharacterClass != ECharacterClass::TankEnemy);
 }
 
 void ACubeEnemy::HighlightActor()
@@ -40,7 +60,7 @@ void ACubeEnemy::UnHighlightActor()
 	Weapon->SetRenderCustomDepth(false);
 }
 
-int32 ACubeEnemy::GetPlayerLevel()
+int32 ACubeEnemy::GetPlayerLevel_Implementation()
 {
 	return Level;
 }
@@ -48,13 +68,29 @@ int32 ACubeEnemy::GetPlayerLevel()
 void ACubeEnemy::Die()
 {
 	SetLifeSpan(LifeSpan);
+	if (CubeAIController) CubeAIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), true);
+
 	Super::Die();
+}
+
+void ACubeEnemy::SetCombatTarget_Implementation(AActor* InCombatTarget)
+{
+	CombatTarget = InCombatTarget;
+}
+
+AActor* ACubeEnemy::GetCombatTarget_Implementation() const
+{
+	return CombatTarget;
 }
 
 void ACubeEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
+	if (CubeAIController && CubeAIController->GetBlackboardComponent())
+	{
+		CubeAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
+	}
 }
 
 void ACubeEnemy::BeginPlay()
@@ -64,7 +100,7 @@ void ACubeEnemy::BeginPlay()
 	InitAbilityActorInfo();
 	if (HasAuthority())
 	{
-		UCubeAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+		UCubeAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent, CharacterClass);
 	}
 
 	// 체력이 변경될때마다 업데이트하는 로직
