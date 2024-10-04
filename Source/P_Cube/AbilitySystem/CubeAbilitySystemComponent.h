@@ -35,6 +35,14 @@ public:
 
 	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+
+	// 어트리부트 업그레이드 함수. 안 씀. 
+	// TODO : 나중에 포인트 통해서 접근할 방법 생기면 사용할 것.
+	void UpgradeAttribute(const FGameplayTag& AttributeTag); 
+
+	// 얘도 마찬가지.
+	UFUNCTION(Server, Reliable)
+	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
 protected:
 
 	virtual void OnRep_ActivateAbilities() override;

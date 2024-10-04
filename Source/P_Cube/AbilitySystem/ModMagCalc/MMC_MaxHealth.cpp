@@ -8,11 +8,7 @@
 
 UMMC_MaxHealth::UMMC_MaxHealth()
 {
-	//VigorDef.AttributeToCapture = UCubeAttributeSet::GetVigorAttribute();
-	//VigorDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
-	//VigorDef.bSnapshot = false;
-
-	//RelevantAttributesToCapture.Add(VigorDef);
+	
 }
 
 float UMMC_MaxHealth::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
@@ -25,12 +21,10 @@ float UMMC_MaxHealth::CalculateBaseMagnitude_Implementation(const FGameplayEffec
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 
-	//float Vigor = 0.f;
-	//GetCapturedAttributeMagnitude(VigorDef, Spec, EvaluationParameters, Vigor);
-	//Vigor = FMath::Max<float>(Vigor, 0.f);
+	UObject* SourceObject = Spec.GetContext().GetSourceObject();
 
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
-	const int32 PlayerLevel = CombatInterface->GetPlayerLevel();
+	const int32 PlayerLevel = CombatInterface->Execute_GetPlayerLevel(SourceObject);
 
-	return 100.f * PlayerLevel;
+	return 925.f + 750.f * PlayerLevel;
 }

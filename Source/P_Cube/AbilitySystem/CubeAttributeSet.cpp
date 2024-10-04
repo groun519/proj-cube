@@ -13,6 +13,8 @@
 #include "P_Cube/Interaction/PlayerInterface.h"
 #include "P_Cube/Player/CubePlayerController.h"
 
+#include "P_Cube/CubeLogChannels.h"
+
 UCubeAttributeSet::UCubeAttributeSet()
 {
 	const FCubeGameplayTags& GameplayTags = FCubeGameplayTags::Get();
@@ -193,14 +195,30 @@ void UCubeAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				IPlayerInterface::Execute_AddToMoney(Props.SourceCharacter, MoneyReward);
 				IPlayerInterface::Execute_AddToSkillPoints(Props.SourceCharacter, SkillPointsReward);
 
-				SetHealth(GetMaxHealth());
-				SetMana(GetMaxMana());
+				bLevelUpHealthReward = true;
+				bLevelUpManaReward = true;
 
 				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
 			}
 
 			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
 		}
+	}
+}
+
+void UCubeAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	Super::PostAttributeChange(Attribute, OldValue, NewValue);
+	if (Attribute == GetMaxHealthAttribute() && bLevelUpHealthReward)
+	{
+		UE_LOG(LogCube, Error, TEXT("LevelUpHealthReward : %f"), GetHealth() + GetMaxHealth() * 0.05);
+		SetHealth(GetHealth() + GetMaxHealth() * 0.05);
+		bLevelUpHealthReward = false;
+	}
+	if (Attribute == GetMaxManaAttribute() && bLevelUpManaReward)
+	{
+		SetMana(GetMana() + GetMaxMana() * 0.05);
+		bLevelUpManaReward = false;
 	}
 }
 
