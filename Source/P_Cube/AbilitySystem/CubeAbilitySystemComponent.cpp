@@ -3,9 +3,10 @@
 
 #include "CubeAbilitySystemComponent.h"
 
-#include "P_Cube/CubeGameplayTags.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "P_Cube/AbilitySystem/Abilities/CubeGameplayAbility.h"
 #include "P_Cube/CubeLogChannels.h"
+#include "P_Cube/Interaction/PlayerInterface.h"
 
 void UCubeAbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -103,6 +104,29 @@ FGameplayTag UCubeAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbi
 		}
 	}
 	return FGameplayTag();
+}
+
+void UCubeAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& AttributeTag)
+{
+	if (GetAvatarActor()->Implements<UPlayerInterface>())
+	{
+		if (IPlayerInterface::Execute_GetMoney(GetAvatarActor()) > 0)
+		{
+			//ServerUpgradeAttribute(AttributeTag);
+		}
+	}
+}
+
+void UCubeAbilitySystemComponent::ServerUpgradeAttribute_Implementation(const FGameplayTag& AttributeTag)
+{
+	FGameplayEventData Payload;
+	Payload.EventTag = AttributeTag;
+	Payload.EventMagnitude = 1.f;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetAvatarActor(), AttributeTag, Payload);
+	if (GetAvatarActor()->Implements<UPlayerInterface>())
+	{
+		IPlayerInterface::Execute_AddToMoney(GetAvatarActor(), -1);
+	}
 }
 
 void UCubeAbilitySystemComponent::OnRep_ActivateAbilities()

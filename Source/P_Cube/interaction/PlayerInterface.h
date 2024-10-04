@@ -45,7 +45,13 @@ public:
 	void AddToMoney(int32 InMoney);
 
 	UFUNCTION(BlueprintNativeEvent)
+	int32 GetMoney() const;
+
+	UFUNCTION(BlueprintNativeEvent)
 	void AddToSkillPoints(int32 InSkillPoints);
+
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetSkillPoints() const;
 
 	UFUNCTION(BlueprintNativeEvent)
 	void LevelUp();

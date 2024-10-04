@@ -32,6 +32,8 @@ public:
 	virtual void AddToPlayerLevel_Implementation(int32 InPlayerLevel) override;
 	virtual void AddToMoney_Implementation(int32 InMoney) override;
 	virtual void AddToSkillPoints_Implementation(int32 InSkillPoints) override;
+	virtual int32 GetMoney_Implementation() const override;
+	virtual int32 GetSkillPoints_Implementation() const override;
 	/** end Player Interface */
 
 	/** Combat Interface */

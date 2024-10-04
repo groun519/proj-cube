@@ -151,6 +151,20 @@ void ACubeCharacter::AddToSkillPoints_Implementation(int32 InSkillPoints)
 	CubePlayerState->AddToSkillPoints(InSkillPoints);
 }
 
+int32 ACubeCharacter::GetMoney_Implementation() const
+{
+	ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>();
+	check(CubePlayerState);
+	return CubePlayerState->GetMoney();
+}
+
+int32 ACubeCharacter::GetSkillPoints_Implementation() const
+{
+	ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>();
+	check(CubePlayerState);
+	return CubePlayerState->GetSkillPoints();
+}
+
 int32 ACubeCharacter::GetPlayerLevel_Implementation()
 {
 	const ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>(); // state를 가져오고,
