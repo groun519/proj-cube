@@ -81,6 +81,9 @@ public:
 	FGameplayTag Abilities_Revolver_Attack;
 	FGameplayTag Abilities_Revolver_Basic;
 	FGameplayTag Abilities_Revolver_Unique;
+	FGameplayTag Abilities_ShortBow_Attack;
+	FGameplayTag Abilities_ShortBow_Basic;
+	FGameplayTag Abilities_ShortBow_Unique;
 
 	FGameplayTag Cooldown_FIreStaff_Attack;
 	FGameplayTag Cooldown_FIreStaff_Basic;
@@ -106,6 +109,9 @@ public:
 	FGameplayTag Cooldown_Revolver_Attack;
 	FGameplayTag Cooldown_Revolver_Basic;
 	FGameplayTag Cooldown_Revolver_Unique;
+	FGameplayTag Cooldown_ShortBow_Attack;
+	FGameplayTag Cooldown_ShortBow_Basic;
+	FGameplayTag Cooldown_ShortBow_Unique;
 
 	FGameplayTag CombatSocket_ActorLocation;
 	FGameplayTag CombatSocket_Weapon;

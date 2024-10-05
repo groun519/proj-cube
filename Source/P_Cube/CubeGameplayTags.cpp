@@ -322,6 +322,17 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FName("Abilities.Revolver.Unique"),
 		FString("Revolver's Unique Ability Tag")
 	);
+	GameplayTags.Abilities_ShortBow_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.ShortBow.Attack"),
+		FString("ShortBow's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_ShortBow_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.ShortBow.Basic"),
+		FString("ShortBow's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_ShortBow_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.ShortBow.Unique"),
+		FString("ShortBow's Unique Ability Tag")
 
 	/*
 	 * Cooldown
@@ -429,6 +440,18 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Cooldown_Revolver_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldown.Revolver.Unique"),
 		FString("Revolver's Unique Cooldown Tag")
+	);
+	GameplayTags.Cooldown_ShortBow_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.ShortBow.Attack"),
+		FString("ShortBow's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_ShortBow_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.ShortBow.Basic"),
+		FString("ShortBow's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_ShortBow_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.ShortBow.Unique"),
+		FString("ShortBow's Unique Cooldown Tag")
 	);
 
 	/*
