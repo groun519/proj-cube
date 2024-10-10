@@ -99,6 +99,12 @@ public:
 	FGameplayTag Abilities_Revolver_Attack;
 	FGameplayTag Abilities_Revolver_Basic;
 	FGameplayTag Abilities_Revolver_Unique;
+	FGameplayTag Abilities_SkullStaff_Attack;
+	FGameplayTag Abilities_SkullStaff_Basic;
+	FGameplayTag Abilities_SkullStaff_Unique;
+	FGameplayTag Abilities_Ninja_Attack;
+	FGameplayTag Abilities_Ninja_Basic;
+	FGameplayTag Abilities_Ninja_Unique;
 
 	FGameplayTag Cooldown_FIreStaff_Attack;
 	FGameplayTag Cooldown_FIreStaff_Basic;
@@ -124,6 +130,12 @@ public:
 	FGameplayTag Cooldown_Revolver_Attack;
 	FGameplayTag Cooldown_Revolver_Basic;
 	FGameplayTag Cooldown_Revolver_Unique;
+	FGameplayTag Cooldown_SkullStaff_Attack;
+	FGameplayTag Cooldown_SkullStaff_Basic;
+	FGameplayTag Cooldown_SkullStaff_Unique;
+	FGameplayTag Cooldown_Ninja_Attack;
+	FGameplayTag Cooldown_Ninja_Basic;
+	FGameplayTag Cooldown_Ninja_Unique;
 
 	FGameplayTag CombatSocket_ActorLocation;
 	FGameplayTag CombatSocket_Weapon;

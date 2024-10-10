@@ -403,6 +403,32 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FString("Revolver's Unique Ability Tag")
 	);
 
+	GameplayTags.Abilities_SkullStaff_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.SkullStaff.Attack"),
+		FString("SkullStaff's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_SkullStaff_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.SkullStaff.Basic"),
+		FString("SkullStaff's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_SkullStaff_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.SkullStaff.Unique"),
+		FString("SkullStaff's Unique Ability Tag")
+	);
+
+	GameplayTags.Abilities_Ninja_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Ninja.Attack"),
+		FString("Ninja's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_Ninja_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Ninja.Basic"),
+		FString("Ninja's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_Ninja_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Ninja.Unique"),
+		FString("Ninja's Unique Ability Tag")
+	);
+
 	/*
 	 * Cooldown
 	 */
@@ -509,6 +535,32 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Cooldown_Revolver_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldown.Revolver.Unique"),
 		FString("Revolver's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_SkullStaff_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.SkullStaff.Attack"),
+		FString("SkullStaff's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_SkullStaff_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.SkullStaff.Basic"),
+		FString("SkullStaff's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_SkullStaff_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.SkullStaff.Unique"),
+		FString("SkullStaff's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_Ninja_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Ninja.Attack"),
+		FString("Ninja's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_Ninja_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Ninja.Basic"),
+		FString("Ninja's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_Ninja_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Ninja.Unique"),
+		FString("Ninja's Unique Cooldown Tag")
 	);
 
 	/*
