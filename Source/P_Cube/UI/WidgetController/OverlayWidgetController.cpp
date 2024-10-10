@@ -11,67 +11,62 @@
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
-	const UCubeAttributeSet* CubeAttributeSet = CastChecked<UCubeAttributeSet>(AttributeSet);
-
-	OnHealthChanged.Broadcast(CubeAttributeSet->GetHealth()); // 체력 값이 변경되면 브로드캐스팅 한다. (OnHealthChanged_Event 블루프린트가 트리거 됨.)
-	OnMaxHealthChanged.Broadcast(CubeAttributeSet->GetMaxHealth()); // 마찬가지로 최대체력
-	OnManaChanged.Broadcast(CubeAttributeSet->GetMana()); // 마나
-	OnMaxManaChanged.Broadcast(CubeAttributeSet->GetMaxMana()); // 최대마나
+	OnHealthChanged.Broadcast(GetCubeAS()->GetHealth()); // 체력 값이 변경되면 브로드캐스팅 한다. (OnHealthChanged_Event 블루프린트가 트리거 됨.)
+	OnMaxHealthChanged.Broadcast(GetCubeAS()->GetMaxHealth()); // 마찬가지로 최대체력
+	OnManaChanged.Broadcast(GetCubeAS()->GetMana()); // 마나
+	OnMaxManaChanged.Broadcast(GetCubeAS()->GetMaxMana()); // 최대마나
 }
 
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
-	ACubePlayerState* CubePlayerState = CastChecked<ACubePlayerState>(PlayerState);
-	CubePlayerState->OnXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
-	CubePlayerState->OnLevelChangedDelegate.AddLambda(
+	GetCubePS()->OnXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
+	GetCubePS()->OnLevelChangedDelegate.AddLambda(
 		[this](int32 NewLevel)
 		{
 			OnPlayerLevelChangedDelegate.Broadcast(NewLevel);
 		}
 	);
 
-	const UCubeAttributeSet* CubeAttributeSet = CastChecked<UCubeAttributeSet>(AttributeSet);
-
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CubeAttributeSet->GetHealthAttribute()).AddLambda(
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetCubeAS()->GetHealthAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			OnHealthChanged.Broadcast(Data.NewValue);
 		}
 	);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CubeAttributeSet->GetMaxHealthAttribute()).AddLambda(
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetCubeAS()->GetMaxHealthAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			OnMaxHealthChanged.Broadcast(Data.NewValue);
 		}
 	);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CubeAttributeSet->GetManaAttribute()).AddLambda(
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetCubeAS()->GetManaAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			OnManaChanged.Broadcast(Data.NewValue);
 		}
 	);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CubeAttributeSet->GetMaxManaAttribute()).AddLambda(
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetCubeAS()->GetMaxManaAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			OnMaxManaChanged.Broadcast(Data.NewValue);
 		}
 	);
 
-	if (UCubeAbilitySystemComponent* CubeASC = Cast<UCubeAbilitySystemComponent>(AbilitySystemComponent))
+	if (GetCubeASC())
 	{
-		if (CubeASC->bStartupAbilitiesGiven)
+		if (GetCubeASC()->bStartupAbilitiesGiven)
 		{
-			OnInitializeStartupAbilities(CubeASC);
+			BroadcastAbilityInfo();
 		}
 		else
 		{
-			CubeASC->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::OnInitializeStartupAbilities);
+			GetCubeASC()->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::BroadcastAbilityInfo);
 		}
 
-		CubeASC->EffectAssetTags.AddLambda(
+		GetCubeASC()->EffectAssetTags.AddLambda(
 			[this](const FGameplayTagContainer& AssetTags)
 			{
 				for (const FGameplayTag& Tag : AssetTags)
@@ -91,26 +86,9 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	}
 }
 
-void UOverlayWidgetController::OnInitializeStartupAbilities(UCubeAbilitySystemComponent* CubeAbilitySystemComponent)
+void UOverlayWidgetController::OnXPChanged(int32 NewXP)
 {
-	//TODO Get information about all given abilities, look up their Ability Info, and broadcast it to widgets.
-	if (!CubeAbilitySystemComponent->bStartupAbilitiesGiven) return;
-
-	FForEachAbility BroadcastDelegate;
-	BroadcastDelegate.BindLambda([this, CubeAbilitySystemComponent](const FGameplayAbilitySpec& AbilitySpec)
-		{
-			//TODO need a way to figure out the ability tag for a given ability spec.
-			FCubeAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(CubeAbilitySystemComponent->GetAbilityTagFromSpec(AbilitySpec));
-			Info.InputTag = CubeAbilitySystemComponent->GetInputTagFromSpec(AbilitySpec);
-			AbilityInfoDelegate.Broadcast(Info);
-		});
-	CubeAbilitySystemComponent->ForEachAbility(BroadcastDelegate);
-}
-
-void UOverlayWidgetController::OnXPChanged(int32 NewXP) const
-{
-	const ACubePlayerState* CubePlayerState = CastChecked<ACubePlayerState>(PlayerState);
-	const ULevelUpInfo* LevelUpInfo = CubePlayerState->LevelUpInfo;
+	const ULevelUpInfo* LevelUpInfo = GetCubePS()->LevelUpInfo;
 	checkf(LevelUpInfo, TEXT("Unabled to find LevelUpInfo. Please fill out CubePlayerState Blueprint"));
 
 	const int32 Level = LevelUpInfo->FindLevelForXP(NewXP);

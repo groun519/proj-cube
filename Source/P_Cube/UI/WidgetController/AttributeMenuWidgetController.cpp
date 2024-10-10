@@ -11,9 +11,8 @@
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
-	UCubeAttributeSet* AS = CastChecked<UCubeAttributeSet>(AttributeSet);
 	check(AttributeInfo);
-	for (auto& Pair : AS->TagsToAttributes)
+	for (auto& Pair : GetCubeAS()->TagsToAttributes)
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(
 			[this, Pair](const FOnAttributeChangeData& Data)
@@ -23,8 +22,7 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 		);
 	}
 
-	ACubePlayerState* CubePlayerState = CastChecked<ACubePlayerState>(PlayerState);
-	CubePlayerState->OnMoneyChangedDelegate.AddLambda(
+	GetCubePS()->OnMoneyChangedDelegate.AddLambda(
 		[this](int32 Points)
 		{
 			MoneyChangedDelegate.Broadcast(Points);
@@ -42,8 +40,7 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 		BroadcastAttributeInfo(Pair.Key, Pair.Value());
 	}
 
-	ACubePlayerState* CubePlayerState = CastChecked<ACubePlayerState>(PlayerState);
-	MoneyChangedDelegate.Broadcast(CubePlayerState->GetMoney());
+	MoneyChangedDelegate.Broadcast(GetCubePS()->GetMoney());
 }
 
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) const

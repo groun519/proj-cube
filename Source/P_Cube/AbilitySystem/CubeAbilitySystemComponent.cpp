@@ -4,6 +4,7 @@
 #include "CubeAbilitySystemComponent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "P_Cube/CubeGameplayTags.h"
 #include "P_Cube/AbilitySystem/Abilities/CubeGameplayAbility.h"
 #include "P_Cube/CubeLogChannels.h"
 #include "P_Cube/Interaction/PlayerInterface.h"
@@ -21,11 +22,12 @@ void UCubeAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 		if (const UCubeGameplayAbility* CubeAbility = Cast<UCubeGameplayAbility>(AbilitySpec.Ability))
 		{
 			AbilitySpec.DynamicAbilityTags.AddTag(CubeAbility->StartupInputTag);
+			AbilitySpec.DynamicAbilityTags.AddTag(FCubeGameplayTags::Get().Abilities_Status_Unlocked);
 			GiveAbility(AbilitySpec);
 		}
 	}
 	bStartupAbilitiesGiven = true;
-	AbilitiesGivenDelegate.Broadcast(this);
+	AbilitiesGivenDelegate.Broadcast();
 }
 
 void UCubeAbilitySystemComponent::AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities)
@@ -106,6 +108,18 @@ FGameplayTag UCubeAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbi
 	return FGameplayTag();
 }
 
+FGameplayTag UCubeAbilitySystemComponent::GetStatusFromSpec(const FGameplayAbilitySpec& AbilitySpec)
+{
+	for (FGameplayTag StatusTag : AbilitySpec.DynamicAbilityTags)
+	{
+		if (StatusTag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Abilities.Status"))))
+		{
+			return StatusTag;
+		}
+	}
+	return FGameplayTag();
+}
+
 void UCubeAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& AttributeTag)
 {
 	if (GetAvatarActor()->Implements<UPlayerInterface>())
@@ -136,7 +150,7 @@ void UCubeAbilitySystemComponent::OnRep_ActivateAbilities()
 	if (!bStartupAbilitiesGiven)
 	{
 		bStartupAbilitiesGiven = true;
-		AbilitiesGivenDelegate.Broadcast(this);
+		AbilitiesGivenDelegate.Broadcast();
 	}
 }
 

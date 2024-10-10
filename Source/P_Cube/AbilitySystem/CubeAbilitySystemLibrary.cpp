@@ -7,38 +7,60 @@
 #include "P_Cube/CubeGameModeBase.h"
 #include "P_Cube/Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
-#include "P_Cube/UI/WidgetController/CubeWidgetController.h"
 #include "P_Cube/Player/CubePlayerState.h"
 #include "P_Cube/UI/HUD/CubeHUD.h"
+#include "P_Cube/UI/WidgetController/CubeWidgetController.h"
 
-UOverlayWidgetController* UCubeAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
+bool UCubeAbilitySystemLibrary::MakeWidgetControllerParams(const UObject* WorldContextObject, FWidgetControllerParams& OutWCParams, ACubeHUD*& OutCubeHUD)
 {
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
 	{
-		if (ACubeHUD* CubeHUD = Cast<ACubeHUD>(PC->GetHUD()))
+		OutCubeHUD = Cast<ACubeHUD>(PC->GetHUD());
+		if (OutCubeHUD)
 		{
 			ACubePlayerState* PS = PC->GetPlayerState<ACubePlayerState>();
 			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
 			UAttributeSet* AS = PS->GetAttributeSet();
-			const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
-			return CubeHUD->GetOverlayWidgetController(WidgetControllerParams);
+
+			OutWCParams.AttributeSet = AS;
+			OutWCParams.AbilitySystemComponent = ASC;
+			OutWCParams.PlayerState = PS;
+			OutWCParams.PlayerController = PC;
+			return true;
 		}
+	}
+	return false;
+}
+
+UOverlayWidgetController* UCubeAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
+{
+	FWidgetControllerParams WCParams;
+	ACubeHUD* CubeHUD = nullptr;
+	if (MakeWidgetControllerParams(WorldContextObject, WCParams, CubeHUD))
+	{
+		return CubeHUD->GetOverlayWidgetController(WCParams);
 	}
 	return nullptr;
 }
 
 UAttributeMenuWidgetController* UCubeAbilitySystemLibrary::GetAttributeMenuWidgetController(const UObject* WorldContextObject)
 {
-	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
+	FWidgetControllerParams WCParams;
+	ACubeHUD* CubeHUD = nullptr;
+	if (MakeWidgetControllerParams(WorldContextObject, WCParams, CubeHUD))
 	{
-		if (ACubeHUD* CubeHUD = Cast<ACubeHUD>(PC->GetHUD()))
-		{
-			ACubePlayerState* PS = PC->GetPlayerState<ACubePlayerState>();
-			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
-			UAttributeSet* AS = PS->GetAttributeSet();
-			const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
-			return CubeHUD->GetAttributeMenuWidgetController(WidgetControllerParams);
-		}
+		return CubeHUD->GetAttributeMenuWidgetController(WCParams);
+	}
+	return nullptr;
+}
+
+USkillMenuWidgetController* UCubeAbilitySystemLibrary::GetSkillMenuWidgetController(const UObject* WorldContextObject)
+{
+	FWidgetControllerParams WCParams;
+	ACubeHUD* CubeHUD = nullptr;
+	if (MakeWidgetControllerParams(WorldContextObject, WCParams, CubeHUD))
+	{
+		return CubeHUD->GetSkillMenuWidgetController(WCParams);
 	}
 	return nullptr;
 }
