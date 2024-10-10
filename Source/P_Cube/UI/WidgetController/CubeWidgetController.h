@@ -8,9 +8,15 @@
 #include "CubeWidgetController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FCubeAbilityInfo&, Info);
 
 class UAttributeSet;
 class UAbilitySystemComponent;
+class ACubePlayerController;
+class ACubePlayerState;
+class UCubeAbilitySystemComponent;
+class UCubeAttributeSet;
+class UAbilityInfo;
 
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams
@@ -53,7 +59,13 @@ public:
 	virtual void BroadcastInitialValues();
 	virtual void BindCallbacksToDependencies();
 
+	UPROPERTY(BlueprintAssignable, Category="GAS|Messages")
+	FAbilityInfoSignature AbilityInfoDelegate;
+	void BroadcastAbilityInfo();
 protected:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
+	TObjectPtr<UAbilityInfo> AbilityInfo;
 
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
 	TObjectPtr<APlayerController> PlayerController;
@@ -66,4 +78,21 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<ACubePlayerController> CubePlayerController;
+
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<ACubePlayerState> CubePlayerState;
+
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<UCubeAbilitySystemComponent> CubeAbilitySystemComponent;
+
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<UCubeAttributeSet> CubeAttributeSet;
+
+	ACubePlayerController* GetCubePC();
+	ACubePlayerState* GetCubePS();
+	UCubeAbilitySystemComponent* GetCubeASC();
+	UCubeAttributeSet* GetCubeAS();
 };

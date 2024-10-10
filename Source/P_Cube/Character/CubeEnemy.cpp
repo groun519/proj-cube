@@ -43,7 +43,7 @@ void ACubeEnemy::PossessedBy(AController* NewController)
 	CubeAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	CubeAIController->RunBehaviorTree(BehaviorTree);
 	CubeAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), false);
-	CubeAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), CharacterClass != ECharacterClass::MeleeEnemy || CharacterClass != ECharacterClass::TankEnemy);
+	CubeAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), CharacterClass != ECharacterClass::MeleeEnemy || CharacterClass != ECharacterClass::TankEnemy || CharacterClass != ECharacterClass::AncientGolem);
 }
 
 void ACubeEnemy::HighlightActor()

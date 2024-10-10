@@ -24,7 +24,9 @@ enum class ECharacterClass : uint8 // 클래스 종류
 	MeleeEnemy,
 	RangedEnemy,
 	TankEnemy,
-	MagicEnemy
+	MagicEnemy,
+
+	AncientGolem
 };
 
 USTRUCT(BlueprintType)

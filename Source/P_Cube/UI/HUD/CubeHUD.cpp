@@ -6,6 +6,7 @@
 #include "P_Cube/UI/Widget/CubeUserWidget.h"
 #include "P_Cube/UI/WidgetController/AttributeMenuWidgetController.h"
 #include "P_Cube/UI/WidgetController/OverlayWidgetController.h"
+#include "P_Cube/UI/WidgetController/SkillMenuWidgetController.h"
 
 UOverlayWidgetController* ACubeHUD::GetOverlayWidgetController(const FWidgetControllerParams& WCParams)
 {
@@ -28,6 +29,17 @@ UAttributeMenuWidgetController* ACubeHUD::GetAttributeMenuWidgetController(const
 		AttributeMenuWidgetController->BindCallbacksToDependencies();
 	}
 	return AttributeMenuWidgetController;
+}
+
+USkillMenuWidgetController* ACubeHUD::GetSkillMenuWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if (SkillMenuWidgetController == nullptr)
+	{
+		SkillMenuWidgetController = NewObject<USkillMenuWidgetController>(this, SkillMenuWidgetControllerClass);
+		SkillMenuWidgetController->SetWidgetControllerParams(WCParams);
+		SkillMenuWidgetController->BindCallbacksToDependencies();
+	}
+	return SkillMenuWidgetController;
 }
 
 void ACubeHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)

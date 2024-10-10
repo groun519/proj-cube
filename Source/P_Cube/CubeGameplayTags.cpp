@@ -146,6 +146,11 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FString("Input Tag for R key")
 	);
 
+	GameplayTags.InputTag_T = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.T"),
+		FString("Input Tag for T key")
+	);
+
 	GameplayTags.InputTag_D = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("InputTag.D"),
 		FString("Input Tag for D key")
@@ -154,6 +159,36 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.InputTag_F = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("InputTag.F"),
 		FString("Input Tag for F key")
+	);
+
+	GameplayTags.InputTag_G = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.G"),
+		FString("Input Tag for G key")
+	);
+
+	GameplayTags.InputTag_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.1"),
+		FString("Input Tag for 1 key")
+	);
+
+	GameplayTags.InputTag_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.2"),
+		FString("Input Tag for 2 key")
+	);
+
+	GameplayTags.InputTag_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.3"),
+		FString("Input Tag for 3 key")
+	);
+
+	GameplayTags.InputTag_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.4"),
+		FString("Input Tag for 4 key")
+	);
+
+	GameplayTags.InputTag_S = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.S"),
+		FString("Input Tag for S key")
 	);
 
 	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -217,6 +252,51 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FName("Abilities.Summon"),
 		FString("Summon Ability Tag")
 	);
+
+
+
+
+	GameplayTags.Abilities_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.HitReact"),
+		FString("Hit React Ability")
+	);
+
+	GameplayTags.Abilities_Status_Locked = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.Locked"),
+		FString("Locked Status")
+	);
+
+	GameplayTags.Abilities_Status_Unlocked = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.Unlocked"),
+		FString("Unlocked Status")
+	);
+
+	GameplayTags.Abilities_Status_Fixed = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.Fixed"),
+		FString("Fixed Status")
+	);
+
+	GameplayTags.Abilities_Status_LowLevel = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.LowLevel"),
+		FString("Low Level Status")
+	);
+
+	GameplayTags.Abilities_Type_None = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Type.None"),
+		FString("Type None")
+	);
+
+	GameplayTags.Abilities_Type_Offensive = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Type.Offensive"),
+		FString("Type Offensive")
+	);
+
+	GameplayTags.Abilities_Type_Passive = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Type.Passive"),
+		FString("Type Passive")
+	);
+
+
 
 
 	GameplayTags.Abilities_FIreStaff_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -321,6 +401,32 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Revolver_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Revolver.Unique"),
 		FString("Revolver's Unique Ability Tag")
+	);
+
+	GameplayTags.Abilities_SkullStaff_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.SkullStaff.Attack"),
+		FString("SkullStaff's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_SkullStaff_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.SkullStaff.Basic"),
+		FString("SkullStaff's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_SkullStaff_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.SkullStaff.Unique"),
+		FString("SkullStaff's Unique Ability Tag")
+	);
+
+	GameplayTags.Abilities_Ninja_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Ninja.Attack"),
+		FString("Ninja's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_Ninja_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Ninja.Basic"),
+		FString("Ninja's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_Ninja_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Ninja.Unique"),
+		FString("Ninja's Unique Ability Tag")
 	);
 
 	/*
@@ -429,6 +535,32 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Cooldown_Revolver_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldown.Revolver.Unique"),
 		FString("Revolver's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_SkullStaff_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.SkullStaff.Attack"),
+		FString("SkullStaff's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_SkullStaff_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.SkullStaff.Basic"),
+		FString("SkullStaff's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_SkullStaff_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.SkullStaff.Unique"),
+		FString("SkullStaff's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_Ninja_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Ninja.Attack"),
+		FString("Ninja's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_Ninja_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Ninja.Basic"),
+		FString("Ninja's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_Ninja_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Ninja.Unique"),
+		FString("Ninja's Unique Cooldown Tag")
 	);
 
 	/*

@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "P_Cube/UI/Widget/CubeUserWidget.h"
 #include "OverheadWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class P_CUBE_API UOverheadWidget : public UUserWidget
+class P_CUBE_API UOverheadWidget : public UCubeUserWidget
 {
 	GENERATED_BODY()
 public:

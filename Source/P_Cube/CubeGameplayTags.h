@@ -46,8 +46,15 @@ public:
 	FGameplayTag InputTag_W;
 	FGameplayTag InputTag_E;
 	FGameplayTag InputTag_R;
+	FGameplayTag InputTag_T;
 	FGameplayTag InputTag_D;
 	FGameplayTag InputTag_F;
+	FGameplayTag InputTag_G;
+	FGameplayTag InputTag_1;
+	FGameplayTag InputTag_2;
+	FGameplayTag InputTag_3;
+	FGameplayTag InputTag_4;
+	FGameplayTag InputTag_S;
 
 	FGameplayTag Damage;
 	FGameplayTag Damage_Physical;
@@ -56,6 +63,17 @@ public:
 
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
+
+	FGameplayTag Abilities_HitReact;
+
+	FGameplayTag Abilities_Status_Locked;
+	FGameplayTag Abilities_Status_Unlocked;
+	FGameplayTag Abilities_Status_Fixed;
+	FGameplayTag Abilities_Status_LowLevel;
+
+	FGameplayTag Abilities_Type_Offensive;
+	FGameplayTag Abilities_Type_Passive;
+	FGameplayTag Abilities_Type_None;
 
 	FGameplayTag Abilities_FIreStaff_Attack;
 	FGameplayTag Abilities_FIreStaff_Basic;
@@ -81,6 +99,12 @@ public:
 	FGameplayTag Abilities_Revolver_Attack;
 	FGameplayTag Abilities_Revolver_Basic;
 	FGameplayTag Abilities_Revolver_Unique;
+	FGameplayTag Abilities_SkullStaff_Attack;
+	FGameplayTag Abilities_SkullStaff_Basic;
+	FGameplayTag Abilities_SkullStaff_Unique;
+	FGameplayTag Abilities_Ninja_Attack;
+	FGameplayTag Abilities_Ninja_Basic;
+	FGameplayTag Abilities_Ninja_Unique;
 
 	FGameplayTag Cooldown_FIreStaff_Attack;
 	FGameplayTag Cooldown_FIreStaff_Basic;
@@ -106,6 +130,12 @@ public:
 	FGameplayTag Cooldown_Revolver_Attack;
 	FGameplayTag Cooldown_Revolver_Basic;
 	FGameplayTag Cooldown_Revolver_Unique;
+	FGameplayTag Cooldown_SkullStaff_Attack;
+	FGameplayTag Cooldown_SkullStaff_Basic;
+	FGameplayTag Cooldown_SkullStaff_Unique;
+	FGameplayTag Cooldown_Ninja_Attack;
+	FGameplayTag Cooldown_Ninja_Basic;
+	FGameplayTag Cooldown_Ninja_Unique;
 
 	FGameplayTag CombatSocket_ActorLocation;
 	FGameplayTag CombatSocket_Weapon;
