@@ -25,6 +25,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
 	FGameplayEffectSpecHandle DamageEffectSpecHandle;
 
+	AActor* InstigatorPlayer;
+	bool bIsAttackOnlyTarget = false;
+	AActor* TargetActor;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Destroyed() override;
@@ -46,6 +50,8 @@ private:
 	bool bHit = false;
 	AActor* LastOtherActor = nullptr;
 
+	TArray<AActor*> IgnoreActors;
+
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNiagaraSystem> ImpactEffect; // 제거될 때 생성할 이펙트
 
@@ -57,4 +63,10 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UAudioComponent> LoopingSoundComponent;
+
+	UFUNCTION(BlueprintCallable)
+	AActor* GetInstigatorPlayer() const;
+
+	UFUNCTION(BlueprintCallable)
+	AActor* GetTargetActor() const;
 };

@@ -64,45 +64,63 @@ void ACubeProjectile::Destroyed()
 
 void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor != LastOtherActor)
+	for (AActor* ignore : IgnoreActors)
 	{
-		if (!DamageEffectSpecHandle.Data.IsValid() || DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor)
+		if (OtherActor == ignore) return;
+	}
+
+	if (bIsAttackOnlyTarget)
+	{
+		if (OtherActor != TargetActor) return;
+	}
+
+	if (!DamageEffectSpecHandle.Data.IsValid() || DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor)
+	{
+		return;
+	}
+	if (!UCubeAbilitySystemLibrary::IsNotFriend(DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser(), OtherActor))
+	{
+		return;
+	}
+	if (!bHit)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator); // 임팩트 사운드도 가끔가다 클라이언트에서 제거된 이후 들리는데, 테스트 후 수정할 것.
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+		if (LoopingSoundComponent) LoopingSoundComponent->Stop();
+		bHit = true;
+	}
+
+	if (HasAuthority())
+	{
+		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
-			return;
-		}
-		if (!UCubeAbilitySystemLibrary::IsNotFriend(DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser(), OtherActor))
-		{
-			return;
-		}
-		if (!bHit)
-		{
-			UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator); // 임팩트 사운드도 가끔가다 클라이언트에서 제거된 이후 들리는데, 테스트 후 수정할 것.
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-			if (LoopingSoundComponent) LoopingSoundComponent->Stop();
-			bHit = true;
+			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get()); // damage 이펙트 적용.
+			IgnoreActors.Add(OtherActor);
 		}
 
-		if (HasAuthority())
+		if (bDestroyOnOverlap)
 		{
-			if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
-			{
-				TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get()); // damage 이펙트 적용.
-			}
-
-			if (bDestroyOnOverlap)
-			{
-				Destroy();
-				if (GetLifeSpan() > 0) LoopingSoundComponent->Stop();
-			}
-
-			// false <- 제거를 안 함으로서 관통되게 함.
+			Destroy();
+			if (GetLifeSpan() > 0) LoopingSoundComponent->Stop();
 		}
-		else
-		{
-			bHit = true;
-		}
+
+		// false <- 제거를 안 함으로서 관통되게 함.
+	}
+	else
+	{
+		bHit = true;
 	}
 
 	LastOtherActor = OtherActor;
+}
+
+AActor* ACubeProjectile::GetInstigatorPlayer() const
+{
+	return InstigatorPlayer;
+}
+
+AActor* ACubeProjectile::GetTargetActor() const
+{
+	return TargetActor;
 }
 
