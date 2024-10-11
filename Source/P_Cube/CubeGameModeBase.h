@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "CubeGameModeBase.generated.h"
 
+class UAbilityInfo;
 class UCharacterClassInfo;
 /**
  * 
@@ -17,4 +18,7 @@ class P_CUBE_API ACubeGameModeBase : public AGameModeBase
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Character Class Defaults")
 	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Ability Info")
+	TObjectPtr<UAbilityInfo> AbilityInfo;
 };

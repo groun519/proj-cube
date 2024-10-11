@@ -7,6 +7,7 @@
 #include "Data/CharacterClassInfo.h"
 #include "CubeAbilitySystemLibrary.generated.h"
 
+class UAbilityInfo;
 class USkillMenuWidgetController;
 class UAbilitySystemComponent;
 class UAttributeMenuWidgetController;
@@ -41,6 +42,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|CharacterClassDefaults")
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category="AuraAbilitySystemLibrary|CharacterClassDefaults")
+	static UAbilityInfo* GetAbilityInfo(const UObject* WorldContextObject);
 
 
 	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayEffects")
