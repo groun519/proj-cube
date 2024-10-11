@@ -44,6 +44,8 @@ public:
 	// 얘도 마찬가지.
 	UFUNCTION(Server, Reliable)
 	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
+
+	void UpdateAbilityStatuses(int32 Level);
 protected:
 
 	virtual void OnRep_ActivateAbilities() override;

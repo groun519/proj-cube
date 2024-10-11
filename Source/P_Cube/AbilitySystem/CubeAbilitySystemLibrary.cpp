@@ -120,9 +120,16 @@ void UCubeAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 
 UCharacterClassInfo* UCubeAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
 {
-	ACubeGameModeBase* CubeGameMode = Cast<ACubeGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	const ACubeGameModeBase* CubeGameMode = Cast<ACubeGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
 	if (CubeGameMode == nullptr) return nullptr; // 게임모드가 할당되어 있지 않다면, 리턴
 	return CubeGameMode->CharacterClassInfo;
+}
+
+UAbilityInfo* UCubeAbilitySystemLibrary::GetAbilityInfo(const UObject* WorldContextObject)
+{
+	const ACubeGameModeBase* CubeGameMode = Cast<ACubeGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (CubeGameMode == nullptr) return nullptr;
+	return CubeGameMode->AbilityInfo;
 }
 
 bool UCubeAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
