@@ -27,6 +27,8 @@ public:
 
 	AActor* InstigatorPlayer;
 	bool bIsAttackOnlyTarget = false;
+
+	UPROPERTY(BlueprintReadWrite)
 	AActor* TargetActor;
 
 protected:

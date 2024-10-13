@@ -61,6 +61,8 @@ public:
 	FGameplayTag Damage_Magical;
 	FGameplayTag Damage_Pure;
 
+	FGameplayTag Abilities_None;
+
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
 
@@ -148,6 +150,7 @@ public:
 	FGameplayTag Montage_Attack_4;
 
 	TArray<FGameplayTag> DamageTypes;
+	//TArray<FGameplayTag> AbilityTags;
 
 	FGameplayTag Effects_HitReact;
 private:

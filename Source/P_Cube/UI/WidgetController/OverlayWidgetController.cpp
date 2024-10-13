@@ -84,6 +84,34 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 			}
 		);
 	}
+
+	GetCubeASC()->AbilityStatusChanged.AddLambda([this](const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, int32 NewLevel)
+		{
+			if (SelectedUniqueAbility.UniqueAbility.MatchesTagExact(AbilityTag))
+			{
+				SelectedUniqueAbility.Status = StatusTag;
+				bool bEnableSpendPoints = false;
+				bool bShouldEnableUniqueButton = false;
+				ShouldEnableUniqueButton(StatusTag, CurrentSkillPoints, bShouldEnableUniqueButton);
+				EnableUniqueSkillDelegate.Broadcast(bShouldEnableUniqueButton);
+			}
+
+			if (AbilityInfo)
+			{
+				FCubeAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+				Info.StatusTag = StatusTag;
+				AbilityInfoDelegate.Broadcast(Info);
+			}
+		});
+
+	GetCubePS()->OnSkillPointsChangedDelegate.AddLambda([this](int32 SkillPoints)
+		{
+			SkillPointsChanged.Broadcast(SkillPoints);
+			CurrentSkillPoints = SkillPoints;
+			bool bShouldEnableUniqueButton = false;
+			ShouldEnableUniqueButton(SelectedUniqueAbility.Status, CurrentSkillPoints, bShouldEnableUniqueButton);
+			EnableUniqueSkillDelegate.Broadcast(bShouldEnableUniqueButton);
+		});
 }
 
 void UOverlayWidgetController::OnXPChanged(int32 NewXP)
@@ -106,4 +134,58 @@ void UOverlayWidgetController::OnXPChanged(int32 NewXP)
 
 		OnXPPercentChangedDelegate.Broadcast(XPBarPercent);
 	}
+}
+
+void UOverlayWidgetController::ShouldEnableUniqueButton(const FGameplayTag& AbilityStatus, int32 SkillPoints, bool& bShouldAddUniqueButton)
+{
+	const FCubeGameplayTags GameplayTags = FCubeGameplayTags::Get();
+	bShouldAddUniqueButton = false;
+	if (AbilityStatus.MatchesTagExact(GameplayTags.Abilities_Status_Fixed))
+	{
+		if (SkillPoints > 0)
+		{
+			bShouldAddUniqueButton = true;
+		}
+	}
+	else if (AbilityStatus.MatchesTagExact(GameplayTags.Abilities_Status_Unlocked))
+	{
+		if (SkillPoints > 0)
+		{
+			bShouldAddUniqueButton = true;
+		}
+	}
+}
+
+void UOverlayWidgetController::SpendSkillPointButtonPressed()
+{
+	if (GetCubeASC())
+	{
+		GetCubeASC()->ServerSpendSkillPoint(SelectedUniqueAbility.UniqueAbility);
+	}
+}
+
+void UOverlayWidgetController::UpdateUniqueSkillEnable(const FGameplayTag& AbilityTag)
+{
+	const FCubeGameplayTags GameplayTags = FCubeGameplayTags::Get();
+	const int32 SkillPoints = GetCubePS()->GetSkillPoints();
+	FGameplayTag AbilityStatus;
+
+	const bool bTagValid = AbilityTag.IsValid();
+	const bool bTagNone = AbilityTag.MatchesTag(GameplayTags.Abilities_None);
+	const FGameplayAbilitySpec* AbilitySpec = GetCubeASC()->GetSpecFromAbilityTag(AbilityTag);
+	const bool bSpecValid = AbilitySpec != nullptr;
+	if (!bTagValid || bTagNone || !bSpecValid)
+	{
+		AbilityStatus = GameplayTags.Abilities_Status_Locked;
+	}
+	else
+	{
+		AbilityStatus = GetCubeASC()->GetStatusFromSpec(*AbilitySpec);
+	}
+
+	SelectedUniqueAbility.UniqueAbility = AbilityTag;
+	SelectedUniqueAbility.Status = AbilityStatus;
+	bool bShouldAddUniqueButton = false;
+	ShouldEnableUniqueButton(AbilityStatus, SkillPoints, bShouldAddUniqueButton);
+	EnableUniqueSkillDelegate.Broadcast(bShouldAddUniqueButton);
 }

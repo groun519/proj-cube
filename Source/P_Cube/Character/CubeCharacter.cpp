@@ -135,6 +135,11 @@ void ACubeCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
 	ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>();
 	check(CubePlayerState);
 	CubePlayerState->AddToLevel(InPlayerLevel);
+
+	if (UCubeAbilitySystemComponent* CubeASC = Cast<UCubeAbilitySystemComponent>(GetAbilitySystemComponent()))
+	{
+		CubeASC->UpdateAbilityStatuses(CubePlayerState->GetPlayerLevel());
+	}
 }
 
 void ACubeCharacter::AddToMoney_Implementation(int32 InMoney)

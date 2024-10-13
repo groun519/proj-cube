@@ -243,6 +243,11 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	 * Abilities
 	 */
 
+	GameplayTags.Abilities_None = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.None"),
+		FString("No Ability - like the nullptr for Ability Tags")
+	);
+
 	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Attack"),
 		FString("Attack Ability Tag")
@@ -428,6 +433,38 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FName("Abilities.Ninja.Unique"),
 		FString("Ninja's Unique Ability Tag")
 	);
+
+	/*GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_GravityStaff_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_GravityStaff_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_GravityStaff_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_LightStaff_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_LightStaff_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_LightStaff_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_MagicShield_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_MagicShield_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_MagicShield_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_HugeShield_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_HugeShield_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_HugeShield_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Rappier_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Rappier_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Rappier_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_ShortBow_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_ShortBow_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_ShortBow_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Revolver_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Revolver_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Revolver_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_SkullStaff_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_SkullStaff_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_SkullStaff_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Ninja_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Ninja_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Ninja_Unique);*/
+
 
 	/*
 	 * Cooldown

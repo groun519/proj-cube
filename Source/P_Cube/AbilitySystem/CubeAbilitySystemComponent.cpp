@@ -5,9 +5,13 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "P_Cube/CubeGameplayTags.h"
+#include "P_Cube/AbilitySystem/CubeAbilitySystemLibrary.h"
 #include "P_Cube/AbilitySystem/Abilities/CubeGameplayAbility.h"
+#include "P_Cube/AbilitySystem/Data/AbilityInfo.h"
 #include "P_Cube/CubeLogChannels.h"
 #include "P_Cube/Interaction/PlayerInterface.h"
+
+#include "GameplayTagsManager.h"
 
 void UCubeAbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -120,6 +124,22 @@ FGameplayTag UCubeAbilitySystemComponent::GetStatusFromSpec(const FGameplayAbili
 	return FGameplayTag();
 }
 
+FGameplayAbilitySpec* UCubeAbilitySystemComponent::GetSpecFromAbilityTag(const FGameplayTag& AbilityTag)
+{
+	FScopedAbilityListLock ActiveScopeLoc(*this);
+	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		for (FGameplayTag Tag : AbilitySpec.Ability.Get()->AbilityTags)
+		{
+			if (Tag.MatchesTag(AbilityTag))
+			{
+				return &AbilitySpec;
+			}
+		}
+	}
+	return nullptr;
+}
+
 void UCubeAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& AttributeTag)
 {
 	if (GetAvatarActor()->Implements<UPlayerInterface>())
@@ -143,6 +163,92 @@ void UCubeAbilitySystemComponent::ServerUpgradeAttribute_Implementation(const FG
 	}
 }
 
+void UCubeAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
+{
+	UAbilityInfo* AbilityInfo = UCubeAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
+	for (const FCubeAbilityInfo& Info : AbilityInfo->AbilityInformation)
+	{
+		if (!Info.AbilityTag.IsValid()) continue;
+		if (Level < Info.LevelRequirement) continue;
+		if (GetSpecFromAbilityTag(Info.AbilityTag) == nullptr)
+		{
+			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Info.Ability, 1);
+			AbilitySpec.DynamicAbilityTags.AddTag(FCubeGameplayTags::Get().Abilities_Status_Unlocked);
+			GiveAbility(AbilitySpec);
+			MarkAbilitySpecDirty(AbilitySpec);
+			ClientUpdateAbilityStatus(Info.AbilityTag, FCubeGameplayTags::Get().Abilities_Status_Unlocked, Level); // 스킬 레벨도 레벨로 설정.
+		}
+	}
+}
+
+void UCubeAbilitySystemComponent::ServerSpendSkillPoint_Implementation(const FGameplayTag& AbilityTag)
+{
+	/*if (FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
+	{
+		if (GetAvatarActor()->Implements<UPlayerInterface>())
+		{
+			IPlayerInterface::Execute_AddToSkillPoints(GetAvatarActor(), -1);
+		}
+
+		const FCubeGameplayTags GameplayTags = FCubeGameplayTags::Get();
+		FGameplayTag Status = GetStatusFromSpec(*AbilitySpec);
+		if (Status.MatchesTagExact(GameplayTags.Abilities_Status_Unlocked))
+		{
+			AbilitySpec->Level += 1;
+		}
+		ClientUpdateAbilityStatus(AbilityTag, Status, AbilitySpec->Level);
+		MarkAbilitySpecDirty(*AbilitySpec);
+	}*/ // -> 스킬 레벨업하는 함수였는데, 당장 필요 없음. 우리 스킬은 플레이어 레벨과 동기화되기 때문에. 이걸 나중에 유니크스킬 업그레이드로 사용할 것.
+}
+
+bool UCubeAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutBasicDescription, FString& OutUniqueDescription, bool bIsDetail)
+{
+	if (const FGameplayAbilitySpec* BasicAbilitySpec = GetSpecFromAbilityTag(AbilityTag))
+	{
+		if (UCubeGameplayAbility* CubeAbility = Cast<UCubeGameplayAbility>(BasicAbilitySpec->Ability))
+		{
+			bIsDetail ? 
+				OutBasicDescription = CubeAbility->GetDetailedBasicDescription(BasicAbilitySpec->Level)
+				:
+				OutBasicDescription = CubeAbility->GetBasicDescription(BasicAbilitySpec->Level);
+
+			if (const FGameplayAbilitySpec* UniqueAbilitySpec = GetSpecFromAbilityTag(GetUniqueTagFromBasicTag(AbilityTag)))
+			{
+				bIsDetail ?
+					OutUniqueDescription = CubeAbility->GetDetailedUniqueDescription(UniqueAbilitySpec->Level)
+					:
+					OutUniqueDescription = CubeAbility->GetUniqueDescription(UniqueAbilitySpec->Level);
+			}
+
+			return true;
+		}
+	}
+
+	OutBasicDescription = FString();
+	OutUniqueDescription = FString();
+
+	return false;
+}
+
+FGameplayTag UCubeAbilitySystemComponent::GetUniqueTagFromBasicTag(const FGameplayTag& BasicTag)
+{
+	// 태그 문자열로 변환
+	FString TagString = BasicTag.ToString();
+
+	// .Basic으로 끝나는지 확인
+	if (TagString.EndsWith(TEXT(".Basic")))
+	{
+		// .Basic을 .Unique로 변경
+		TagString.RemoveFromEnd(TEXT(".Basic"));
+		TagString.Append(TEXT(".Unique"));
+
+		return UGameplayTagsManager::Get().RequestGameplayTag(FName(*TagString));
+	}
+
+	// .Basic이 아닐 경우, 기본 태그를 그대로 반환
+	return FGameplayTag();
+}
+
 void UCubeAbilitySystemComponent::OnRep_ActivateAbilities()
 {
 	Super::OnRep_ActivateAbilities();
@@ -152,6 +258,11 @@ void UCubeAbilitySystemComponent::OnRep_ActivateAbilities()
 		bStartupAbilitiesGiven = true;
 		AbilitiesGivenDelegate.Broadcast();
 	}
+}
+
+void UCubeAbilitySystemComponent::ClientUpdateAbilityStatus_Implementation(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, int32 AbilityLevel)
+{
+	AbilityStatusChanged.Broadcast(AbilityTag, StatusTag, AbilityLevel);
 }
 
 void UCubeAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
