@@ -14,7 +14,7 @@ void UCubeProjectileSkill::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UCubeProjectileSkill::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, bool bOverrideYaw, float YawOverride) // 투사체 생성
+void UCubeProjectileSkill::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, bool bOverrideYaw, float YawOverride, AActor* InstigatorPlayer, bool bIsOnlyAttackTargetActor, AActor* TargetActor) // 투사체 생성
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
@@ -27,7 +27,7 @@ void UCubeProjectileSkill::SpawnProjectile(const FVector& ProjectileTargetLocati
 	{
 		Rotation.Pitch = PitchOverride;
 	}
-	if (bOverrideYaw) 
+	if (bOverrideYaw)
 	{
 		Rotation.Yaw += YawOverride;
 	}
@@ -42,6 +42,19 @@ void UCubeProjectileSkill::SpawnProjectile(const FVector& ProjectileTargetLocati
 		GetOwningActorFromActorInfo(),
 		Cast<APawn>(GetOwningActorFromActorInfo()),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+	if (InstigatorPlayer)
+	{
+		Projectile->InstigatorPlayer = InstigatorPlayer;
+	}
+	if (bIsOnlyAttackTargetActor)
+	{
+		Projectile->bIsAttackOnlyTarget = bIsOnlyAttackTargetActor;
+	}
+	if (TargetActor)
+	{
+		Projectile->TargetActor = TargetActor;
+	}
 
 	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 	// EffectContextHandle 정의
