@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AbilityInfo.h"
@@ -21,4 +21,37 @@ FCubeAbilityInfo UAbilityInfo::FindAbilityInfoForTag(const FGameplayTag& Ability
 	}
 
 	return FCubeAbilityInfo();
+}
+
+FGameplayTag UAbilityInfo::FindUniqueTagForBasicTag(const FGameplayTag& BasicAbilityTag, bool bLogNotFound) const
+{
+	TArray<FString> ParsedArray;
+	
+	BasicAbilityTag.GetTagName().ToString().ParseIntoArray(ParsedArray, TEXT("."), true);
+
+	FString UniqueTagString;
+		
+
+	for ( const FString& Str : ParsedArray )
+	{
+		if ( Str != "Basic" )
+		{
+			UniqueTagString.Append(Str);
+			UniqueTagString.Append(".");
+		}
+		else
+		{
+			UniqueTagString.Append("Unique");
+		}
+	}
+
+	for ( const FCubeAbilityInfo& Info : AbilityInformation )
+	{
+		if ( Info.AbilityTag.GetTagName() == UniqueTagString )
+		{
+			return Info.AbilityTag;
+		}
+	}
+
+	return FGameplayTag();
 }

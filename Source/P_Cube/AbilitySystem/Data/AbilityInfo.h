@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -27,6 +27,9 @@ struct FCubeAbilityInfo
 	FGameplayTag CooldownTag = FGameplayTag();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag AbilityType = FGameplayTag();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<const UTexture2D> Icon = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -52,4 +55,6 @@ public:
 	TArray<FCubeAbilityInfo> AbilityInformation;
 
 	FCubeAbilityInfo FindAbilityInfoForTag(const FGameplayTag& AbilityTag, bool bLogNotFound = false) const;
+
+	FGameplayTag FindUniqueTagForBasicTag(const FGameplayTag& BasicAbilityTag, bool bLogNotFound = false) const;
 };

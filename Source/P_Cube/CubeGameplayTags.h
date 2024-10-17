@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -68,13 +68,13 @@ public:
 
 	FGameplayTag Abilities_HitReact;
 
-	FGameplayTag Abilities_Status_Locked;
-	FGameplayTag Abilities_Status_Unlocked;
+	FGameplayTag Abilities_Status_UnEquipped;
+	FGameplayTag Abilities_Status_Equipped;
 	FGameplayTag Abilities_Status_Fixed;
-	FGameplayTag Abilities_Status_LowLevel;
 
 	FGameplayTag Abilities_Type_Offensive;
 	FGameplayTag Abilities_Type_Passive;
+	FGameplayTag Abilities_Type_Scroll;
 	FGameplayTag Abilities_Type_None;
 
 	FGameplayTag Abilities_FIreStaff_Attack;

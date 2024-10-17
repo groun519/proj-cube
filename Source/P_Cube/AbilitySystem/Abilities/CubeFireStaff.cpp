@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "P_Cube/AbilitySystem/Abilities/CubeFireStaff.h"
@@ -66,7 +66,7 @@ FString UCubeFireStaff::GetDetailedBasicDescription(int32 Level)
 	{
 		return FString::Printf(TEXT(
 			// Title
-			"<Title>ºÒ ½ºÅÂÇÁ</>\n\n"
+			"<Title>ë¶ˆ ìŠ¤íƒœí”„</>\n\n"
 			// Level
 			"<Small>Level: </><Level>%d</>\n"
 			// ManaCost

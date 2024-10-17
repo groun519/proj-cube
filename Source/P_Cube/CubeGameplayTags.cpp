@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CubeGameplayTags.h"
@@ -266,24 +266,19 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FString("Hit React Ability")
 	);
 
-	GameplayTags.Abilities_Status_Locked = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Abilities.Status.Locked"),
-		FString("Locked Status")
+	GameplayTags.Abilities_Status_UnEquipped = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.UnEquipped"),
+		FString("UnEquipped Status")
 	);
 
-	GameplayTags.Abilities_Status_Unlocked = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Abilities.Status.Unlocked"),
-		FString("Unlocked Status")
+	GameplayTags.Abilities_Status_Equipped = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.Equipped"),
+		FString("Equipped Status")
 	);
 
 	GameplayTags.Abilities_Status_Fixed = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Abilities.Status.Fixed"),
-		FString("Fixed Status")
-	);
-
-	GameplayTags.Abilities_Status_LowLevel = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Abilities.Status.LowLevel"),
-		FString("Low Level Status")
+	FName("Abilities.Status.Fixed"),
+	FString("Fixed Status")
 	);
 
 	GameplayTags.Abilities_Type_None = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -299,6 +294,11 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Type_Passive = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Type.Passive"),
 		FString("Type Passive")
+	);
+
+	GameplayTags.Abilities_Type_Scroll = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Type.Scroll"),
+		FString("Type Scroll")
 	);
 
 
