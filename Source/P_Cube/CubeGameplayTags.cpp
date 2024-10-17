@@ -322,17 +322,18 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FName("Abilities.Revolver.Unique"),
 		FString("Revolver's Unique Ability Tag")
 	);
-	GameplayTags.Abilities_ShortBow_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Abilities.ShortBow.Attack"),
-		FString("ShortBow's Attack Ability Tag")
+	GameplayTags.Abilities_LongBow_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.LongBow.Attack"),
+		FString("LongBow's Attack Ability Tag")
 	);
-	GameplayTags.Abilities_ShortBow_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Abilities.ShortBow.Basic"),
-		FString("ShortBow's Basic Ability Tag")
+	GameplayTags.Abilities_LongBow_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.LongBow.Basic"),
+		FString("LongBow's Basic Ability Tag")
 	);
-	GameplayTags.Abilities_ShortBow_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Abilities.ShortBow.Unique"),
-		FString("ShortBow's Unique Ability Tag")
+	GameplayTags.Abilities_LongBow_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.LongBow.Unique"),
+		FString("LongBow's Unique Ability Tag")
+	);
 
 	/*
 	 * Cooldown
@@ -441,17 +442,17 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FName("Cooldown.Revolver.Unique"),
 		FString("Revolver's Unique Cooldown Tag")
 	);
-	GameplayTags.Cooldown_ShortBow_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Cooldown.ShortBow.Attack"),
-		FString("ShortBow's Attack Cooldown Tag")
+	GameplayTags.Cooldown_LongBow_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.LongBow.Attack"),
+		FString("LongBow's Attack Cooldown Tag")
 	);
-	GameplayTags.Cooldown_ShortBow_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Cooldown.ShortBow.Basic"),
-		FString("ShortBow's Basic Cooldown Tag")
+	GameplayTags.Cooldown_LongBow_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.LongBow.Basic"),
+		FString("LongBow's Basic Cooldown Tag")
 	);
-	GameplayTags.Cooldown_ShortBow_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Cooldown.ShortBow.Unique"),
-		FString("ShortBow's Unique Cooldown Tag")
+	GameplayTags.Cooldown_LongBow_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.LongBow.Unique"),
+		FString("LongBow's Unique Cooldown Tag")
 	);
 
 	/*

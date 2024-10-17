@@ -14,7 +14,7 @@ void UCubeProjectileSkill::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UCubeProjectileSkill::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride) // 투사체 생성
+void UCubeProjectileSkill::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, bool bOverrideYaw, float YawOverride) // 투사체 생성
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
@@ -26,6 +26,10 @@ void UCubeProjectileSkill::SpawnProjectile(const FVector& ProjectileTargetLocati
 	if (bOverridePitch)
 	{
 		Rotation.Pitch = PitchOverride;
+	}
+	if (bOverrideYaw) 
+	{
+		Rotation.Yaw += YawOverride;
 	}
 
 	FTransform SpawnTransform;
