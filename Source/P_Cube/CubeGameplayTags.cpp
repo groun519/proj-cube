@@ -434,6 +434,32 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FString("Ninja's Unique Ability Tag")
 	);
 
+	GameplayTags.Abilities_WorldTreesBranch_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.WorldTreesBranch.Attack"),
+		FString("WorldTreesBranch's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_WorldTreesBranch_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.WorldTreesBranch.Basic"),
+		FString("WorldTreesBranch's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_WorldTreesBranch_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.WorldTreesBranch.Unique"),
+		FString("WorldTreesBranch's Unique Ability Tag")
+	);
+
+	GameplayTags.Abilities_RedFlag_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.RedFlag.Attack"),
+		FString("RedFlag's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_RedFlag_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.RedFlag.Basic"),
+		FString("RedFlag's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_RedFlag_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.RedFlag.Unique"),
+		FString("RedFlag's Unique Ability Tag")
+	);
+
 	/*GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Attack);
 	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Basic);
 	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Unique);
@@ -598,6 +624,32 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Cooldown_Ninja_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldown.Ninja.Unique"),
 		FString("Ninja's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_WorldTreesBranch_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.WorldTreesBranch.Attack"),
+		FString("WorldTreesBranch's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_WorldTreesBranch_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.WorldTreesBranch.Basic"),
+		FString("WorldTreesBranch's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_WorldTreesBranch_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.WorldTreesBranch.Unique"),
+		FString("WorldTreesBranch's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_RedFlag_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.RedFlag.Attack"),
+		FString("RedFlag's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_RedFlag_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.RedFlag.Basic"),
+		FString("RedFlag's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_RedFlag_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.RedFlag.Unique"),
+		FString("RedFlag's Unique Cooldown Tag")
 	);
 
 	/*

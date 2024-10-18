@@ -25,6 +25,11 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		[this](int32 NewLevel)
 		{
 			OnPlayerLevelChangedDelegate.Broadcast(NewLevel);
+
+			if ( GetCubeASC() )
+			{
+				GetCubeASC()->UpdateAbilityStatuses(NewLevel);
+			}
 		}
 	);
 

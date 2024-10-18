@@ -107,6 +107,12 @@ public:
 	FGameplayTag Abilities_Ninja_Attack;
 	FGameplayTag Abilities_Ninja_Basic;
 	FGameplayTag Abilities_Ninja_Unique;
+	FGameplayTag Abilities_WorldTreesBranch_Attack;
+	FGameplayTag Abilities_WorldTreesBranch_Basic;
+	FGameplayTag Abilities_WorldTreesBranch_Unique;
+	FGameplayTag Abilities_RedFlag_Attack;
+	FGameplayTag Abilities_RedFlag_Basic;
+	FGameplayTag Abilities_RedFlag_Unique;
 
 	FGameplayTag Cooldown_FIreStaff_Attack;
 	FGameplayTag Cooldown_FIreStaff_Basic;
@@ -138,6 +144,12 @@ public:
 	FGameplayTag Cooldown_Ninja_Attack;
 	FGameplayTag Cooldown_Ninja_Basic;
 	FGameplayTag Cooldown_Ninja_Unique;
+	FGameplayTag Cooldown_WorldTreesBranch_Attack;
+	FGameplayTag Cooldown_WorldTreesBranch_Basic;
+	FGameplayTag Cooldown_WorldTreesBranch_Unique;
+	FGameplayTag Cooldown_RedFlag_Attack;
+	FGameplayTag Cooldown_RedFlag_Basic;
+	FGameplayTag Cooldown_RedFlag_Unique;
 
 	FGameplayTag CombatSocket_ActorLocation;
 	FGameplayTag CombatSocket_Weapon;
