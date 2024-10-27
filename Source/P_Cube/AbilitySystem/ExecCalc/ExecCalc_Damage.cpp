@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ExecCalc_Damage.h"
@@ -13,44 +13,169 @@
 
 struct CubeDamageStatics
 {
-	DECLARE_ATTRIBUTE_CAPTUREDEF(Armor);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(ArmorPenetration);
+	FGameplayEffectAttributeCaptureDefinition TargetPhysicalPowerDef;
+	FGameplayEffectAttributeCaptureDefinition SourcePhysicalPowerDef;
+
+	FGameplayEffectAttributeCaptureDefinition TargetMagicalPowerDef;
+	FGameplayEffectAttributeCaptureDefinition SourceMagicalPowerDef;
+
+	FGameplayEffectAttributeCaptureDefinition TargetHealthDef;
+	FGameplayEffectAttributeCaptureDefinition SourceHealthDef;
+
+	FGameplayEffectAttributeCaptureDefinition TargetMaxHealthDef;
+	FGameplayEffectAttributeCaptureDefinition SourceMaxHealthDef;
+
+	FGameplayEffectAttributeCaptureDefinition TargetManaDef;
+	FGameplayEffectAttributeCaptureDefinition SourceManaDef;
+
+	FGameplayEffectAttributeCaptureDefinition TargetMaxManaDef;
+	FGameplayEffectAttributeCaptureDefinition SourceMaxManaDef;
+
+	FGameplayEffectAttributeCaptureDefinition TargetMovementSpeedDef;
+	FGameplayEffectAttributeCaptureDefinition SourceMovementSpeedDef;
+
+	FGameplayEffectAttributeCaptureDefinition TargetAttackSpeedDef;
+	FGameplayEffectAttributeCaptureDefinition SourceAttackSpeedDef;
+
+
+	//DECLARE_ATTRIBUTE_CAPTUREDEF(Armor);
+	FGameplayEffectAttributeCaptureDefinition TargetArmorDef;
+	FGameplayEffectAttributeCaptureDefinition SourceArmorDef;
+
+	//DECLARE_ATTRIBUTE_CAPTUREDEF(ArmorPenetration);
+	FGameplayEffectAttributeCaptureDefinition TargetArmorPenetrationDef;
+	FGameplayEffectAttributeCaptureDefinition SourceArmorPenetrationDef;
+
 	DECLARE_ATTRIBUTE_CAPTUREDEF(ArmorPenetrationRate);
 
-	DECLARE_ATTRIBUTE_CAPTUREDEF(MagicResistance);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(MagicResistancePenetration);
+	//DECLARE_ATTRIBUTE_CAPTUREDEF(MagicResistance);
+	FGameplayEffectAttributeCaptureDefinition TargetMagicResistanceDef;
+	FGameplayEffectAttributeCaptureDefinition SourceMagicResistanceDef;
+
+	//DECLARE_ATTRIBUTE_CAPTUREDEF(MagicResistancePenetration);
+	FGameplayEffectAttributeCaptureDefinition TargetMagicResistancePenetrationDef;
+	FGameplayEffectAttributeCaptureDefinition SourceMagicResistancePenetrationDef;
+
 	DECLARE_ATTRIBUTE_CAPTUREDEF(MagicResistancePenetrationRate);
 
-	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalChance);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalDamage);
+	//DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalChance);
+	FGameplayEffectAttributeCaptureDefinition TargetCriticalChanceDef;
+	FGameplayEffectAttributeCaptureDefinition SourceCriticalChanceDef;
 
-	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
+	//DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalDamage);
+	FGameplayEffectAttributeCaptureDefinition TargetCriticalDamageDef;
+	FGameplayEffectAttributeCaptureDefinition SourceCriticalDamageDef;
 
 	CubeDamageStatics()
 	{
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, Armor, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, ArmorPenetration, Source, false);
+		SourcePhysicalPowerDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetPhysicalPowerAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetPhysicalPowerDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetPhysicalPowerAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
+
+		SourceMagicalPowerDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetMagicalPowerAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetMagicalPowerDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetMagicalPowerAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
+
+		SourceHealthDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetHealthAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetHealthDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetHealthAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
+
+		SourceMaxHealthDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetMaxHealthAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetMaxHealthDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetMaxHealthAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
+
+		SourceManaDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetManaAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetManaDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetManaAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
+
+		SourceMaxManaDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetMaxManaAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetMaxManaDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetMaxManaAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
+
+		SourceMovementSpeedDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetMovementSpeedAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetMovementSpeedDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetMovementSpeedAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
+
+		SourceAttackSpeedDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetAttackSpeedAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetAttackSpeedDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetAttackSpeedAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
+
+
+		//DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, Armor, Target, false);
+		SourceArmorDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetArmorAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetArmorDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetArmorAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
+
+		//DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, ArmorPenetration, Source, false);
+		SourceArmorPenetrationDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetArmorPenetrationAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetArmorPenetrationDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetArmorPenetrationAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
+
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, ArmorPenetrationRate, Source, false);
 
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, MagicResistance, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, MagicResistancePenetration, Source, false);
+		//DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, MagicResistance, Target, false);
+		SourceMagicResistanceDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetMagicResistanceAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetMagicResistanceDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetMagicResistanceAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
+
+		//DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, MagicResistancePenetration, Source, false);
+		SourceMagicResistancePenetrationDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetMagicResistancePenetrationAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetMagicResistancePenetrationDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetMagicResistancePenetrationAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
+
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, MagicResistancePenetrationRate, Source, false);
 
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, CriticalChance, Source, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, CriticalDamage, Source, false);
+		//DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, CriticalChance, Source, false);
+		SourceCriticalChanceDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetCriticalChanceAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetCriticalChanceDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetCriticalChanceAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
 
-		const FCubeGameplayTags& Tags = FCubeGameplayTags::Get();
-
-		TagsToCaptureDefs.Add(Tags.Attributes_Primary_Armor, ArmorDef);
-		TagsToCaptureDefs.Add(Tags.Attributes_Primary_ArmorPenetration, ArmorPenetrationDef);
-		TagsToCaptureDefs.Add(Tags.Attributes_Primary_ArmorPenetrationRate, ArmorPenetrationRateDef);
-
-		TagsToCaptureDefs.Add(Tags.Attributes_Primary_MagicResistance, MagicResistanceDef);
-		TagsToCaptureDefs.Add(Tags.Attributes_Primary_MagicResistancePenetration, MagicResistancePenetrationDef);
-		TagsToCaptureDefs.Add(Tags.Attributes_Primary_MagicResistancePenetrationRate, MagicResistancePenetrationRateDef);
-
-		TagsToCaptureDefs.Add(Tags.Attributes_Primary_CriticalChance, CriticalChanceDef);
-		TagsToCaptureDefs.Add(Tags.Attributes_Primary_CriticalDamage, CriticalDamageDef);
+		//DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, CriticalDamage, Source, false);
+		SourceCriticalChanceDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetCriticalDamageAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetCriticalChanceDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetCriticalDamageAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
 	}
 };
 
@@ -62,20 +187,91 @@ static const CubeDamageStatics& DamageStatics()
 
 UExecCalc_Damage::UExecCalc_Damage()
 {
-	RelevantAttributesToCapture.Add(DamageStatics().ArmorDef);
-	RelevantAttributesToCapture.Add(DamageStatics().ArmorPenetrationDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourcePhysicalPowerDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceMagicalPowerDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceHealthDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceMaxHealthDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceManaDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceMaxManaDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceMovementSpeedDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceAttackSpeedDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceArmorDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceArmorPenetrationDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceMagicResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceMagicResistancePenetrationDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceCriticalChanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceCriticalDamageDef);
+
+	RelevantAttributesToCapture.Add(DamageStatics().TargetPhysicalPowerDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetMagicalPowerDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetHealthDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetMaxHealthDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetManaDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetMaxManaDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetMovementSpeedDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetAttackSpeedDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetArmorDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetArmorPenetrationDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetMagicResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetMagicResistancePenetrationDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetCriticalChanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetCriticalDamageDef);
+
 	RelevantAttributesToCapture.Add(DamageStatics().ArmorPenetrationRateDef);
-
-	RelevantAttributesToCapture.Add(DamageStatics().MagicResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().MagicResistancePenetrationDef);
 	RelevantAttributesToCapture.Add(DamageStatics().MagicResistancePenetrationRateDef);
+}
 
-	RelevantAttributesToCapture.Add(DamageStatics().CriticalChanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().CriticalDamageDef);
+void UExecCalc_Damage::DetermineDebuff(const FGameplayEffectCustomExecutionParameters& ExecutionParams, const FGameplayEffectSpec& Spec, 
+	FAggregatorEvaluateParameters EvaluationParameters, const FGameplayTag& DamageType, const FGameplayTag& DebuffType,
+	const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& InTagsToDefs) const
+{
+	const FCubeGameplayTags& GameplayTags = FCubeGameplayTags::Get();
+
+	const float TypeDamage = Spec.GetSetByCallerMagnitude(DamageType, false, -1.f);
+	if ( TypeDamage > -.5f ) // .5 padding for floating point [im]precision
+	{
+		// Determine if there was a successful debuff
+		float TargetResistance = 0.f;
+		float TargetResistanceRate = 0.f;
+		float SourcePenetration = 0.f;
+		float SourcePenetrationRate = 0.f;
+
+
+		const FGameplayTag& ResistanceTag = GameplayTags.DamageTypesToResistanceInfos[ DamageType ].Resistance;
+		const FGameplayTag& ResistanceRateTag = GameplayTags.DamageTypesToResistanceInfos[ DamageType ].ResistanceRate;
+		const FGameplayTag& PenetrationTag = GameplayTags.DamageTypesToResistanceInfos[ DamageType ].Penetration;
+		const FGameplayTag& PenetrationRateTag = GameplayTags.DamageTypesToResistanceInfos[ DamageType ].PenetrationRate;
+		
+
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(InTagsToDefs[ ResistanceTag ], EvaluationParameters, TargetResistance);
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(InTagsToDefs[ ResistanceRateTag ], EvaluationParameters, TargetResistanceRate);
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(InTagsToDefs[ PenetrationTag ], EvaluationParameters, SourcePenetration);
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(InTagsToDefs[ PenetrationRateTag ], EvaluationParameters, SourcePenetrationRate);
+		
+		TargetResistance = FMath::Max<float>(TargetResistance, 0.f);
+		TargetResistanceRate = FMath::Max<float>(TargetResistanceRate, 0.f);
+		SourcePenetration = FMath::Max<float>(SourcePenetration, 0.f);
+		SourcePenetrationRate = FMath::Max<float>(SourcePenetrationRate, 0.f);
+	}
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
+	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
+	const FCubeGameplayTags& Tags = FCubeGameplayTags::Get();
+
+	/*TagsToCaptureDefs.Add(Tags.Attributes_Primary_Armor, DamageStatics().ArmorDef);
+	TagsToCaptureDefs.Add(Tags.Attributes_Primary_ArmorPenetration, DamageStatics().ArmorPenetrationDef);
+	TagsToCaptureDefs.Add(Tags.Attributes_Primary_ArmorPenetrationRate, DamageStatics().ArmorPenetrationRateDef);
+
+	TagsToCaptureDefs.Add(Tags.Attributes_Primary_MagicResistance, DamageStatics().MagicResistanceDef);
+	TagsToCaptureDefs.Add(Tags.Attributes_Primary_MagicResistancePenetration, DamageStatics().MagicResistancePenetrationDef);
+	TagsToCaptureDefs.Add(Tags.Attributes_Primary_MagicResistancePenetrationRate, DamageStatics().MagicResistancePenetrationRateDef);
+
+	TagsToCaptureDefs.Add(Tags.Attributes_Primary_CriticalChance, DamageStatics().CriticalChanceDef);
+	TagsToCaptureDefs.Add(Tags.Attributes_Primary_CriticalDamage, DamageStatics().CriticalDamageDef);*/
+
+
 	const UAbilitySystemComponent* SourceASC = ExecutionParams.GetSourceAbilitySystemComponent();
 	const UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent();
 
@@ -92,22 +288,134 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 
+	// Debuff <- Ïùå...
+	//DetermineDebuff(ExecutionParams, Spec, EvaluationParameters, FCubeGameplayTags::Get().Damage_Magical, FCubeGameplayTags::Get().Debuff_Burn, TagsToCaptureDefs);
+
 	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
 
-	// Set by Caller∑Œ º≥¡§µ» «««ÿ ∞™¿ª ∞°¡Æø»
+	// Set by CallerÎ°ú ÏÑ§Ï†ïÎêú ÌîºÌï¥ Í∞íÏùÑ Í∞ÄÏ†∏Ïò¥
 	float Damage = 0.f;
+
+	for ( FGameplayTag CoeffAttTag : FCubeGameplayTags::Get().DamageCoeffAttributes )
+	{
+		const float DamageCoeffWithSign = Spec.GetSetByCallerMagnitude(CoeffAttTag, false);
+
+		if ( DamageCoeffWithSign == 0 ) continue;
+
+		float DamageCoeffAttribute = 0.f;
+
+		if ( DamageCoeffWithSign < 0 ) // Target
+		{
+			if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.PhysicalPower") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetPhysicalPowerDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.MagicalPower") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetMagicalPowerDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Vital.Health") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetHealthDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Secondary.MaxHealth") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetMaxHealthDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Vital.Mana") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetManaDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Secondary.MaxMana") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetMaxManaDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.MovementSpeed") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetMovementSpeedDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.AttackSpeed") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetAttackSpeedDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.Armor") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetArmorDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.ArmorPenetration") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetArmorPenetrationDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.MagicResistance") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetMagicResistanceDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.MagicResistancePenetration") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetMagicResistancePenetrationDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.CriticalChance") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetCriticalChanceDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.CriticalDamage") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetCriticalDamageDef, EvaluationParameters, DamageCoeffAttribute);
+
+			DamageCoeffAttribute = DamageCoeffAttribute * -DamageCoeffWithSign;
+		}
+		else
+		{
+			if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.PhysicalPower") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourcePhysicalPowerDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.MagicalPower") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceMagicalPowerDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Vital.Health") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceHealthDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Secondary.MaxHealth") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceMaxHealthDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Vital.Mana") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceManaDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Secondary.MaxMana") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceMaxManaDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.MovementSpeed") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceMovementSpeedDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.AttackSpeed") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceAttackSpeedDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.Armor") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceArmorDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.ArmorPenetration") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceArmorPenetrationDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.MagicResistance") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceMagicResistanceDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.MagicResistancePenetration") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceMagicResistancePenetrationDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.CriticalChance") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceCriticalChanceDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.CriticalDamage") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceCriticalDamageDef, EvaluationParameters, DamageCoeffAttribute);
+
+			DamageCoeffAttribute = DamageCoeffAttribute * DamageCoeffWithSign; // Í≥ÑÏàò ÎπÑÎ°Ä ÌîºÌï¥Îüâ Í≥ÑÏÇ∞
+		}
+		
+		DamageCoeffAttribute = FMath::Max<float>(DamageCoeffAttribute, 0.f); // ÏùåÏàò ÌîºÌï¥Îüâ Îî∞ÏúÑÎäî ÌóàÏö©ÌïòÏßÄ ÏïäÎäîÎã§.
+		Damage = Damage + DamageCoeffAttribute; // Í≥ÑÏàò ÎßåÌÅºÏùò ÌîºÌï¥Îüâ Ìï©ÏÇ∞
+	}
+
+
 	float SourcePenetration = 0.f;
 	float SourcePenetrationRate = 0.f;
 	int32 DamageType = 0;
+
 	for (FGameplayTag DamageTypeTag : FCubeGameplayTags::Get().DamageTypes)
 	{
-		const float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTypeTag, false);
+		float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTypeTag, false);
 
-		if (DamageTypeValue == 0) continue;
+		if ( DamageTypeValue == 0 ) continue; // ÎßåÏïΩ Ìï†Îãπ ÏïàÎêêÏúºÎ©¥ countinue
+		if ( DamageTypeValue < 0 ) DamageTypeValue = 0; // Ìï†ÎãπÏùÄ ÎêêÎäîÎç∞ BaseDamageÎ•º Ïïà Ïì∞Í≥† Ïã∂Îã§Î©¥ ÏùåÏàòÍ∞íÏúºÎ°ú ÎëêÎ©¥ Îê®. Í∑∏Îü¨Î©¥ 0ÏúºÎ°ú Ï≤òÎ¶¨.
 
 		if (DamageTypeTag.GetTagName() == TEXT("Damage.Physical"))
 		{
-			ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorPenetrationDef, EvaluationParameters, SourcePenetration);
+			ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceArmorPenetrationDef, EvaluationParameters, SourcePenetration);
 			SourcePenetration = FMath::Max<float>(SourcePenetration, 0.f);
 
 			ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorPenetrationRateDef, EvaluationParameters, SourcePenetrationRate);
@@ -118,7 +426,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		}
 		else if (DamageTypeTag.GetTagName() == TEXT("Damage.Magical"))
 		{
-			ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().MagicResistancePenetrationDef, EvaluationParameters, SourcePenetration);
+			ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceMagicResistancePenetrationDef, EvaluationParameters, SourcePenetration);
 			SourcePenetration = FMath::Max<float>(SourcePenetration, 0.f);
 
 			ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().MagicResistancePenetrationRateDef, EvaluationParameters, SourcePenetrationRate);
@@ -141,35 +449,26 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	float TargetResistanceRate = 0.f;
 	if (DamageType == 0)
 	{
-		// ≈∏∞Ÿ¿« Armor ∞™¿ª ƒ∏√≥«œø© ∞°¡Æø»
-		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorDef, EvaluationParameters, TargetResistance);
+		// ÌÉÄÍ≤üÏùò Armor Í∞íÏùÑ Ï∫°Ï≤òÌïòÏó¨ Í∞ÄÏ†∏Ïò¥
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetArmorDef, EvaluationParameters, TargetResistance);
 		TargetResistance = FMath::Max<float>(TargetResistance, 0.f);
 
-		// Armor ∞™¿ª ±‚π›¿∏∑Œ ArmorRate ∞™¿ª ƒø∫Í ≈◊¿Ã∫Ìø°º≠ ∞°¡Æø»
+		// Armor Í∞íÏùÑ Í∏∞Î∞òÏúºÎ°ú ArmorRate Í∞íÏùÑ Ïª§Î∏å ÌÖåÏù¥Î∏îÏóêÏÑú Í∞ÄÏ†∏Ïò¥
 		const UCharacterClassInfo* CharacterClassInfo = UCubeAbilitySystemLibrary::GetCharacterClassInfo(SourceAvatar);
 		const FRealCurve* ResistanceRateCurve = CharacterClassInfo->ResistanceRateCurveTable->FindCurve(FName("ArmorRate"), FString());
 		TargetResistanceRate = ResistanceRateCurve->Eval(TargetResistance - SourcePenetration);
 	}
 	else if (DamageType == 1)
 	{
-		// ≈∏∞Ÿ¿« MagicResistance ∞™¿ª ƒ∏√≥«œø© ∞°¡Æø»
-		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().MagicResistanceDef, EvaluationParameters, TargetResistance);
+		// ÌÉÄÍ≤üÏùò MagicResistance Í∞íÏùÑ Ï∫°Ï≤òÌïòÏó¨ Í∞ÄÏ†∏Ïò¥
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetMagicResistanceDef, EvaluationParameters, TargetResistance);
 		TargetResistance = FMath::Max<float>(TargetResistance, 0.f);
 
-		// MagicResistance ∞™¿ª ±‚π›¿∏∑Œ MagicResistanceRate ∞™¿ª ƒø∫Í ≈◊¿Ã∫Ìø°º≠ ∞°¡Æø»
+		// MagicResistance Í∞íÏùÑ Í∏∞Î∞òÏúºÎ°ú MagicResistanceRate Í∞íÏùÑ Ïª§Î∏å ÌÖåÏù¥Î∏îÏóêÏÑú Í∞ÄÏ†∏Ïò¥
 		const UCharacterClassInfo* CharacterClassInfo = UCubeAbilitySystemLibrary::GetCharacterClassInfo(SourceAvatar);
 		const FRealCurve* ResistanceRateCurve = CharacterClassInfo->ResistanceRateCurveTable->FindCurve(FName("MagicResistanceRate"), FString());
 		TargetResistanceRate = ResistanceRateCurve->Eval(TargetResistance - SourcePenetration);
 	}
-	
-	/*/ " ArmorPenetation "
-	float SourceArmorPenetration = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorPenetrationDef, EvaluationParameters, SourceArmorPenetration);
-	SourceArmorPenetration = FMath::Max<float>(SourceArmorPenetration, 0.f);
-	// " ArmorPenetationRate "
-	float SourceArmorPenetrationRate = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorPenetrationRateDef, EvaluationParameters, SourceArmorPenetrationRate);
-	SourceArmorPenetrationRate = FMath::Max<float>(SourceArmorPenetrationRate, 0.f); */
 
 	const float EffectiveArmorRate = TargetResistanceRate - SourcePenetrationRate;
 
@@ -179,12 +478,15 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	 * Critical
 	 */
 	float SourceCriticalChance = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalChanceDef, EvaluationParameters, SourceCriticalChance);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceCriticalChanceDef, EvaluationParameters, SourceCriticalChance);
 	SourceCriticalChance = FMath::Max<float>(SourceCriticalChance, 0.f);
 
 	float SourceCriticalDamage = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalDamageDef, EvaluationParameters, SourceCriticalDamage);
-	SourceCriticalDamage = FMath::Max<float>(SourceCriticalDamage, 0.f);
+	if ( DamageType == 0 ) // PhysicalDamageÎßå ÏπòÎ™ÖÌÉÄ Ï†ÅÏö©.
+	{
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceCriticalDamageDef, EvaluationParameters, SourceCriticalDamage);
+		SourceCriticalDamage = FMath::Max<float>(SourceCriticalDamage, 0.f);
+	}
 
 	const bool bCriticalHit = FMath::RandRange(1, 100) < SourceCriticalChance;
 

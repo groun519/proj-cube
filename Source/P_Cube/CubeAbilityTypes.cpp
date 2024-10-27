@@ -1,4 +1,4 @@
-#include "CubeAbilityTypes.h"
+﻿#include "CubeAbilityTypes.h"
 
 bool FCubeGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess)
 {
@@ -48,6 +48,14 @@ bool FCubeGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 		if (bIsPureHit)
 		{
 			RepBits |= 1 << 10;
+		}
+		if ( bIsSuccessfulDebuff )
+		{
+			RepBits |= 1 << 11;
+		}
+		if ( DamageType.IsValid() )
+		{
+			RepBits |= 1 << 12;
 		}
 	}
 
@@ -108,6 +116,21 @@ bool FCubeGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 	if (RepBits & (1 << 10))
 	{
 		Ar << bIsPureHit;
+	}
+	if ( RepBits & ( 1 << 11 ) )
+	{
+		Ar << bIsSuccessfulDebuff;
+	}
+	if ( RepBits & ( 1 << 12 ) )
+	{
+		if ( Ar.IsLoading() )
+		{
+			if ( !DamageType.IsValid() )
+			{
+				DamageType = TSharedPtr<FGameplayTag>(new FGameplayTag());
+			}
+		}
+		DamageType->NetSerialize(Ar, Map, bOutSuccess);
 	}
 
 	if (Ar.IsLoading())

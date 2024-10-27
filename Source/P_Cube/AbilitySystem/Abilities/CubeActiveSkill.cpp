@@ -1,20 +1,23 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CubeProjectileSkill.h"
+#include "CubeActiveSkill.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+
 #include "P_Cube/Actor/CubeProjectile.h"
+#include "P_Cube/Actor/CubeHitbox.h"
+
 #include "P_Cube/Interaction/CombatInterface.h"
 #include "P_Cube/CubeGameplayTags.h"
 
-void UCubeProjectileSkill::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+void UCubeActiveSkill::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UCubeProjectileSkill::SpawnProjectile(const FName DamageName, const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, bool bOverrideYaw, float YawOverride, AActor* InstigatorPlayer, bool bIsOnlyAttackTargetActor, AActor* TargetActor) // 투사체 생성
+void UCubeActiveSkill::SpawnProjectile(const FName ProjectileName, const FName DamageName, const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, bool bOverrideYaw, float YawOverride, AActor* InstigatorPlayer, bool bIsOnlyAttackTargetActor, AActor* TargetActor) // 투사체 생성
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
@@ -37,7 +40,7 @@ void UCubeProjectileSkill::SpawnProjectile(const FName DamageName, const FVector
 	SpawnTransform.SetRotation(Rotation.Quaternion());
 
 	ACubeProjectile* Projectile = GetWorld()->SpawnActorDeferred<ACubeProjectile>(
-		ProjectileClass,
+		ProjectileClassMap[ ProjectileName ],
 		SpawnTransform,
 		GetOwningActorFromActorInfo(),
 		Cast<APawn>(GetOwningActorFromActorInfo()),
@@ -59,4 +62,39 @@ void UCubeProjectileSkill::SpawnProjectile(const FName DamageName, const FVector
 	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor, DamageName);
 
 	Projectile->FinishSpawning(SpawnTransform);
+}
+
+void UCubeActiveSkill::SpawnHitBox(const FName HitboxName, const FName DamageName, const FVector& HitboxLocation, AActor* InstigatorPlayer, AActor* TargetActor)
+{
+	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
+	if ( !bIsServer ) return;
+
+	FRotator Rotation;
+	Rotation.Pitch = 0;
+	Rotation.Yaw = 0;
+	Rotation.Roll = 0;
+	
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(HitboxLocation);
+	SpawnTransform.SetRotation(Rotation.Quaternion());
+
+	ACubeHitbox* Hitbox = GetWorld()->SpawnActorDeferred<ACubeHitbox>(
+		HitboxClassMap[ HitboxName ],
+		SpawnTransform,
+		GetOwningActorFromActorInfo(),
+		Cast<APawn>(GetOwningActorFromActorInfo()),	
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+	if ( InstigatorPlayer )
+	{
+		Hitbox->InstigatorPlayer = InstigatorPlayer;
+	}
+	if ( TargetActor )
+	{
+		Hitbox->TargetActor = TargetActor;
+	}
+
+	Hitbox->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor, DamageName);
+
+	Hitbox->FinishSpawning(SpawnTransform);
 }

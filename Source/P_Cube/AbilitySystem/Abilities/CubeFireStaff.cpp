@@ -2,11 +2,12 @@
 
 
 #include "P_Cube/AbilitySystem/Abilities/CubeFireStaff.h"
-#include "P_Cube/CubeGameplayTags.h"
+//#include "P_Cube/CubeGameplayTags.h"
 
 FString UCubeFireStaff::GetBasicDescription(int32 Level)
 {
-	const int32 Damage = GetDamageByDamageType(Level, FCubeGameplayTags::Get().Damage_Magical);
+	//const int32 Damage = GetDamageByDamageType(Level, FCubeGameplayTags::Get().Damage_Magical);
+	const float BaseDamage = DamageInfoMap[ "Projectile" ].BaseDamage.GetValueAtLevel(GetAbilityLevel());
 	const float ManaCost = FMath::Abs(GetManaCost(Level));
 	const float Cooldown = GetCooldown(Level);
 	if (Level == 1)
@@ -30,7 +31,7 @@ FString UCubeFireStaff::GetBasicDescription(int32 Level)
 			Level,
 			ManaCost,
 			Cooldown,
-			Damage);
+			BaseDamage);
 	}
 	else
 	{
@@ -53,13 +54,13 @@ FString UCubeFireStaff::GetBasicDescription(int32 Level)
 			Level,
 			ManaCost,
 			Cooldown,
-			Damage);
+			BaseDamage);
 	}
 }
 
 FString UCubeFireStaff::GetDetailedBasicDescription(int32 Level)
 {
-	const int32 Damage = GetDamageByDamageType(Level, FCubeGameplayTags::Get().Damage_Magical);
+	const int32 BaseDamage = DamageInfoMap[ "Projectile" ].BaseDamage.GetValueAtLevel(GetAbilityLevel());
 	const float ManaCost = FMath::Abs(GetManaCost(Level));
 	const float Cooldown = GetCooldown(Level);
 	if (Level == 1)
@@ -83,7 +84,7 @@ FString UCubeFireStaff::GetDetailedBasicDescription(int32 Level)
 			Level,
 			ManaCost,
 			Cooldown,
-			Damage);
+			BaseDamage);
 	}
 	else
 	{
@@ -106,13 +107,13 @@ FString UCubeFireStaff::GetDetailedBasicDescription(int32 Level)
 			Level,
 			ManaCost,
 			Cooldown,
-			Damage);
+			BaseDamage);
 	}
 }
 
 FString UCubeFireStaff::GetUniqueDescription(int32 Level)
 {
-	const int32 Damage = GetDamageByDamageType(Level, FCubeGameplayTags::Get().Damage_Magical);
+	const int32 BaseDamage = DamageInfoMap[ "Projectile" ].BaseDamage.GetValueAtLevel(GetAbilityLevel());
 	const float ManaCost = FMath::Abs(GetManaCost(Level));
 	const float Cooldown = GetCooldown(Level);
 	if (Level == 1)
@@ -136,7 +137,7 @@ FString UCubeFireStaff::GetUniqueDescription(int32 Level)
 			Level,
 			ManaCost,
 			Cooldown,
-			Damage);
+			BaseDamage);
 	}
 	else
 	{
@@ -159,13 +160,13 @@ FString UCubeFireStaff::GetUniqueDescription(int32 Level)
 			Level,
 			ManaCost,
 			Cooldown,
-			Damage);
+			BaseDamage);
 	}
 }
 
 FString UCubeFireStaff::GetDetailedUniqueDescription(int32 Level)
 {
-	const int32 Damage = GetDamageByDamageType(Level, FCubeGameplayTags::Get().Damage_Magical);
+	const int32 BaseDamage = DamageInfoMap[ "Projectile" ].BaseDamage.GetValueAtLevel(GetAbilityLevel());
 	const float ManaCost = FMath::Abs(GetManaCost(Level));
 	const float Cooldown = GetCooldown(Level);
 	if (Level == 1)
@@ -189,7 +190,7 @@ FString UCubeFireStaff::GetDetailedUniqueDescription(int32 Level)
 			Level,
 			ManaCost,
 			Cooldown,
-			Damage);
+			BaseDamage);
 	}
 	else
 	{
@@ -212,6 +213,6 @@ FString UCubeFireStaff::GetDetailedUniqueDescription(int32 Level)
 			Level,
 			ManaCost,
 			Cooldown,
-			Damage);
+			BaseDamage);
 	}
 }

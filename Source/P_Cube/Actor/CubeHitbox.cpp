@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CubeProjectile.h"
+#include "CubeHitbox.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
@@ -10,35 +10,46 @@
 #include "P_Cube/P_Cube.h"
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-ACubeProjectile::ACubeProjectile()
+ACubeHitbox::ACubeHitbox()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
 
-	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
-	SetRootComponent(Sphere);
-	Sphere->SetCollisionObjectType(ECC_Projectile); // 충돌 타입을 Projectile로 설정
-	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	Sphere->SetCollisionResponseToAllChannels(ECR_Ignore);
-	Sphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
-	Sphere->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap);
-	Sphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	if ( HitboxCollision )
+	{
+		SetHitboxCollision(HitboxCollision);
+	}
+}
 
-	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovement");
-	ProjectileMovement->InitialSpeed = 550.f;
-	ProjectileMovement->MaxSpeed = 550.f;
-	ProjectileMovement->ProjectileGravityScale = 0.f;
+void ACubeHitbox::SetHitboxCollision(UPrimitiveComponent* NewCollisionComponent)
+{
+    // 기존 충돌 컴포넌트가 있으면 이벤트 바인딩 해제
+    if ( HitboxCollision )
+    {
+        HitboxCollision->OnComponentBeginOverlap.RemoveDynamic(this, &ACubeHitbox::OnCollisionOverlap);
+        HitboxCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    }
+
+    // 새 충돌 컴포넌트 설정 및 이벤트 바인딩
+    HitboxCollision = NewCollisionComponent;
+
+    if ( HitboxCollision )
+    {
+        HitboxCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+        HitboxCollision->OnComponentBeginOverlap.AddDynamic(this, &ACubeHitbox::OnCollisionOverlap);
+    }
 }
 
 // Called when the game starts or when spawned
-void ACubeProjectile::BeginPlay()
+void ACubeHitbox::BeginPlay()
 {
 	Super::BeginPlay();
+
 	SetLifeSpan(LifeSpan);
-	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACubeProjectile::OnSphereOverlap);
+	//Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACubeHitbox::OnSphereOverlap);
 
 	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(
 		LoopingSound, 
@@ -49,7 +60,7 @@ void ACubeProjectile::BeginPlay()
 		true);
 }
 
-void ACubeProjectile::OnHit()
+void ACubeHitbox::OnHit()
 {
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
@@ -58,13 +69,13 @@ void ACubeProjectile::OnHit()
 	bHit = true;
 }
 
-void ACubeProjectile::Destroyed()
+void ACubeHitbox::Destroyed()
 {
 	if ( !bHit && !HasAuthority() ) OnHit();
 	Super::Destroyed();
 }
 
-void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ACubeHitbox::OnCollisionOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	for (AActor* ignore : IgnoreActors) 
 		if ( OtherActor == ignore ) return;
@@ -83,6 +94,16 @@ void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
+			/*const bool bKnockback = DamageEffectParams.bKnockback;
+			if ( bKnockback )
+			{
+				FRotator Rotation = GetActorRotation();
+				Rotation.Pitch = 45.f;
+
+				const FVector KnockbackDirection = Rotation.Vector();
+				const FVector KnockbackForceVec = KnockbackDirection * DamageEffectParams.KnockbackForce;
+			}*/
+
 			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
 			UCubeAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); // damage 이펙트 적용.
 			IgnoreActors.Add(OtherActor);
@@ -101,12 +122,12 @@ void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	LastOtherActor = OtherActor;
 }
 
-AActor* ACubeProjectile::GetInstigatorPlayer() const
+AActor* ACubeHitbox::GetInstigatorPlayer() const
 {
 	return InstigatorPlayer;
 }
 
-AActor* ACubeProjectile::GetTargetActor() const
+AActor* ACubeHitbox::GetTargetActor() const
 {
 	return TargetActor;
 }

@@ -113,6 +113,20 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	);
 
 	/*
+	 * Vital Attributes
+	 */
+
+	GameplayTags.Attributes_Vital_Health = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Vital.Health"),
+		FString("Health")
+	);
+
+	GameplayTags.Attributes_Vital_Mana = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Vital.Mana"),
+		FString("Mana")
+	);
+
+	/*
 	 * Input Tags
 	 */
 
@@ -217,6 +231,32 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	 * Meta Attributes
 	 */
 
+	GameplayTags.Debuff_Burn = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Burn"),
+		FString("Burn Debuff Tag")
+	);
+	GameplayTags.Debuff_Stun = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Stun"),
+		FString("Stun Debuff Tag")
+	);
+
+	GameplayTags.Debuff_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Damage"),
+		FString("Damage Debuff Tag")
+	);
+	GameplayTags.Debuff_Duration = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Duration"),
+		FString("Duration Debuff Tag")
+	);
+	GameplayTags.Debuff_Frequency = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Frequency"),
+		FString("Frequency Debuff Tag")
+	);
+
+	/*
+	 * Meta Attributes
+	 */
+
 	GameplayTags.Attributes_Meta_IncomingXP = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Attributes.Meta.IncomingXP"),
 		FString("Incoming XP Meta Attribute")
@@ -229,6 +269,45 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Physical);
 	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Magical);
 	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Pure);
+
+	/*
+	 * Array of Damage Coeff Attributes
+	 */
+
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_Armor);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_ArmorPenetration);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_MagicResistance);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_MagicResistancePenetration);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_PhysicalPower);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_MagicalPower);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_AttackSpeed);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_CriticalChance);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_CriticalDamage);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_MovementSpeed);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Vital_Health);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Secondary_MaxHealth);
+
+	/*
+	 * Map of Damage Types to Resistance Infos
+	 */
+
+	GameplayTags.DamageTypesToResistanceInfos.Add(GameplayTags.Damage_Physical,
+		FResistanceInfo(
+			GameplayTags.Attributes_Primary_Armor,
+			GameplayTags.Attributes_Secondary_ArmorRate,
+			GameplayTags.Attributes_Primary_ArmorPenetration,
+			GameplayTags.Attributes_Primary_ArmorPenetrationRate
+		)
+	);
+
+	GameplayTags.DamageTypesToResistanceInfos.Add(GameplayTags.Damage_Magical,
+		FResistanceInfo(
+			GameplayTags.Attributes_Primary_MagicResistance,
+			GameplayTags.Attributes_Secondary_MagicResistanceRate,
+			GameplayTags.Attributes_Primary_MagicResistancePenetration,
+			GameplayTags.Attributes_Primary_MagicResistancePenetrationRate
+		)
+	);
 
 	/*
 	 * Effects

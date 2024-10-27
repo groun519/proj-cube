@@ -11,6 +11,44 @@
  * Singleton containing native Gameplay Tags
  */
 
+struct FResistanceInfo
+{
+	FResistanceInfo(FGameplayTag Resist, FGameplayTag ResistRate, FGameplayTag Penet, FGameplayTag PenetRate)
+	{
+		Resistance = Resist;
+		ResistanceRate = ResistRate;
+		Penetration = Penet;
+		PenetrationRate = PenetRate;
+	}
+
+	FGameplayTag Resistance;
+
+	FGameplayTag ResistanceRate;
+
+	FGameplayTag Penetration;
+
+	FGameplayTag PenetrationRate;
+};
+
+struct FDebuffInfo
+{
+	FDebuffInfo(FGameplayTag Type, float Dam, float Dur, float Fre)
+	{
+		DamageType = Type;
+		Damage = Dam;
+		Duration = Dur;
+		Frequency = Fre;
+	}
+
+	FGameplayTag DamageType;
+
+	float Damage;
+
+	float Duration;
+
+	float Frequency;
+};
+
 struct FCubeGameplayTags
 {
 public:
@@ -38,6 +76,9 @@ public:
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
 
+	FGameplayTag Attributes_Vital_Health;
+	FGameplayTag Attributes_Vital_Mana;
+
 	FGameplayTag Attributes_Meta_IncomingXP;
 
 	FGameplayTag InputTag_LMB;
@@ -60,6 +101,13 @@ public:
 	FGameplayTag Damage_Physical;
 	FGameplayTag Damage_Magical;
 	FGameplayTag Damage_Pure;
+
+	FGameplayTag Debuff_Burn;
+	FGameplayTag Debuff_Stun;
+
+	FGameplayTag Debuff_Damage;
+	FGameplayTag Debuff_Duration;
+	FGameplayTag Debuff_Frequency;
 
 	FGameplayTag Abilities_None;
 
@@ -162,9 +210,13 @@ public:
 	FGameplayTag Montage_Attack_4;
 
 	TArray<FGameplayTag> DamageTypes;
-	//TArray<FGameplayTag> AbilityTags;
+	TArray<FGameplayTag> DamageCoeffAttributes;
+	TMap<FGameplayTag, FResistanceInfo> DamageTypesToResistanceInfos;
+	TMap<FGameplayTag, FDebuffInfo> DebuffTagsToDebuffInfos;
 
 	FGameplayTag Effects_HitReact;
 private:
 	static FCubeGameplayTags GameplayTags;
 };
+
+

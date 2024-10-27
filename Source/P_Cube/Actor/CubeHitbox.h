@@ -5,22 +5,21 @@
 #include "CoreMinimal.h"
 #include "P_Cube/CubeAbilityTypes.h"
 #include "GameFramework/Actor.h"
-#include "CubeProjectile.generated.h"
+#include "CubeHitbox.generated.h"
 
 class UNiagaraSystem;
-class USphereComponent;
-class UProjectileMovementComponent;
 
 UCLASS()
-class P_CUBE_API ACubeProjectile : public AActor
+class P_CUBE_API ACubeHitbox : public AActor
 {
 	GENERATED_BODY()
 	
 public:
-	ACubeProjectile();
+	ACubeHitbox();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
+	// 충돌 컴포넌트를 설정하는 함수
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	void SetHitboxCollision(UPrimitiveComponent* CollisionComponent);
 
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
 	FDamageEffectParams DamageEffectParams;
@@ -35,12 +34,11 @@ protected:
 	virtual void BeginPlay() override;
 	void OnHit();
 	virtual void Destroyed() override;
+	
+	UPrimitiveComponent* HitboxCollision;
 
 	UFUNCTION()
-	void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<USphereComponent> Sphere;
+	void OnCollisionOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 private:
 
