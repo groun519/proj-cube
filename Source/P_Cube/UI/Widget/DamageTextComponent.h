@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,5 +15,5 @@ class P_CUBE_API UDamageTextComponent : public UWidgetComponent
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetDamageText(float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit);
+	void SetDamageText(float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit, bool bHealHit);
 };

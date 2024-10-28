@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CubeGameplayTags.h"
@@ -113,6 +113,20 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	);
 
 	/*
+	 * Vital Attributes
+	 */
+
+	GameplayTags.Attributes_Vital_Health = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Vital.Health"),
+		FString("Health")
+	);
+
+	GameplayTags.Attributes_Vital_Mana = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Vital.Mana"),
+		FString("Mana")
+	);
+
+	/*
 	 * Input Tags
 	 */
 
@@ -212,6 +226,36 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FName("Damage.Pure"),
 		FString("Pure Damage Type")
 	);
+	GameplayTags.Damage_Heal = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Heal"),
+		FString("Heal Damage Type")
+	);
+
+	/*
+	 * Meta Attributes
+	 */
+
+	GameplayTags.Debuff_Burn = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Burn"),
+		FString("Burn Debuff Tag")
+	);
+	GameplayTags.Debuff_Stun = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Stun"),
+		FString("Stun Debuff Tag")
+	);
+
+	GameplayTags.Debuff_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Damage"),
+		FString("Damage Debuff Tag")
+	);
+	GameplayTags.Debuff_Duration = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Duration"),
+		FString("Duration Debuff Tag")
+	);
+	GameplayTags.Debuff_Frequency = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Frequency"),
+		FString("Frequency Debuff Tag")
+	);
 
 	/*
 	 * Meta Attributes
@@ -229,6 +273,46 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Physical);
 	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Magical);
 	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Pure);
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Heal);
+
+	/*
+	 * Array of Damage Coeff Attributes
+	 */
+
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_Armor);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_ArmorPenetration);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_MagicResistance);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_MagicResistancePenetration);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_PhysicalPower);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_MagicalPower);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_AttackSpeed);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_CriticalChance);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_CriticalDamage);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_MovementSpeed);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Vital_Health);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Secondary_MaxHealth);
+
+	/*
+	 * Map of Damage Types to Resistance Infos
+	 */
+
+	GameplayTags.DamageTypesToResistanceInfos.Add(GameplayTags.Damage_Physical,
+		FResistanceInfo(
+			GameplayTags.Attributes_Primary_Armor,
+			GameplayTags.Attributes_Secondary_ArmorRate,
+			GameplayTags.Attributes_Primary_ArmorPenetration,
+			GameplayTags.Attributes_Primary_ArmorPenetrationRate
+		)
+	);
+
+	GameplayTags.DamageTypesToResistanceInfos.Add(GameplayTags.Damage_Magical,
+		FResistanceInfo(
+			GameplayTags.Attributes_Primary_MagicResistance,
+			GameplayTags.Attributes_Secondary_MagicResistanceRate,
+			GameplayTags.Attributes_Primary_MagicResistancePenetration,
+			GameplayTags.Attributes_Primary_MagicResistancePenetrationRate
+		)
+	);
 
 	/*
 	 * Effects
@@ -242,6 +326,11 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	/*
 	 * Abilities
 	 */
+
+	GameplayTags.Abilities_None = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.None"),
+		FString("No Ability - like the nullptr for Ability Tags")
+	);
 
 	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Attack"),
@@ -261,24 +350,19 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FString("Hit React Ability")
 	);
 
-	GameplayTags.Abilities_Status_Locked = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Abilities.Status.Locked"),
-		FString("Locked Status")
+	GameplayTags.Abilities_Status_UnEquipped = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.UnEquipped"),
+		FString("UnEquipped Status")
 	);
 
-	GameplayTags.Abilities_Status_Unlocked = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Abilities.Status.Unlocked"),
-		FString("Unlocked Status")
+	GameplayTags.Abilities_Status_Equipped = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.Equipped"),
+		FString("Equipped Status")
 	);
 
 	GameplayTags.Abilities_Status_Fixed = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Abilities.Status.Fixed"),
-		FString("Fixed Status")
-	);
-
-	GameplayTags.Abilities_Status_LowLevel = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Abilities.Status.LowLevel"),
-		FString("Low Level Status")
+	FName("Abilities.Status.Fixed"),
+	FString("Fixed Status")
 	);
 
 	GameplayTags.Abilities_Type_None = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -294,6 +378,11 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Type_Passive = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Type.Passive"),
 		FString("Type Passive")
+	);
+
+	GameplayTags.Abilities_Type_Scroll = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Type.Scroll"),
+		FString("Type Scroll")
 	);
 
 
@@ -441,6 +530,64 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FString("Ninja's Unique Ability Tag")
 	);
 
+	GameplayTags.Abilities_WorldTreesBranch_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.WorldTreesBranch.Attack"),
+		FString("WorldTreesBranch's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_WorldTreesBranch_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.WorldTreesBranch.Basic"),
+		FString("WorldTreesBranch's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_WorldTreesBranch_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.WorldTreesBranch.Unique"),
+		FString("WorldTreesBranch's Unique Ability Tag")
+	);
+
+	GameplayTags.Abilities_RedFlag_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.RedFlag.Attack"),
+		FString("RedFlag's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_RedFlag_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.RedFlag.Basic"),
+		FString("RedFlag's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_RedFlag_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.RedFlag.Unique"),
+		FString("RedFlag's Unique Ability Tag")
+	);
+
+	/*GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_GravityStaff_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_GravityStaff_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_GravityStaff_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_LightStaff_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_LightStaff_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_LightStaff_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_MagicShield_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_MagicShield_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_MagicShield_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_HugeShield_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_HugeShield_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_HugeShield_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Rappier_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Rappier_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Rappier_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_ShortBow_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_ShortBow_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_ShortBow_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Revolver_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Revolver_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Revolver_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_SkullStaff_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_SkullStaff_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_SkullStaff_Unique);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Ninja_Attack);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Ninja_Basic);
+	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_Ninja_Unique);*/
+
+
 	/*
 	 * Cooldown
 	 */
@@ -585,6 +732,32 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Cooldown_Ninja_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldown.Ninja.Unique"),
 		FString("Ninja's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_WorldTreesBranch_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.WorldTreesBranch.Attack"),
+		FString("WorldTreesBranch's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_WorldTreesBranch_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.WorldTreesBranch.Basic"),
+		FString("WorldTreesBranch's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_WorldTreesBranch_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.WorldTreesBranch.Unique"),
+		FString("WorldTreesBranch's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_RedFlag_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.RedFlag.Attack"),
+		FString("RedFlag's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_RedFlag_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.RedFlag.Basic"),
+		FString("RedFlag's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_RedFlag_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.RedFlag.Unique"),
+		FString("RedFlag's Unique Cooldown Tag")
 	);
 
 	/*

@@ -1,9 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CubeAttributeSet.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "P_Cube/CubeAbilityTypes.h"
 #include "GameFramework/Character.h"
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
@@ -36,17 +37,17 @@ UCubeAttributeSet::UCubeAttributeSet()
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_CriticalDamage, GetCriticalChanceAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_MovementSpeed, GetMovementSpeedAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MovementSpeedIncreaseRate, GetMovementSpeedIncreaseRateAttribute);
-	//TagsToAttributes.Add(GameplayTags.Attributes_Primary_CriticalDamage, GetCriticalChanceAttribute); <- ƒ∞® √ﬂ∞°«“∞Õ.
-	//ƒ∞®∞™ / ƒ∞®∆€µµ ¿÷æÓæﬂ∞⁄≥◊ ;; æ∆ ±◊∏Æ∞Ì ∏∂¿˙rateµµ ±◊∑°«¡ ∏∏µÈæÓæﬂ«—¥Ÿ.
+	//TagsToAttributes.Add(GameplayTags.Attributes_Primary_CriticalDamage, GetCriticalChanceAttribute); <- Ïø®Í∞ê Ï∂îÍ∞ÄÌï†Í≤É.
+	//Ïø®Í∞êÍ∞í / Ïø®Í∞êÌçºÎèÑ ÏûàÏñ¥ÏïºÍ≤†ÎÑ§ ;; ÏïÑ Í∑∏Î¶¨Í≥† ÎßàÏ†ÄrateÎèÑ Í∑∏ÎûòÌîÑ ÎßåÎì§Ïñ¥ÏïºÌïúÎã§.
 
-	// æÍ≥◊µÈ¿∫ ≥™¡ﬂø° √º¡® ∏∂¡® ∞¢∞¢ √º∑¬πŸ ∏∂≥™πŸ ø¿∏•¬  ≥°ø° ≈ÿΩ∫∆Æ∑Œ «•Ω√«“ ∞Õ. ¥Áø¨»˜ ±◊¿¸ø° ≈ÿΩ∫∆Æ∑Œ maxhealth maxmana πﬁæ∆øÕ ¡ﬂæ”ø° «•Ω√«œ∞Ì.
+	// ÏñòÎÑ§Îì§ÏùÄ ÎÇòÏ§ëÏóê Ï≤¥Ï†† ÎßàÏ†† Í∞ÅÍ∞Å Ï≤¥Î†•Î∞î ÎßàÎÇòÎ∞î Ïò§Î•∏Ï™Ω ÎÅùÏóê ÌÖçÏä§Ìä∏Î°ú ÌëúÏãúÌï† Í≤É. ÎãπÏó∞Ìûà Í∑∏Ï†ÑÏóê ÌÖçÏä§Ìä∏Î°ú maxhealth maxmana Î∞õÏïÑÏôÄ Ï§ëÏïôÏóê ÌëúÏãúÌïòÍ≥†.
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MaxHealth, GetMaxHealthAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MaxMana, GetMaxManaAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_HealthRegeneration, GetHealthRegenerationAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_ManaRegeneration, GetManaRegenerationAttribute);
 }
 
-void UCubeAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const // º≠πˆø°º≠ ∫Ø∞ÊªÁ«◊¿Ã πﬂª˝«ÿ ∫π¡¶ µ… º”º∫(attribute)µÈ¿« ¡§∫∏∏¶ ∞°¡Æø¿¥¬ «‘ºˆ.
+void UCubeAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const // ÏÑúÎ≤ÑÏóêÏÑú Î≥ÄÍ≤ΩÏÇ¨Ìï≠Ïù¥ Î∞úÏÉùÌï¥ Î≥µÏ†ú Îê† ÏÜçÏÑ±(attribute)Îì§Ïùò Ï†ïÎ≥¥Î•º Í∞ÄÏ†∏Ïò§Îäî Ìï®Ïàò.
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
@@ -72,7 +73,7 @@ void UCubeAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, ManaRegeneration, COND_None, REPNOTIFY_Always);
 
 	// Vital
-	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, Health, COND_None, REPNOTIFY_Always); // º”º∫¿« ∫Ø∞ÊªÁ«◊¿Ã ª˝±‚∏È º”º∫¿ª ∫π¡¶(«◊ªÛ)«œ∞Ì, OnRep_«‘ºˆ∏¶ »£√‚«‘.
+	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, Health, COND_None, REPNOTIFY_Always); // ÏÜçÏÑ±Ïùò Î≥ÄÍ≤ΩÏÇ¨Ìï≠Ïù¥ ÏÉùÍ∏∞Î©¥ ÏÜçÏÑ±ÏùÑ Î≥µÏ†ú(Ìï≠ÏÉÅ)ÌïòÍ≥†, OnRep_Ìï®ÏàòÎ•º Ìò∏Ï∂úÌï®.
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, Mana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
@@ -94,7 +95,7 @@ void UCubeAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 
 void UCubeAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const
 {
-	// Source = ¿Ã∆Â∆Æ º“Ω∫ (¿Ã∆Â∆Æ∏¶ ∏∏µÂ¥¬ æ◊≈Õ), Target = ¿Ã∆Â∆Æ∏¶ ¿˚øÎ«“ ¥ÎªÛ (¿Ã AS∏¶ ∞°¡¯)
+	// Source = Ïù¥ÌéôÌä∏ ÏÜåÏä§ (Ïù¥ÌéôÌä∏Î•º ÎßåÎìúÎäî Ïï°ÌÑ∞), Target = Ïù¥ÌéôÌä∏Î•º Ï†ÅÏö©Ìï† ÎåÄÏÉÅ (Ïù¥ ASÎ•º Í∞ÄÏßÑ)
 
 	Props.EffectContextHandle = Data.EffectSpec.GetContext();
 	Props.SourceASC = Props.EffectContextHandle.GetOriginalInstigatorAbilitySystemComponent();
@@ -132,6 +133,8 @@ void UCubeAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
 
+	if ( Props.TargetCharacter->Implements<UCombatInterface>() && ICombatInterface::Execute_IsDead(Props.TargetCharacter) ) return;
+
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
@@ -142,67 +145,11 @@ void UCubeAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
-		const float LocalIncomingDamage = GetIncomingDamage();
-		SetIncomingDamage(0.f);
-		if (LocalIncomingDamage > 0.f)
-		{
-			const float NewHealth = GetHealth() - LocalIncomingDamage;
-			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
-
-			const bool bFatal = NewHealth <= 0.f;
-			if (bFatal) // ¡◊¿ª ¡§µµ¿« «««ÿ∏¶ πﬁæ“¥¬∞°?
-			{
-				ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
-				if (CombatInterface) // ¿Ø»øº∫ »Æ¿Œ
-				{
-					CombatInterface->Die(); // ªÁ∏¡
-				}
-				SendXPEvent(Props);
-			}
-			else // ªÏ∏∏«—∞°?
-			{
-				FGameplayTagContainer TagContainer;
-				TagContainer.AddTag(FCubeGameplayTags::Get().Effects_HitReact);
-				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
-			}
-
-			const bool bCriticalHit = UCubeAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
-			const bool bPhysicalHit = UCubeAbilitySystemLibrary::IsPhysicalHit(Props.EffectContextHandle);
-			const bool bMagicalHit = UCubeAbilitySystemLibrary::IsMagicalHit(Props.EffectContextHandle);
-			const bool bPureHit = UCubeAbilitySystemLibrary::IsPureHit(Props.EffectContextHandle);
-			ShowFloatingText(Props, LocalIncomingDamage, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit);
-		}
+		HandleIncomingDamage(Props);
 	}
-	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
+	if ( Data.EvaluatedData.Attribute == GetIncomingXPAttribute() )
 	{
-		const float LocalIncomingXP = GetIncomingXP();
-		SetIncomingXP(0.f);
-
-		// Source Character is the owner, since GA_ListenForEvents applies GE_EventBasedEffect, adding to IncomingXP
-		if (Props.SourceCharacter->Implements<UPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>())
-		{
-			const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(Props.SourceCharacter);
-			const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceCharacter);
-
-			const int32 NewLevel = IPlayerInterface::Execute_FindLevelForXP(Props.SourceCharacter, CurrentXP + LocalIncomingXP);
-			const int32 NumLevelUps = NewLevel - CurrentLevel;
-			if (NumLevelUps > 0)
-			{
-				const int32 MoneyReward = IPlayerInterface::Execute_GetMoneyReward(Props.SourceCharacter, CurrentLevel);
-				const int32 SkillPointsReward = IPlayerInterface::Execute_GetSkillPointsReward(Props.SourceCharacter, CurrentLevel);
-
-				IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelUps);
-				IPlayerInterface::Execute_AddToMoney(Props.SourceCharacter, MoneyReward);
-				IPlayerInterface::Execute_AddToSkillPoints(Props.SourceCharacter, SkillPointsReward);
-
-				bLevelUpHealthReward = true;
-				bLevelUpManaReward = true;
-
-				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
-			}
-
-			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
-		}
+		HandleIncomingXP(Props);
 	}
 }
 
@@ -238,25 +185,25 @@ void UCubeAttributeSet::SendXPEvent(const FEffectProperties& Props)
 	}
 }
 
-void UCubeAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit) const
+void UCubeAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit, bool bHealHit) const
 {
-	if (Props.SourceCharacter != Props.TargetCharacter) // Ω∫Ω∫∑Œ ∂ß∏∞∞‘ æ∆¥œ∏È
+	if (Props.SourceCharacter != Props.TargetCharacter) // Ïä§Ïä§Î°ú ÎïåÎ¶∞Í≤å ÏïÑÎãàÎ©¥
 	{
 		if (ACubePlayerController* PC = Cast<ACubePlayerController>(Props.SourceCharacter->Controller))
 		{
-			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit);
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit, bHealHit);
 			return;
 		}
 		if (ACubePlayerController* PC = Cast<ACubePlayerController>(Props.TargetCharacter->Controller))
 		{
-			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit); // ¥ÎªÛ ¿ßƒ°ø° µ•πÃ¡ˆ ≈ÿΩ∫∆Æ «•Ω√
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit, bHealHit); // ÎåÄÏÉÅ ÏúÑÏπòÏóê Îç∞ÎØ∏ÏßÄ ÌÖçÏä§Ìä∏ ÌëúÏãú
 		}
 	}
 }
 
 void UCubeAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const 
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UCubeAttributeSet, Health, OldHealth); // º≠πˆø°º≠ º”º∫¿Ã ∫Ø∞Êµ«æ˙¥Ÿ∏È, ≈¨∂Û¿Ãæ∆Æø°º≠ «ÿ¥Á º”º∫¿« ∫Ø∞ÊªÁ«◊¿ª ¿˚øÎ.
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCubeAttributeSet, Health, OldHealth); // ÏÑúÎ≤ÑÏóêÏÑú ÏÜçÏÑ±Ïù¥ Î≥ÄÍ≤ΩÎêòÏóàÎã§Î©¥, ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏ÏóêÏÑú Ìï¥Îãπ ÏÜçÏÑ±Ïùò Î≥ÄÍ≤ΩÏÇ¨Ìï≠ÏùÑ Ï†ÅÏö©.
 }
 
 void UCubeAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const
@@ -360,4 +307,98 @@ void UCubeAttributeSet::OnRep_HealthRegeneration(const FGameplayAttributeData& O
 void UCubeAttributeSet::OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UCubeAttributeSet, ManaRegeneration, OldManaRegeneration);
+}
+
+void UCubeAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
+{
+	const float LocalIncomingDamage = GetIncomingDamage();
+	SetIncomingDamage(0.f);
+	if ( LocalIncomingDamage ) // ÏõêÎûò LocalIncomingDamage > 0.f
+	{
+		const float NewHealth = GetHealth() - LocalIncomingDamage;
+		SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+		const bool bFatal = NewHealth <= 0.f;
+		if ( bFatal )
+		{
+			ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
+			if ( CombatInterface )
+			{
+				CombatInterface->Die();
+			}
+			SendXPEvent(Props);
+		}
+		else
+		{
+			FGameplayTagContainer TagContainer;
+			TagContainer.AddTag(FCubeGameplayTags::Get().Effects_HitReact);
+			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+		}
+		const bool bCriticalHit = UCubeAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+		const bool bPhysicalHit = UCubeAbilitySystemLibrary::IsPhysicalHit(Props.EffectContextHandle);
+		const bool bMagicalHit = UCubeAbilitySystemLibrary::IsMagicalHit(Props.EffectContextHandle);
+		const bool bPureHit = UCubeAbilitySystemLibrary::IsPureHit(Props.EffectContextHandle);
+		const bool bHealHit = UCubeAbilitySystemLibrary::IsHealHit(Props.EffectContextHandle);
+		ShowFloatingText(Props, LocalIncomingDamage, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit, bHealHit);
+	}
+}
+
+void UCubeAttributeSet::HandleIncomingXP(const FEffectProperties & Props)
+{
+	const float LocalIncomingXP = GetIncomingXP();
+	SetIncomingXP(0.f);
+	// Source Character is the owner, since GA_ListenForEvents applies GE_EventBasedEffect, adding to IncomingXP
+	if ( Props.SourceCharacter->Implements<UPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>() )
+	{
+		const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(Props.SourceCharacter);
+		const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceCharacter);
+		const int32 NewLevel = IPlayerInterface::Execute_FindLevelForXP(Props.SourceCharacter, CurrentXP + LocalIncomingXP);
+		const int32 NumLevelUps = NewLevel - CurrentLevel;
+		if ( NumLevelUps > 0 )
+		{
+			const int32 MoneyReward = IPlayerInterface::Execute_GetMoneyReward(Props.SourceCharacter, CurrentLevel);
+			const int32 SkillPointsReward = IPlayerInterface::Execute_GetSkillPointsReward(Props.SourceCharacter, CurrentLevel);
+			IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelUps);
+			IPlayerInterface::Execute_AddToMoney(Props.SourceCharacter, MoneyReward);
+			IPlayerInterface::Execute_AddToSkillPoints(Props.SourceCharacter, SkillPointsReward);
+			bLevelUpHealthReward = true;
+			bLevelUpManaReward = true;
+			IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
+		}
+
+		IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
+	}
+}
+
+void UCubeAttributeSet::Debuff(const FEffectProperties& Props, const FGameplayTag& Debuff,
+	const float DebuffDamage, const float DebuffDuration,
+	const float DebuffFrequency, const FGameplayTag& DamageType)
+{
+	const FCubeGameplayTags& GameplayTags = FCubeGameplayTags::Get();
+	FGameplayEffectContextHandle EffectContext = Props.SourceASC->MakeEffectContext();
+	EffectContext.AddSourceObject(Props.SourceAvatarActor);
+
+	FString DebuffName = FString::Printf(TEXT("DynamicDebuff_%s"), *Debuff.ToString());
+	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DebuffName));
+
+	Effect->DurationPolicy = EGameplayEffectDurationType::HasDuration;
+	Effect->Period = DebuffFrequency;
+	Effect->DurationMagnitude = FScalableFloat(DebuffDuration);
+	Effect->InheritableOwnedTagsContainer.AddTag(Debuff);
+	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
+	Effect->StackLimitCount = 1;
+
+	const int32 Index = Effect->Modifiers.Num();
+	Effect->Modifiers.Add(FGameplayModifierInfo());
+	FGameplayModifierInfo& ModifierInfo = Effect->Modifiers[ Index ];
+	ModifierInfo.ModifierMagnitude = FScalableFloat(DebuffDamage);
+	ModifierInfo.ModifierOp = EGameplayModOp::Additive;
+	ModifierInfo.Attribute = UCubeAttributeSet::GetIncomingDamageAttribute();
+
+	if ( FGameplayEffectSpec* MutableSpec = new FGameplayEffectSpec(Effect, EffectContext, 1.f) )
+	{
+		FCubeGameplayEffectContext* CubeContext = static_cast< FCubeGameplayEffectContext* >( MutableSpec->GetContext().Get() );
+		TSharedPtr<FGameplayTag> DebuffDamageType = MakeShareable(new FGameplayTag(DamageType));
+		CubeContext->SetDamageType(DebuffDamageType);
+		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
+	}
 }

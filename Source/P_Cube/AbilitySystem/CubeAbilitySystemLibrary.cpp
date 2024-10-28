@@ -1,9 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CubeAbilitySystemLibrary.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "P_Cube/CubeAbilityTypes.h"
+#include "P_Cube/CubeGameplayTags.h"
 #include "P_Cube/CubeGameModeBase.h"
 #include "P_Cube/Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -69,23 +71,23 @@ void UCubeAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 {
 	AActor* AvatarActor = ASC->GetAvatarActor();
 
-	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject); // Å¬·¡½º µ¥ÀÌÅÍ¿¡¼Â¿¡ Á¢±Ù, ÇÒ´ç.
-	FCharacterClassDefaultInfo ClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass); // ³»ºÎ ±¸Á¶Ã¼¿¡ Á¢±Ù
+	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject); // í´ëž˜ìŠ¤ ë°ì´í„°ì—ì…‹ì— ì ‘ê·¼, í• ë‹¹.
+	FCharacterClassDefaultInfo ClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass); // ë‚´ë¶€ êµ¬ì¡°ì²´ì— ì ‘ê·¼
 
-	// 1. Effect Context(È¿°ú ÄÁÅØ½ºÆ®)¸¦ »ý¼ºÇÏ¿© PrimaryAttributesContextHandle¿¡ ÀúÀåÇÕ´Ï´Ù.
+	// 1. Effect Context(íš¨ê³¼ ì»¨í…ìŠ¤íŠ¸)ë¥¼ ìƒì„±í•˜ì—¬ PrimaryAttributesContextHandleì— ì €ìž¥í•©ë‹ˆë‹¤.
 	FGameplayEffectContextHandle PrimaryAttributesContextHandle = ASC->MakeEffectContext();
-	// 2. È¿°ú ÄÁÅØ½ºÆ®¿¡ AvatarActor¸¦ ¼Ò½º °´Ã¼·Î Ãß°¡ÇÕ´Ï´Ù.
-	//    (È¿°ú°¡ ÀÌ °´Ã¼·ÎºÎÅÍ ¹ß»ýÇßÀ½À» ³ªÅ¸³À´Ï´Ù)
+	// 2. íš¨ê³¼ ì»¨í…ìŠ¤íŠ¸ì— AvatarActorë¥¼ ì†ŒìŠ¤ ê°ì²´ë¡œ ì¶”ê°€í•©ë‹ˆë‹¤.
+	//    (íš¨ê³¼ê°€ ì´ ê°ì²´ë¡œë¶€í„° ë°œìƒí–ˆìŒì„ ë‚˜íƒ€ëƒ…ë‹ˆë‹¤)
 	PrimaryAttributesContextHandle.AddSourceObject(AvatarActor);
-	// 3. È¿°ú »ç¾ç(Spec)À» »ý¼ºÇÏ¿© PrimaryAttributesSpecHandle¿¡ ÀúÀåÇÕ´Ï´Ù.
-	//    - ClassDefaultInfo.PrimaryAttributes: Å¬·¡½º¿¡ µû¸¥ ÁÖ ´É·ÂÄ¡ È¿°ú
-	//    - Level: ·¹º§
-	//    - PrimaryAttributesContextHandle: È¿°ú ÄÁÅØ½ºÆ®
+	// 3. íš¨ê³¼ ì‚¬ì–‘(Spec)ì„ ìƒì„±í•˜ì—¬ PrimaryAttributesSpecHandleì— ì €ìž¥í•©ë‹ˆë‹¤.
+	//    - ClassDefaultInfo.PrimaryAttributes: í´ëž˜ìŠ¤ì— ë”°ë¥¸ ì£¼ ëŠ¥ë ¥ì¹˜ íš¨ê³¼
+	//    - Level: ë ˆë²¨
+	//    - PrimaryAttributesContextHandle: íš¨ê³¼ ì»¨í…ìŠ¤íŠ¸
 	const FGameplayEffectSpecHandle PrimaryAttributesSpecHandle = ASC->MakeOutgoingSpec(ClassDefaultInfo.PrimaryAttributes, Level, PrimaryAttributesContextHandle);
-	// 4. »ý¼ºµÈ È¿°ú »ç¾çÀ» ÀÚ±â ÀÚ½Å(ASC)¿¡°Ô Àû¿ëÇÕ´Ï´Ù.
+	// 4. ìƒì„±ëœ íš¨ê³¼ ì‚¬ì–‘ì„ ìžê¸° ìžì‹ (ASC)ì—ê²Œ ì ìš©í•©ë‹ˆë‹¤.
 	ASC->ApplyGameplayEffectSpecToSelf(*PrimaryAttributesSpecHandle.Data.Get());
 
-	// °°Àº ¹æ½Ä, SecondaryAttributes (ºÎ ´É·ÂÄ¡)
+	// ê°™ì€ ë°©ì‹, SecondaryAttributes (ë¶€ ëŠ¥ë ¥ì¹˜)
 	FGameplayEffectContextHandle SecondaryAttributesContextHandle = ASC->MakeEffectContext();
 	SecondaryAttributesContextHandle.AddSourceObject(AvatarActor);
 	const FGameplayEffectSpecHandle SecondaryAttributesSpecHandle = ASC->MakeOutgoingSpec(CharacterClassInfo->SecondaryAttributes, Level, SecondaryAttributesContextHandle);
@@ -121,7 +123,7 @@ void UCubeAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 UCharacterClassInfo* UCubeAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
 {
 	const ACubeGameModeBase* CubeGameMode = Cast<ACubeGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if (CubeGameMode == nullptr) return nullptr; // °ÔÀÓ¸ðµå°¡ ÇÒ´çµÇ¾î ÀÖÁö ¾Ê´Ù¸é, ¸®ÅÏ
+	if (CubeGameMode == nullptr) return nullptr; // ê²Œìž„ëª¨ë“œê°€ í• ë‹¹ë˜ì–´ ìžˆì§€ ì•Šë‹¤ë©´, ë¦¬í„´
 	return CubeGameMode->CharacterClassInfo;
 }
 
@@ -168,6 +170,15 @@ bool UCubeAbilitySystemLibrary::IsPureHit(const FGameplayEffectContextHandle& Ef
 	return false;
 }
 
+bool UCubeAbilitySystemLibrary::IsHealHit(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if ( const FCubeGameplayEffectContext* CubeEffectContext = static_cast<const FCubeGameplayEffectContext*>( EffectContextHandle.Get()))
+	{
+		return CubeEffectContext->IsHealHit();
+	}
+	return false;
+}
+
 void UCubeAbilitySystemLibrary::SetIsCriticalHit(UPARAM(ref)FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCriticalHit)
 {
 	if (FCubeGameplayEffectContext* CubeEffectContext = static_cast<FCubeGameplayEffectContext*>(EffectContextHandle.Get()))
@@ -200,8 +211,16 @@ void UCubeAbilitySystemLibrary::SetIsPureHit(UPARAM(ref)FGameplayEffectContextHa
 	}
 }
 
+void UCubeAbilitySystemLibrary::SetIsHealHit(UPARAM(ref)FGameplayEffectContextHandle& EffectContextHandle, bool bInIsHealHit)
+{
+	if (FCubeGameplayEffectContext* CubeEffectContext = static_cast<FCubeGameplayEffectContext*>( EffectContextHandle.Get()))
+	{
+		CubeEffectContext->SetIsHealHit(bInIsHealHit);
+	}
+}
+
 void UCubeAbilitySystemLibrary::GetLivePlayersWithinSphere(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin)
-{ // ¿øÇü ¸Þ½Ã ±â¹Ý ÇÃ·¹ÀÌ¾î Å½»ö
+{ // ì›í˜• ë©”ì‹œ ê¸°ë°˜ í”Œë ˆì´ì–´ íƒìƒ‰
 	FCollisionQueryParams SphereParams;
 	SphereParams.AddIgnoredActors(ActorsToIgnore);
 
@@ -225,6 +244,37 @@ bool UCubeAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondAc
 	const bool bBothAreEnemies = FirstActor->ActorHasTag(FName("Enemy")) && SecondActor->ActorHasTag(FName("Enemy"));
 	const bool bFriends = bBothArePlayers || bBothAreEnemies;
 	return !bFriends;
+}
+
+FGameplayEffectContextHandle UCubeAbilitySystemLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
+{
+	const FCubeGameplayTags& GameplayTags = FCubeGameplayTags::Get();
+	const AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+
+	FGameplayEffectContextHandle EffectContexthandle = DamageEffectParams.SourceAbilitySystemComponent->MakeEffectContext();
+	EffectContexthandle.AddSourceObject(SourceAvatarActor);
+	const FGameplayEffectSpecHandle SpecHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContexthandle);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.DamageType, DamageEffectParams.BaseDamage);
+
+	for ( FCoeffs Coeffs : DamageEffectParams.AttributeCoeffs )
+	{
+		if ( Coeffs.bIsTarget ) // Target
+		{
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Coeffs.Attribute, -Coeffs.Coeff);
+		}
+		else // Source
+		{
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Coeffs.Attribute, Coeffs.Coeff);
+		}
+	}
+
+	DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
+	return EffectContexthandle;
+}
+
+FGameplayEffectContextHandle UCubeAbilitySystemLibrary::ApplyDebuffEffect(const FDamageEffectParams& DamageEffectParams)
+{
+	return FGameplayEffectContextHandle();
 }
 
 int32 UCubeAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel)

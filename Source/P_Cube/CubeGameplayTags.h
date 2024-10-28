@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -10,6 +10,44 @@
  *
  * Singleton containing native Gameplay Tags
  */
+
+struct FResistanceInfo
+{
+	FResistanceInfo(FGameplayTag Resist, FGameplayTag ResistRate, FGameplayTag Penet, FGameplayTag PenetRate)
+	{
+		Resistance = Resist;
+		ResistanceRate = ResistRate;
+		Penetration = Penet;
+		PenetrationRate = PenetRate;
+	}
+
+	FGameplayTag Resistance;
+
+	FGameplayTag ResistanceRate;
+
+	FGameplayTag Penetration;
+
+	FGameplayTag PenetrationRate;
+};
+
+struct FDebuffInfo
+{
+	FDebuffInfo(FGameplayTag Type, float Dam, float Dur, float Fre)
+	{
+		DamageType = Type;
+		Damage = Dam;
+		Duration = Dur;
+		Frequency = Fre;
+	}
+
+	FGameplayTag DamageType;
+
+	float Damage;
+
+	float Duration;
+
+	float Frequency;
+};
 
 struct FCubeGameplayTags
 {
@@ -38,6 +76,9 @@ public:
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
 
+	FGameplayTag Attributes_Vital_Health;
+	FGameplayTag Attributes_Vital_Mana;
+
 	FGameplayTag Attributes_Meta_IncomingXP;
 
 	FGameplayTag InputTag_LMB;
@@ -60,19 +101,29 @@ public:
 	FGameplayTag Damage_Physical;
 	FGameplayTag Damage_Magical;
 	FGameplayTag Damage_Pure;
+	FGameplayTag Damage_Heal;
+
+	FGameplayTag Debuff_Burn;
+	FGameplayTag Debuff_Stun;
+
+	FGameplayTag Debuff_Damage;
+	FGameplayTag Debuff_Duration;
+	FGameplayTag Debuff_Frequency;
+
+	FGameplayTag Abilities_None;
 
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
 
 	FGameplayTag Abilities_HitReact;
 
-	FGameplayTag Abilities_Status_Locked;
-	FGameplayTag Abilities_Status_Unlocked;
+	FGameplayTag Abilities_Status_UnEquipped;
+	FGameplayTag Abilities_Status_Equipped;
 	FGameplayTag Abilities_Status_Fixed;
-	FGameplayTag Abilities_Status_LowLevel;
 
 	FGameplayTag Abilities_Type_Offensive;
 	FGameplayTag Abilities_Type_Passive;
+	FGameplayTag Abilities_Type_Scroll;
 	FGameplayTag Abilities_Type_None;
 
 	FGameplayTag Abilities_FIreStaff_Attack;
@@ -105,6 +156,12 @@ public:
 	FGameplayTag Abilities_Ninja_Attack;
 	FGameplayTag Abilities_Ninja_Basic;
 	FGameplayTag Abilities_Ninja_Unique;
+	FGameplayTag Abilities_WorldTreesBranch_Attack;
+	FGameplayTag Abilities_WorldTreesBranch_Basic;
+	FGameplayTag Abilities_WorldTreesBranch_Unique;
+	FGameplayTag Abilities_RedFlag_Attack;
+	FGameplayTag Abilities_RedFlag_Basic;
+	FGameplayTag Abilities_RedFlag_Unique;
 
 	FGameplayTag Cooldown_FIreStaff_Attack;
 	FGameplayTag Cooldown_FIreStaff_Basic;
@@ -136,6 +193,12 @@ public:
 	FGameplayTag Cooldown_Ninja_Attack;
 	FGameplayTag Cooldown_Ninja_Basic;
 	FGameplayTag Cooldown_Ninja_Unique;
+	FGameplayTag Cooldown_WorldTreesBranch_Attack;
+	FGameplayTag Cooldown_WorldTreesBranch_Basic;
+	FGameplayTag Cooldown_WorldTreesBranch_Unique;
+	FGameplayTag Cooldown_RedFlag_Attack;
+	FGameplayTag Cooldown_RedFlag_Basic;
+	FGameplayTag Cooldown_RedFlag_Unique;
 
 	FGameplayTag CombatSocket_ActorLocation;
 	FGameplayTag CombatSocket_Weapon;
@@ -148,8 +211,13 @@ public:
 	FGameplayTag Montage_Attack_4;
 
 	TArray<FGameplayTag> DamageTypes;
+	TArray<FGameplayTag> DamageCoeffAttributes;
+	TMap<FGameplayTag, FResistanceInfo> DamageTypesToResistanceInfos;
+	TMap<FGameplayTag, FDebuffInfo> DebuffTagsToDebuffInfos;
 
 	FGameplayTag Effects_HitReact;
 private:
 	static FCubeGameplayTags GameplayTags;
 };
+
+

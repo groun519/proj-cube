@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -13,14 +13,14 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 /*
-- GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) : Å¬·¡½º(ClassName)¿¡¼­ »ç¿ëÇÒ attribute(PropertyName) ¼Ó¼º¿¡ ´ëÇÑ Á¢±ÙÀÚ¸¦ »ı¼ºÇØ ¼Ó¼ºÀ» »ç¿ëÇÒ ¶§ ÇÊ¿äÇÑ ÇÔ¼ö¸¦ Á¤ÀÇ.
-- GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) : ¼Ó¼º(attribute)ÀÇ ÇöÀç °ªÀ» ¹İÈ¯ÇÏ´Â getter ÇÔ¼ö »ı¼º.
-- GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) : ¼Ó¼º(attribute)°ªÀ» ¼³Á¤ÇÏ´Â setter ÇÔ¼ö »ı¼º.
-- GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName) : ¼Ó¼ºÀÇ ÃÊ±â°ªÀ» ¼³Á¤ÇÏ´Â ÃÊ±âÈ­ ÇÔ¼ö¸¦ »ı¼º. (Init~~())
+- GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) : í´ë˜ìŠ¤(ClassName)ì—ì„œ ì‚¬ìš©í•  attribute(PropertyName) ì†ì„±ì— ëŒ€í•œ ì ‘ê·¼ìë¥¼ ìƒì„±í•´ ì†ì„±ì„ ì‚¬ìš©í•  ë•Œ í•„ìš”í•œ í•¨ìˆ˜ë¥¼ ì •ì˜.
+- GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) : ì†ì„±(attribute)ì˜ í˜„ì¬ ê°’ì„ ë°˜í™˜í•˜ëŠ” getter í•¨ìˆ˜ ìƒì„±.
+- GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) : ì†ì„±(attribute)ê°’ì„ ì„¤ì •í•˜ëŠ” setter í•¨ìˆ˜ ìƒì„±.
+- GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName) : ì†ì„±ì˜ ì´ˆê¸°ê°’ì„ ì„¤ì •í•˜ëŠ” ì´ˆê¸°í™” í•¨ìˆ˜ë¥¼ ìƒì„±. (Init~~())
 */
 
 USTRUCT()
-struct FEffectProperties // ÀÌÆåÆ®ÀÇ ¼Ó¼ºÀ» ´ã´Â ±¸Á¶Ã¼.
+struct FEffectProperties // ì´í™íŠ¸ì˜ ì†ì„±ì„ ë‹´ëŠ” êµ¬ì¡°ì²´.
 {
 	GENERATED_BODY()
 
@@ -158,7 +158,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Vital Attributes")
 	FGameplayAttributeData Health;
-	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, Health); // Health ¼Ó¼º¿¡ ´ëÇÑ Á¢±ÙÀÚµéÀ» Á¤ÀÇÇÔ.
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, Health); // Health ì†ì„±ì— ëŒ€í•œ ì ‘ê·¼ìë“¤ì„ ì •ì˜í•¨.
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxHealth, Category = "Vital Attributes")
 	FGameplayAttributeData MaxHealth;
@@ -253,9 +253,16 @@ public:
 	void OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const;
 
 private:
-
+	void HandleIncomingDamage(const FEffectProperties& Props);
+	void HandleIncomingXP(const FEffectProperties& Props);
+	void Debuff(const FEffectProperties& Props, const FGameplayTag& Debuff,
+		const float DebuffDamage,
+		const float DebuffDuration,
+		const float DebuffFrequency,
+		const FGameplayTag& DamageType
+		);
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
-	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit) const;
+	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit, bool bHealHit) const;
 	void SendXPEvent(const FEffectProperties& Props);
 	bool bLevelUpHealthReward = false;
 	bool bLevelUpManaReward = false;

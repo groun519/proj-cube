@@ -1,10 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
+#include "P_Cube/CubeAbilityTypes.h"
 #include "GameFramework/Actor.h"
-#include "GameplayEffectTypes.h"
 #include "CubeProjectile.generated.h"
 
 class UNiagaraSystem;
@@ -23,14 +23,17 @@ public:
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
-	FGameplayEffectSpecHandle DamageEffectSpecHandle;
+	FDamageEffectParams DamageEffectParams;
 
 	AActor* InstigatorPlayer;
 	bool bIsAttackOnlyTarget = false;
+
+	UPROPERTY(BlueprintReadWrite)
 	AActor* TargetActor;
 
 protected:
 	virtual void BeginPlay() override;
+	void OnHit();
 	virtual void Destroyed() override;
 
 	UFUNCTION()
@@ -53,13 +56,13 @@ private:
 	TArray<AActor*> IgnoreActors;
 
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UNiagaraSystem> ImpactEffect; // Á¦°ÅµÉ ¶§ »ı¼ºÇÒ ÀÌÆåÆ®
+	TObjectPtr<UNiagaraSystem> ImpactEffect; // ì œê±°ë  ë•Œ ìƒì„±í•  ì´í™íŠ¸
 
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<USoundBase> ImpactSound; // Á¦°ÅµÉ ¶§ »ı¼ºÇÒ »ç¿îµå
+	TObjectPtr<USoundBase> ImpactSound; // ì œê±°ë  ë•Œ ìƒì„±í•  ì‚¬ìš´ë“œ
 
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<USoundBase> LoopingSound; // »ı¼º - Á¦°Å±îÁö ¹İº¹ Àç»ıµÉ »ç¿îµå
+	TObjectPtr<USoundBase> LoopingSound; // ìƒì„± - ì œê±°ê¹Œì§€ ë°˜ë³µ ì¬ìƒë  ì‚¬ìš´ë“œ
 
 	UPROPERTY()
 	TObjectPtr<UAudioComponent> LoopingSoundComponent;

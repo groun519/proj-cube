@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CubeProjectileSkill.h"
@@ -14,14 +14,14 @@ void UCubeProjectileSkill::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UCubeProjectileSkill::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, bool bOverrideYaw, float YawOverride, AActor* InstigatorPlayer, bool bIsOnlyAttackTargetActor, AActor* TargetActor) // Åõ»çÃ¼ »ý¼º
+void UCubeProjectileSkill::SpawnProjectile(const FName DamageName, const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, bool bOverrideYaw, float YawOverride, AActor* InstigatorPlayer, bool bIsOnlyAttackTargetActor, AActor* TargetActor) // íˆ¬ì‚¬ì²´ ìƒì„±
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
 
 	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(
 		GetAvatarActorFromActorInfo(),
-		SocketTag); // Åõ»çÃ¼ »ý¼º ¼ÒÄÏ(WeaponHandSocket)ÀÇ À§Ä¡Á¤º¸¸¦ ¹Þ¾Æ¿È. <- ¼ÒÄÏ À§Ä¡¿¡¼­ ½ÃÀÛµÇ±â ¶§¹®¿¡, µ¹ÁøÇü ½ºÅ³À» »ç¿ëÇÏ°Å³ª, ¸¶¿ì½º À§Ä¡¸¦ Ä³¸¯ÅÍ¿Í ¼ÒÄÏ »çÀÌ¿¡ µÑ °æ¿ì ¹Ý´ë ¹æÇâÀ¸·Î Åõ»çÃ¼¸¦ ¹ß»çÇÏ´Â °æ¿ì°¡ ¹ß»ýÇÔ. ³ªÁß¿¡ ¼ÒÄÏ ±âÁØÀÌ ¾Æ´Ï¶ó Ä³¸¯ÅÍ ±âÁØÀ¸·Î º¯°æÇÏ´Â °Ô ÁÁÀ» µí.
+		SocketTag); // íˆ¬ì‚¬ì²´ ìƒì„± ì†Œì¼“(WeaponHandSocket)ì˜ ìœ„ì¹˜ì •ë³´ë¥¼ ë°›ì•„ì˜´. <- ì†Œì¼“ ìœ„ì¹˜ì—ì„œ ì‹œìž‘ë˜ê¸° ë•Œë¬¸ì—, ëŒì§„í˜• ìŠ¤í‚¬ì„ ì‚¬ìš©í•˜ê±°ë‚˜, ë§ˆìš°ìŠ¤ ìœ„ì¹˜ë¥¼ ìºë¦­í„°ì™€ ì†Œì¼“ ì‚¬ì´ì— ë‘˜ ê²½ìš° ë°˜ëŒ€ ë°©í–¥ìœ¼ë¡œ íˆ¬ì‚¬ì²´ë¥¼ ë°œì‚¬í•˜ëŠ” ê²½ìš°ê°€ ë°œìƒí•¨. ë‚˜ì¤‘ì— ì†Œì¼“ ê¸°ì¤€ì´ ì•„ë‹ˆë¼ ìºë¦­í„° ê¸°ì¤€ìœ¼ë¡œ ë³€ê²½í•˜ëŠ” ê²Œ ì¢‹ì„ ë“¯.
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 	if (bOverridePitch)
 	{
@@ -56,29 +56,7 @@ void UCubeProjectileSkill::SpawnProjectile(const FVector& ProjectileTargetLocati
 		Projectile->TargetActor = TargetActor;
 	}
 
-	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
-	// EffectContextHandle Á¤ÀÇ
-	FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
-	EffectContextHandle.SetAbility(this);
-	EffectContextHandle.AddSourceObject(Projectile);
-	TArray<TWeakObjectPtr<AActor>> Actors;
-	Actors.Add(Projectile);
-	EffectContextHandle.AddActors(Actors);
-	FHitResult HitResult;
-	HitResult.Location = ProjectileTargetLocation;
-	EffectContextHandle.AddHitResult(HitResult); //
-
-	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
-
-	const FCubeGameplayTags GameplayTags = FCubeGameplayTags::Get();
-
-	for (auto& Pair : DamageTypes)
-	{
-		const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamage);
-	}
-
-	Projectile->DamageEffectSpecHandle = SpecHandle;
+	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor, DamageName);
 
 	Projectile->FinishSpawning(SpawnTransform);
 }
