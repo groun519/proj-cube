@@ -59,8 +59,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayEffects")
 	static bool IsPureHit(const FGameplayEffectContextHandle& EffectContextHandle);
 
-	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|GameplayEffects")
-	static bool IsSuccessfulDebuff(const FGameplayEffectContextHandle& EffectContextHandle);
+	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayEffects")
+	static bool IsHealHit(const FGameplayEffectContextHandle& EffectContextHandle);
 
 
 	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayEffects")
@@ -74,6 +74,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayEffects")
 	static void SetIsPureHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsPureHit);
+
+	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayEffects")
+	static void SetIsHealHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsHealHit);
 
 	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayMechanics")
 	static void GetLivePlayersWithinSphere(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);

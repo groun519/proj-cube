@@ -49,7 +49,7 @@ bool FCubeGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 		{
 			RepBits |= 1 << 10;
 		}
-		if ( bIsSuccessfulDebuff )
+		if ( bIsHealHit )
 		{
 			RepBits |= 1 << 11;
 		}
@@ -117,9 +117,9 @@ bool FCubeGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 	{
 		Ar << bIsPureHit;
 	}
-	if ( RepBits & ( 1 << 11 ) )
+	if (RepBits & (1 << 11))
 	{
-		Ar << bIsSuccessfulDebuff;
+		Ar << bIsHealHit;
 	}
 	if ( RepBits & ( 1 << 12 ) )
 	{

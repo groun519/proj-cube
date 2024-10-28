@@ -81,7 +81,7 @@ public:
 	bool IsPhysicalHit() const { return bIsPhysicalHit; }
 	bool IsMagicalHit() const { return bIsMagicalHit; }
 	bool IsPureHit() const { return bIsPureHit; }
-	bool IsSuccessfulDebuff() const { return bIsSuccessfulDebuff; }
+	bool IsHealHit() const { return bIsHealHit; }
 	TSharedPtr<FGameplayTag> GetDamageType() const
 	{
 		return DamageType;
@@ -91,7 +91,7 @@ public:
 	void SetIsPhysicalHit(bool bInIsPhysicalHit) { bIsPhysicalHit = bInIsPhysicalHit; }
 	void SetIsMagicalHit(bool bInIsMagicalHit) { bIsMagicalHit = bInIsMagicalHit; }
 	void SetIsPureHit(bool bInIsPureHit) { bIsPureHit = bInIsPureHit; }
-	void SetIsSuccessfulDebuff(bool bInIsDebuff) { bIsSuccessfulDebuff = bInIsDebuff; }
+	void SetIsHealHit(bool bInIsHealHit) { bIsHealHit = bInIsHealHit; }
 	void SetDamageType(TSharedPtr<FGameplayTag> InDamageType)
 	{
 		DamageType = InDamageType;
@@ -137,7 +137,7 @@ protected:
 	bool bIsPureHit = false;
 
 	UPROPERTY()
-	bool bIsSuccessfulDebuff = false;
+	bool bIsHealHit = false;
 
 	TSharedPtr<FGameplayTag> DamageType;
 

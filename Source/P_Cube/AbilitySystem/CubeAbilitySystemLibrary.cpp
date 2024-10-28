@@ -170,11 +170,11 @@ bool UCubeAbilitySystemLibrary::IsPureHit(const FGameplayEffectContextHandle& Ef
 	return false;
 }
 
-bool UCubeAbilitySystemLibrary::IsSuccessfulDebuff(const FGameplayEffectContextHandle& EffectContextHandle)
+bool UCubeAbilitySystemLibrary::IsHealHit(const FGameplayEffectContextHandle& EffectContextHandle)
 {
-	if ( const FCubeGameplayEffectContext* CubeEffectContext = static_cast< const FCubeGameplayEffectContext* >( EffectContextHandle.Get() ) )
+	if ( const FCubeGameplayEffectContext* CubeEffectContext = static_cast<const FCubeGameplayEffectContext*>( EffectContextHandle.Get()))
 	{
-		return CubeEffectContext->IsSuccessfulDebuff();
+		return CubeEffectContext->IsHealHit();
 	}
 	return false;
 }
@@ -208,6 +208,14 @@ void UCubeAbilitySystemLibrary::SetIsPureHit(UPARAM(ref)FGameplayEffectContextHa
 	if (FCubeGameplayEffectContext* CubeEffectContext = static_cast<FCubeGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
 		CubeEffectContext->SetIsPureHit(bInIsPureHit);
+	}
+}
+
+void UCubeAbilitySystemLibrary::SetIsHealHit(UPARAM(ref)FGameplayEffectContextHandle& EffectContextHandle, bool bInIsHealHit)
+{
+	if (FCubeGameplayEffectContext* CubeEffectContext = static_cast<FCubeGameplayEffectContext*>( EffectContextHandle.Get()))
+	{
+		CubeEffectContext->SetIsHealHit(bInIsHealHit);
 	}
 }
 

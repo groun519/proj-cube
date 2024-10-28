@@ -441,13 +441,18 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 			DamageType = 2;
 			UCubeAbilitySystemLibrary::SetIsPureHit(EffectContextHandle, true);
 		}
+		else if (DamageTypeTag.GetTagName() == TEXT("Damage.Heal"))
+		{
+			DamageType = 3;
+			UCubeAbilitySystemLibrary::SetIsHealHit(EffectContextHandle, true);
+		}
 
 		Damage += DamageTypeValue;
 	}
 
 	float TargetResistance = 0.f;
 	float TargetResistanceRate = 0.f;
-	if (DamageType == 0)
+	if (DamageType == 0) // Physical
 	{
 		// 타겟의 Armor 값을 캡처하여 가져옴
 		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetArmorDef, EvaluationParameters, TargetResistance);
@@ -458,7 +463,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		const FRealCurve* ResistanceRateCurve = CharacterClassInfo->ResistanceRateCurveTable->FindCurve(FName("ArmorRate"), FString());
 		TargetResistanceRate = ResistanceRateCurve->Eval(TargetResistance - SourcePenetration);
 	}
-	else if (DamageType == 1)
+	else if (DamageType == 1) // Magical
 	{
 		// 타겟의 MagicResistance 값을 캡처하여 가져옴
 		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetMagicResistanceDef, EvaluationParameters, TargetResistance);
@@ -494,6 +499,14 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	Damage = bCriticalHit ? Damage * SourceCriticalDamage : Damage;
 
-	const FGameplayModifierEvaluatedData EvaluatedData(UCubeAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
-	OutExecutionOutput.AddOutputModifier(EvaluatedData);
+	if ( DamageType == 3 )
+	{
+		const FGameplayModifierEvaluatedData EvaluatedData(UCubeAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, -Damage);
+		OutExecutionOutput.AddOutputModifier(EvaluatedData);
+	}
+	else
+	{
+		const FGameplayModifierEvaluatedData EvaluatedData(UCubeAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
+		OutExecutionOutput.AddOutputModifier(EvaluatedData);
+	}
 }

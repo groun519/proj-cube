@@ -101,6 +101,7 @@ public:
 	FGameplayTag Damage_Physical;
 	FGameplayTag Damage_Magical;
 	FGameplayTag Damage_Pure;
+	FGameplayTag Damage_Heal;
 
 	FGameplayTag Debuff_Burn;
 	FGameplayTag Debuff_Stun;

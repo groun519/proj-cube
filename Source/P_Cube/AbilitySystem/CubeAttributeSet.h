@@ -262,7 +262,7 @@ private:
 		const FGameplayTag& DamageType
 		);
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
-	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit) const;
+	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit, bool bHealHit) const;
 	void SendXPEvent(const FEffectProperties& Props);
 	bool bLevelUpHealthReward = false;
 	bool bLevelUpManaReward = false;

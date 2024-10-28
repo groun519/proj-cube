@@ -226,6 +226,10 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FName("Damage.Pure"),
 		FString("Pure Damage Type")
 	);
+	GameplayTags.Damage_Heal = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Heal"),
+		FString("Heal Damage Type")
+	);
 
 	/*
 	 * Meta Attributes
@@ -269,6 +273,7 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Physical);
 	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Magical);
 	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Pure);
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Heal);
 
 	/*
 	 * Array of Damage Coeff Attributes

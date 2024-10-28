@@ -1,4 +1,4 @@
-#include "CubePlayerController.h"
+Ôªø#include "CubePlayerController.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "P_Cube/CubeGameplayTags.h"
@@ -25,15 +25,15 @@ void ACubePlayerController::PlayerTick(float DeltaTime)
     AutoRun();
 }
 
-void ACubePlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit)
+void ACubePlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit, bool bHealHit)
 {
     if (IsValid(TargetCharacter) && DamageTextComponentClass && IsLocalController())
     {
-        UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass); // µ•πÃ¡ˆ ≈ÿΩ∫∆Æ ƒƒ∆˜≥Õ∆Æ ª˝º∫
-        DamageText->RegisterComponent(); // ƒƒ∆˜≥Õ∆Æ∏¶ ∞‘¿” ø˘µÂø° µÓ∑œ
-        DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); // ƒƒ∆˜≥Õ∆Æ∏¶ ∑Á∆Æ ƒƒ∆˜≥Õ∆Æ ¿⁄Ωƒ¿∏∑Œ º≥¡§. ∑Á∆Æ ƒƒ∆˜≥Õ∆Æ¿« ∆Æ∑£Ω∫∆˚¿∏∑Œ ¿ßƒ°∞° ºˆ¡§µ .
-        DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); // ø˘µÂ ¡¬«•∏¶ ¿Ø¡ˆ«— ªÛ≈¬∑Œ, ƒƒ∆˜≥Õ∆Æ∏¶ ∫–∏Æ.
-        DamageText->SetDamageText(DamageAmount, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit); // µ•πÃ¡ˆ æÁ¿ª «•Ω√«œµµ∑œ µ•πÃ¡ˆ ≈ÿΩ∫∆Æ º≥¡§
+        UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass); // Îç∞ÎØ∏ÏßÄ ÌÖçÏä§Ìä∏ Ïª¥Ìè¨ÎÑåÌä∏ ÏÉùÏÑ±
+        DamageText->RegisterComponent(); // Ïª¥Ìè¨ÎÑåÌä∏Î•º Í≤åÏûÑ ÏõîÎìúÏóê Îì±Î°ù
+        DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); // Ïª¥Ìè¨ÎÑåÌä∏Î•º Î£®Ìä∏ Ïª¥Ìè¨ÎÑåÌä∏ ÏûêÏãùÏúºÎ°ú ÏÑ§Ï†ï. Î£®Ìä∏ Ïª¥Ìè¨ÎÑåÌä∏Ïùò Ìä∏ÎûúÏä§ÌèºÏúºÎ°ú ÏúÑÏπòÍ∞Ä ÏàòÏ†ïÎê®.
+        DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); // ÏõîÎìú Ï¢åÌëúÎ•º Ïú†ÏßÄÌïú ÏÉÅÌÉúÎ°ú, Ïª¥Ìè¨ÎÑåÌä∏Î•º Î∂ÑÎ¶¨.
+        DamageText->SetDamageText(DamageAmount, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit, bHealHit); // Îç∞ÎØ∏ÏßÄ ÏñëÏùÑ ÌëúÏãúÌïòÎèÑÎ°ù Îç∞ÎØ∏ÏßÄ ÌÖçÏä§Ìä∏ ÏÑ§Ï†ï
     }
 }
 
@@ -52,9 +52,9 @@ void ACubePlayerController::BeginPlay()
     DefaultMouseCursor = EMouseCursor::Default;
 
     FInputModeGameAndUI InputModeData;
-    InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock); // ∫‰∆˜∆Æø° ∏∂øÏΩ∫∏¶ ∞Ì¡§Ω√≈∞¡ˆ æ ∞‘ «‘.
-    InputModeData.SetHideCursorDuringCapture(false); // ∫‰∆˜∆Æ∏¶ ≈¨∏Ø«œ∏È ƒøº≠ ªÁ∂Û¡ˆ¥¬ «ˆªÛ¿ª πÊ¡ˆ«‘.
-    SetInputMode(InputModeData); // ¿ß¿« ¿Œ«≤ ºº∆√¿ª »∞º∫»≠«‘.
+    InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock); // Î∑∞Ìè¨Ìä∏Ïóê ÎßàÏö∞Ïä§Î•º Í≥†Ï†ïÏãúÌÇ§ÏßÄ ÏïäÍ≤å Ìï®.
+    InputModeData.SetHideCursorDuringCapture(false); // Î∑∞Ìè¨Ìä∏Î•º ÌÅ¥Î¶≠ÌïòÎ©¥ Ïª§ÏÑú ÏÇ¨ÎùºÏßÄÎäî ÌòÑÏÉÅÏùÑ Î∞©ÏßÄÌï®.
+    SetInputMode(InputModeData); // ÏúÑÏùò Ïù∏Ìíã ÏÑ∏ÌåÖÏùÑ ÌôúÏÑ±ÌôîÌï®.
 }
 
 void ACubePlayerController::CursorTrace()
@@ -74,9 +74,9 @@ void ACubePlayerController::CursorTrace()
 
 void ACubePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-    if (InputTag.MatchesTagExact(FCubeGameplayTags::Get().InputTag_RMB)) // RMBøÕ ≈∞∞° ¿œƒ°«œ∏È, ≈¬±◊ ∫Œø©
+    if (InputTag.MatchesTagExact(FCubeGameplayTags::Get().InputTag_RMB)) // RMBÏôÄ ÌÇ§Í∞Ä ÏùºÏπòÌïòÎ©¥, ÌÉúÍ∑∏ Î∂ÄÏó¨
     {
-        bTargeting = ThisActor ? true : false; // ThisActor∞° ¡∏¿Á«œ∏È T, æ∆¥œ∏È F ∏¶ bTargetingø° «“¥Á.
+        bTargeting = ThisActor ? true : false; // ThisActorÍ∞Ä Ï°¥Ïû¨ÌïòÎ©¥ T, ÏïÑÎãàÎ©¥ F Î•º bTargetingÏóê Ìï†Îãπ.
         bAutoRunning = false;
     }
 }
@@ -120,26 +120,26 @@ void ACubePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 void ACubePlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
-    if (!InputTag.MatchesTagExact(FCubeGameplayTags::Get().InputTag_RMB)) // RMB∞° æ∆¥“ ∞ÊøÏ
+    if (!InputTag.MatchesTagExact(FCubeGameplayTags::Get().InputTag_RMB)) // RMBÍ∞Ä ÏïÑÎãê Í≤ΩÏö∞
     {
         if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
-        return; // ≥™∞°
+        return; // ÎÇòÍ∞Ä
     }
 
-    if (bTargeting) // æ∆±Ó Pressedø°º≠ πﬁ¿∫ bTargeting bool¿Ã T∏È, (¥ÎªÛ ≈¨∏Ø æ»«œ∞Ì ¥ÎªÛ ¿ß∑Œ ∏∂øÏΩ∫ ¥©∏• √§ »£πˆ∏µ «œ¥¬ ∞Õ πÊ¡ˆ)
+    if (bTargeting) // ÏïÑÍπå PressedÏóêÏÑú Î∞õÏùÄ bTargeting boolÏù¥ TÎ©¥, (ÎåÄÏÉÅ ÌÅ¥Î¶≠ ÏïàÌïòÍ≥† ÎåÄÏÉÅ ÏúÑÎ°ú ÎßàÏö∞Ïä§ ÎàÑÎ•∏ Ï±Ñ Ìò∏Î≤ÑÎßÅ ÌïòÎäî Í≤É Î∞©ÏßÄ)
     {
         if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
     }
-    else // F∏È
+    else // FÎ©¥
     {
-        FollowTime += GetWorld()->GetDeltaSeconds(); // ¿Ãµø
+        FollowTime += GetWorld()->GetDeltaSeconds(); // Ïù¥Îèô
 
-        if (CursorHit.bBlockingHit) CachedDestination = CursorHit.ImpactPoint; // ∏Ò«•¡ˆ¡°¿ª ∏∂øÏΩ∫ æ∆∑° ∫§≈Õ∑Œ º≥¡§.
+        if (CursorHit.bBlockingHit) CachedDestination = CursorHit.ImpactPoint; // Î™©ÌëúÏßÄÏ†êÏùÑ ÎßàÏö∞Ïä§ ÏïÑÎûò Î≤°ÌÑ∞Î°ú ÏÑ§Ï†ï.
 
-        if (APawn* ControlledPawn = GetPawn()) // ControlledPawnø° ∫ª¿Œ¿ª ≥÷¿Ω.
+        if (APawn* ControlledPawn = GetPawn()) // ControlledPawnÏóê Î≥∏Ïù∏ÏùÑ ÎÑ£Ïùå.
         {
             const FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
-            ControlledPawn->AddMovementInput(WorldDirection); // WorldDirection πÊ«‚¿∏∑Œ ¿Ãµø
+            ControlledPawn->AddMovementInput(WorldDirection); // WorldDirection Î∞©Ìñ•ÏúºÎ°ú Ïù¥Îèô
         }
     }
 }

@@ -28,6 +28,8 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Hitbox")
 	void SpawnHitBox(const FName HitboxName, const FName DamageName, const FVector& HitboxLocation, AActor* InstigatorPlayer = nullptr, AActor* TargetActor = nullptr);
 
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FName, TSubclassOf<ACubeProjectile>> ProjectileClassMap;
 

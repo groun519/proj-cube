@@ -185,18 +185,18 @@ void UCubeAttributeSet::SendXPEvent(const FEffectProperties& Props)
 	}
 }
 
-void UCubeAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit) const
+void UCubeAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit, bool bHealHit) const
 {
 	if (Props.SourceCharacter != Props.TargetCharacter) // 스스로 때린게 아니면
 	{
 		if (ACubePlayerController* PC = Cast<ACubePlayerController>(Props.SourceCharacter->Controller))
 		{
-			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit);
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit, bHealHit);
 			return;
 		}
 		if (ACubePlayerController* PC = Cast<ACubePlayerController>(Props.TargetCharacter->Controller))
 		{
-			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit); // 대상 위치에 데미지 텍스트 표시
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit, bHealHit); // 대상 위치에 데미지 텍스트 표시
 		}
 	}
 }
@@ -313,7 +313,7 @@ void UCubeAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 {
 	const float LocalIncomingDamage = GetIncomingDamage();
 	SetIncomingDamage(0.f);
-	if ( LocalIncomingDamage > 0.f )
+	if ( LocalIncomingDamage ) // 원래 LocalIncomingDamage > 0.f
 	{
 		const float NewHealth = GetHealth() - LocalIncomingDamage;
 		SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
@@ -337,20 +337,8 @@ void UCubeAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 		const bool bPhysicalHit = UCubeAbilitySystemLibrary::IsPhysicalHit(Props.EffectContextHandle);
 		const bool bMagicalHit = UCubeAbilitySystemLibrary::IsMagicalHit(Props.EffectContextHandle);
 		const bool bPureHit = UCubeAbilitySystemLibrary::IsPureHit(Props.EffectContextHandle);
-		ShowFloatingText(Props, LocalIncomingDamage, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit);
-		if ( UCubeAbilitySystemLibrary::IsSuccessfulDebuff(Props.EffectContextHandle) )
-		{
-			FGameplayTagContainer ActorTags;
-			FGameplayTagContainer SpecTags;
-			Props.EffectContextHandle.GetOwnedGameplayTags(ActorTags, SpecTags);
-
-			/*for ( const FGameplayTag DebuffTag : SpecTags )
-			{
-				FDebuffInfo DebuffInfo = FCubeGameplayTags::Get().DebuffTagsToDebuffInfos[ DebuffTag ];
-
-				Debuff(Props, DebuffTag, DebuffInfo.Damage, DebuffInfo.Duration, DebuffInfo.Frequency, DebuffInfo.DamageType);
-			}*/
-		}
+		const bool bHealHit = UCubeAbilitySystemLibrary::IsHealHit(Props.EffectContextHandle);
+		ShowFloatingText(Props, LocalIncomingDamage, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit, bHealHit);
 	}
 }
 
