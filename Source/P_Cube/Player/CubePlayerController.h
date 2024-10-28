@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "GameplayTagContainer.h"
 #include "CubePlayerController.generated.h"
 
-// ¿¸πÊº±æ
+// Ï†ÑÎ∞©ÏÑ†Ïñ∏
 class UDamageTextComponent;
 class UInputMappingContext; 
 class UInputAction;
@@ -36,7 +36,7 @@ public:
 	FVector TargetVec;
 
 	UFUNCTION(Client, Reliable)
-	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit);
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit, bool bHealHit);
 
 protected:
 	virtual void BeginPlay();
@@ -69,8 +69,8 @@ private:
 	UCubeAbilitySystemComponent* GetASC();
 
 
-	// ≈¨∏Ø ¿Ãµø ∫Øºˆ
-	FVector CachedDestination = FVector::ZeroVector; // ∏Ò«• ∫§≈Õ
+	// ÌÅ¥Î¶≠ Ïù¥Îèô Î≥ÄÏàò
+	FVector CachedDestination = FVector::ZeroVector; // Î™©Ìëú Î≤°ÌÑ∞
 	float FollowTime = 0.f; //
 	float ShortPressThreshold = 0.5f; 
 	bool bAutoRunning = false; // 
@@ -80,7 +80,7 @@ private:
 	float AutoRunAcceptanceRadius = 50.f;
 
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USplineComponent> Spline; // ∞Ê∑Œ ∞Óº±
+	TObjectPtr<USplineComponent> Spline; // Í≤ΩÎ°ú Í≥°ÏÑ†
 
 	void AutoRun();
 

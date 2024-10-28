@@ -1,7 +1,74 @@
-#pragma once
+﻿#pragma once
 
 #include "GameplayEffectTypes.h"
 #include "CubeAbilityTypes.generated.h"
+
+class UGameplayEffect;
+
+USTRUCT(BlueprintType)
+struct FCoeffs // 계수를 다루는 구조체
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag Attribute;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float Coeff;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bIsTarget;
+};
+
+USTRUCT(BlueprintType)
+struct FDamageEffectParams
+{
+	GENERATED_BODY()
+
+	FDamageEffectParams(){}
+
+	UPROPERTY(/*BlueprintReadWrite, EditAnywhere, Category = "DamageEffectParams"*/)
+	TObjectPtr<UObject> WorldContextObject = nullptr;
+
+	UPROPERTY()
+	TSubclassOf<UGameplayEffect> DamageGameplayEffectClass = nullptr;
+
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> SourceAbilitySystemComponent;
+
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> TargetAbilitySystemComponent;
+
+	
+
+
+	UPROPERTY()
+	float AbilityLevel = 1.f;
+
+	UPROPERTY()
+	FGameplayTag DamageType = FGameplayTag();
+
+	UPROPERTY()
+	float BaseDamage = 0.f;
+
+	UPROPERTY()
+	TArray<FCoeffs> AttributeCoeffs;
+
+
+
+	UPROPERTY()
+	bool bKnockback = false;
+
+	UPROPERTY()
+	float KnockbackForce = 0.f;
+
+
+	/*UPROPERTY()
+	float Duration;
+
+	UPROPERTY()
+	float Frequency;*/
+};
 
 USTRUCT(BlueprintType)
 struct FCubeGameplayEffectContext : public FGameplayEffectContext
@@ -14,11 +81,21 @@ public:
 	bool IsPhysicalHit() const { return bIsPhysicalHit; }
 	bool IsMagicalHit() const { return bIsMagicalHit; }
 	bool IsPureHit() const { return bIsPureHit; }
+	bool IsHealHit() const { return bIsHealHit; }
+	TSharedPtr<FGameplayTag> GetDamageType() const
+	{
+		return DamageType;
+	}
 
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
 	void SetIsPhysicalHit(bool bInIsPhysicalHit) { bIsPhysicalHit = bInIsPhysicalHit; }
 	void SetIsMagicalHit(bool bInIsMagicalHit) { bIsMagicalHit = bInIsMagicalHit; }
 	void SetIsPureHit(bool bInIsPureHit) { bIsPureHit = bInIsPureHit; }
+	void SetIsHealHit(bool bInIsHealHit) { bIsHealHit = bInIsHealHit; }
+	void SetDamageType(TSharedPtr<FGameplayTag> InDamageType)
+	{
+		DamageType = InDamageType;
+	}
 
 	/** Returns the actual struct used for serialization, subclasses must override this! */
 	virtual UScriptStruct* GetScriptStruct() const
@@ -58,6 +135,11 @@ protected:
 
 	UPROPERTY()
 	bool bIsPureHit = false;
+
+	UPROPERTY()
+	bool bIsHealHit = false;
+
+	TSharedPtr<FGameplayTag> DamageType;
 
 };
 

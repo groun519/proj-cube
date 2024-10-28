@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -59,6 +59,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayEffects")
 	static bool IsPureHit(const FGameplayEffectContextHandle& EffectContextHandle);
 
+	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayEffects")
+	static bool IsHealHit(const FGameplayEffectContextHandle& EffectContextHandle);
+
 
 	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayEffects")
 	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCriticalHit);
@@ -72,11 +75,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayEffects")
 	static void SetIsPureHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsPureHit);
 
+	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayEffects")
+	static void SetIsHealHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsHealHit);
+
 	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayMechanics")
 	static void GetLivePlayersWithinSphere(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);
 
 	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayMechanics")
 	static bool IsNotFriend(AActor* FirstActor, AActor* SecondActor);
+
+	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|DamageEffect")
+	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
+
+	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|DamageEffect")
+	static FGameplayEffectContextHandle ApplyDebuffEffect(const FDamageEffectParams& DamageEffectParams);
 
 	static int32 GetXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel);
 };

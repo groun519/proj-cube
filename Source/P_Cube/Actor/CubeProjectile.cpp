@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CubeProjectile.h"
@@ -20,7 +20,7 @@ ACubeProjectile::ACubeProjectile()
 
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
 	SetRootComponent(Sphere);
-	Sphere->SetCollisionObjectType(ECC_Projectile); // Ãæµ¹ Å¸ÀÔÀ» Projectile·Î ¼³Á¤
+	Sphere->SetCollisionObjectType(ECC_Projectile); // ì¶©ëŒ íƒ€ìž…ì„ Projectileë¡œ ì„¤ì •
 	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	Sphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 	Sphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
@@ -49,52 +49,42 @@ void ACubeProjectile::BeginPlay()
 		true);
 }
 
+void ACubeProjectile::OnHit()
+{
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	if ( LoopingSoundComponent ) LoopingSoundComponent->Stop();
+	// if (GetLifeSpan() > 0)
+	bHit = true;
+}
+
 void ACubeProjectile::Destroyed()
 {
-	if (!bHit && !HasAuthority())
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-		if (LoopingSoundComponent) LoopingSoundComponent->Stop();
-		// if (GetLifeSpan() > 0)
-		bHit = true;
-	}
+	if ( !bHit && !HasAuthority() ) OnHit();
 	Super::Destroyed();
 }
 
 void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	for (AActor* ignore : IgnoreActors)
-	{
-		if (OtherActor == ignore) return;
-	}
+	for (AActor* ignore : IgnoreActors) 
+		if ( OtherActor == ignore ) return;
 
 	if (bIsAttackOnlyTarget)
-	{
-		if (OtherActor != TargetActor) return;
-	}
+		if ( OtherActor != TargetActor ) return;
 
-	if (!DamageEffectSpecHandle.Data.IsValid() || DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor)
-	{
-		return;
-	}
-	if (!UCubeAbilitySystemLibrary::IsNotFriend(DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser(), OtherActor))
-	{
-		return;
-	}
-	if (!bHit)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator); // ÀÓÆÑÆ® »ç¿îµåµµ °¡²û°¡´Ù Å¬¶óÀÌ¾ðÆ®¿¡¼­ Á¦°ÅµÈ ÀÌÈÄ µé¸®´Âµ¥, Å×½ºÆ® ÈÄ ¼öÁ¤ÇÒ °Í.
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-		if (LoopingSoundComponent) LoopingSoundComponent->Stop();
-		bHit = true;
-	}
+
+	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+	if ( SourceAvatarActor == OtherActor ) return;
+	if ( !UCubeAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor) ) return;
+	if ( !bHit ) OnHit();
+
 
 	if (HasAuthority())
 	{
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
-			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get()); // damage ÀÌÆåÆ® Àû¿ë.
+			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
+			UCubeAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); // damage ì´íŽ™íŠ¸ ì ìš©.
 			IgnoreActors.Add(OtherActor);
 		}
 
@@ -104,12 +94,9 @@ void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 			if (GetLifeSpan() > 0) LoopingSoundComponent->Stop();
 		}
 
-		// false <- Á¦°Å¸¦ ¾È ÇÔÀ¸·Î¼­ °üÅëµÇ°Ô ÇÔ.
+		// false <- ì œê±°ë¥¼ ì•ˆ í•¨ìœ¼ë¡œì„œ ê´€í†µë˜ê²Œ í•¨.
 	}
-	else
-	{
-		bHit = true;
-	}
+	else bHit = true;
 
 	LastOtherActor = OtherActor;
 }
