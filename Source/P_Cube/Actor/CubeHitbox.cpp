@@ -92,6 +92,8 @@ void ACubeHitbox::OnCollisionOverlap(UPrimitiveComponent* OverlappedComponent, A
 
 	if (HasAuthority())
 	{
+		if ( bOnlyPlayer && !OtherActor->ActorHasTag("Player") ) return;
+
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
 			/*const bool bKnockback = DamageEffectParams.bKnockback;
@@ -122,6 +124,11 @@ void ACubeHitbox::OnCollisionOverlap(UPrimitiveComponent* OverlappedComponent, A
 	LastOtherActor = OtherActor;
 }
 
+void ACubeHitbox::SetOnlyPlayer(const bool OnlyPlayer)
+{
+	bOnlyPlayer = OnlyPlayer;
+}
+
 AActor* ACubeHitbox::GetInstigatorPlayer() const
 {
 	return InstigatorPlayer;
@@ -131,4 +138,6 @@ AActor* ACubeHitbox::GetTargetActor() const
 {
 	return TargetActor;
 }
+
+
 
