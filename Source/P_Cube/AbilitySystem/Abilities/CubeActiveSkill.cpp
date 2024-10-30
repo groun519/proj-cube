@@ -64,19 +64,14 @@ void UCubeActiveSkill::SpawnProjectile(const FName ProjectileName, const FName D
 	Projectile->FinishSpawning(SpawnTransform);
 }
 
-void UCubeActiveSkill::SpawnHitBox(const FName HitboxName, const FName DamageName, const FVector& HitboxLocation, AActor* InstigatorPlayer, AActor* TargetActor)
+void UCubeActiveSkill::SpawnHitBox(const FName HitboxName, const FName DamageName, const FTransform& HitboxTransform, AActor* InstigatorPlayer, AActor* TargetActor)
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if ( !bIsServer ) return;
 
-	FRotator Rotation;
-	Rotation.Pitch = 0;
-	Rotation.Yaw = 0;
-	Rotation.Roll = 0;
-	
 	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(HitboxLocation);
-	SpawnTransform.SetRotation(Rotation.Quaternion());
+	SpawnTransform.SetLocation(HitboxTransform.GetLocation());
+	SpawnTransform.SetRotation(HitboxTransform.GetRotation());
 
 	ACubeHitbox* Hitbox = GetWorld()->SpawnActorDeferred<ACubeHitbox>(
 		HitboxClassMap[ HitboxName ],

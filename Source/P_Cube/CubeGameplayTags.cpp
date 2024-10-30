@@ -556,6 +556,19 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FString("RedFlag's Unique Ability Tag")
 	);
 
+	GameplayTags.Abilities_Assassin_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Assassin.Attack"),
+		FString("Assassin's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_Assassin_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Assassin.Basic"),
+		FString("Assassin's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_Assassin_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Assassin.Unique"),
+		FString("Assassin's Unique Ability Tag")
+	);
+
 	/*GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Attack);
 	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Basic);
 	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Unique);
@@ -758,6 +771,19 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Cooldown_RedFlag_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldown.RedFlag.Unique"),
 		FString("RedFlag's Unique Cooldown Tag")
+	);
+
+	GameplayTags.Cooldown_Assassin_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	FName("Cooldown.Assassin.Attack"),
+	FString(" Assassin's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_Assassin_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Assassin.Basic"),
+		FString("Assassin's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_Assassin_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Assassin.Unique"),
+		FString("Assassin's Unique Cooldown Tag")
 	);
 
 	/*
