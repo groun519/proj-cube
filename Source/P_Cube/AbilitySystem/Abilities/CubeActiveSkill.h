@@ -26,7 +26,7 @@ protected:
 	void SpawnProjectile(const FName ProjectileName, const FName DamageName, const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch = false, float PitchOverride = 0.f, bool bOverrideYaw = false, float YawOverride = 0.f, AActor* InstigatorPlayer = nullptr, bool bIsOnlyAttackTargetActor = false, AActor* TargetActor = nullptr);
 
 	UFUNCTION(BlueprintCallable, Category = "Hitbox")
-	void SpawnHitBox(const FName HitboxName, const FName DamageName, const FVector& HitboxLocation, AActor* InstigatorPlayer = nullptr, AActor* TargetActor = nullptr);
+	void SpawnHitBox(const FName HitboxName, const FName DamageName, const FVector& HitboxLocation, const bool bOnlyPlayer, AActor* InstigatorPlayer = nullptr, AActor* TargetActor = nullptr);
 
 
 
@@ -35,4 +35,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FName, TSubclassOf<ACubeHitbox>> HitboxClassMap;
+
+private:
+	UFUNCTION(BlueprintCallable)
+	TArray<AActor*> FindNearestActorsByTag(const FName TagName, const FVector Location, const float Radius, const int32 findingPlayers, const bool bDrawDebugSphere);
 };

@@ -85,20 +85,19 @@ void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		{
 			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
 			UCubeAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); // damage 이펙트 적용.
-			IgnoreActors.Add(OtherActor);
 		}
 
-		if (bDestroyOnOverlap)
+		if (bDestroyOnOverlap) 
 		{
 			Destroy();
 			if (GetLifeSpan() > 0) LoopingSoundComponent->Stop();
 		}
-
-		// false <- 제거를 안 함으로서 관통되게 함.
+		else // false <- 제거를 안 함으로서 관통되게 함.
+		{
+			IgnoreActors.Add(OtherActor);
+		}
 	}
 	else bHit = true;
-
-	LastOtherActor = OtherActor;
 }
 
 AActor* ACubeProjectile::GetInstigatorPlayer() const

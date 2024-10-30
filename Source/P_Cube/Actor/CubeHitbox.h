@@ -30,6 +30,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	AActor* TargetActor;
 
+	void SetOnlyPlayer(const bool OnlyPlayer);
+
 protected:
 	virtual void BeginPlay() override;
 	void OnHit();
@@ -70,4 +72,6 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	AActor* GetTargetActor() const;
+
+	bool bOnlyPlayer = false;
 };
