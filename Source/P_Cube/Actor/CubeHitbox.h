@@ -21,6 +21,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	void SetHitboxCollision(UPrimitiveComponent* CollisionComponent);
 
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	void ResetIgnoreActors();
+
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
 	FDamageEffectParams DamageEffectParams;
 
