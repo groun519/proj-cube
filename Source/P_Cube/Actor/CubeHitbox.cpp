@@ -43,6 +43,11 @@ void ACubeHitbox::SetHitboxCollision(UPrimitiveComponent* NewCollisionComponent)
     }
 }
 
+void ACubeHitbox::ResetIgnoreActors()
+{
+	IgnoreActors.Empty();
+}
+
 // Called when the game starts or when spawned
 void ACubeHitbox::BeginPlay()
 {
