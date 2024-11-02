@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CubeCharacterBase.h"
@@ -14,11 +14,11 @@ ACubeCharacterBase::ACubeCharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore); // Ä¸½¶ Äİ¸®Àü Ä«¸Ş¶ó Ãæµ¹ ¹«½ÃÇÏ°Ô ¼³Á¤. (ÇÃ·¹ÀÌ¾î¿¡ Ä«¸Ş¶ó°¡ ¿µÇâ ¹Ş´Â °ÍÀ» ¹æÁö)
-	GetCapsuleComponent()->SetGenerateOverlapEvents(false); // Ãæµ¹ ÀÌº¥Æ® °¡´ÉÇÏ°Ô ¼³Á¤.
-	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore); // ¸Ş½¬ Ä«¸Ş¶ó Ãæµ¹ ¹«½Ã ¼³Á¤.
-	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap); // Åõ»çÃ¼ Á¢ÃË ÆÇÁ¤À» OverlapÀ¸·Î ¼³Á¤.
-	GetMesh()->SetGenerateOverlapEvents(true); // Ãæµ¹ ÀÌº¥Æ® °¡´ÉÇÏ°Ô ¼³Á¤.
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore); // ìº¡ìŠ ì½œë¦¬ì „ ì¹´ë©”ë¼ ì¶©ëŒ ë¬´ì‹œí•˜ê²Œ ì„¤ì •. (í”Œë ˆì´ì–´ì— ì¹´ë©”ë¼ê°€ ì˜í–¥ ë°›ëŠ” ê²ƒì„ ë°©ì§€)
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false); // ì¶©ëŒ ì´ë²¤íŠ¸ ê°€ëŠ¥í•˜ê²Œ ì„¤ì •.
+	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore); // ë©”ì‰¬ ì¹´ë©”ë¼ ì¶©ëŒ ë¬´ì‹œ ì„¤ì •.
+	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap); // íˆ¬ì‚¬ì²´ ì ‘ì´‰ íŒì •ì„ Overlapìœ¼ë¡œ ì„¤ì •.
+	GetMesh()->SetGenerateOverlapEvents(true); // ì¶©ëŒ ì´ë²¤íŠ¸ ê°€ëŠ¥í•˜ê²Œ ì„¤ì •.
 
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
@@ -37,11 +37,11 @@ UAnimMontage* ACubeCharacterBase::GetHitReactMontage_Implementation()
 
 void ACubeCharacterBase::Die()
 {
-	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true)); // ºÎ¸ğ¿¡¼­ ºĞ¸®
+	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true)); // ë¶€ëª¨ì—ì„œ ë¶„ë¦¬
 	MulticastHandleDeath();
 }
 
-void ACubeCharacterBase::MulticastHandleDeath_Implementation() // ·¡±×µ¹  ÇÔ¼ö
+void ACubeCharacterBase::MulticastHandleDeath_Implementation() // ë˜ê·¸ëŒ  í•¨ìˆ˜
 {
 	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation(), GetActorRotation());
 
@@ -49,19 +49,18 @@ void ACubeCharacterBase::MulticastHandleDeath_Implementation() // ·¡±×µ¹  ÇÔ¼ö
 	Weapon->SetEnableGravity(true);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 
-	GetMesh()->SetSimulatePhysics(true); // Ä³¸¯ÅÍ ¸Ş½¬ ¹°¸® ½Ã¹Ä·¹ÀÌ¼Ç È°¼ºÈ­
-	GetMesh()->SetEnableGravity(true); // Ä³¸¯ÅÍ ¸Ş½¬ Áß·Â È°¼ºÈ­
+	GetMesh()->SetSimulatePhysics(true); // ìºë¦­í„° ë©”ì‰¬ ë¬¼ë¦¬ ì‹œë®¬ë ˆì´ì…˜ í™œì„±í™”
+	GetMesh()->SetEnableGravity(true); // ìºë¦­í„° ë©”ì‰¬ ì¤‘ë ¥ í™œì„±í™”
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	Dissolve(); // »ç¶óÁö´Â ÀÌÆåÆ®
+	Dissolve(); // ì‚¬ë¼ì§€ëŠ” ì´í™íŠ¸
 }
 
 void ACubeCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 FVector ACubeCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
@@ -165,13 +164,13 @@ void ACubeCharacterBase::AddCharacterAbilities()
 
 void ACubeCharacterBase::Dissolve()
 {
-	if (IsValid(DissolveMaterialInstance)) // Ä³¸¯ÅÍ ¸Ş½¬ µğÁ¹ºê ÀÌÆåÆ® Àû¿ë
+	if (IsValid(DissolveMaterialInstance)) // ìºë¦­í„° ë©”ì‰¬ ë””ì¡¸ë¸Œ ì´í™íŠ¸ ì ìš©
 	{
 		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
 		GetMesh()->SetMaterial(0, DynamicMatInst);
 		StartDissolveTimeline(DynamicMatInst);
 	}
-	if (IsValid(WeaponDissolveMaterialInstance)) // ¹«±â ¸Ş½¬ µğÁ¹ºê ÀÌÆåÆ® Àû¿ë
+	if (IsValid(WeaponDissolveMaterialInstance)) // ë¬´ê¸° ë©”ì‰¬ ë””ì¡¸ë¸Œ ì´í™íŠ¸ ì ìš©
 	{
 		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
 		Weapon->SetMaterial(0, DynamicMatInst);

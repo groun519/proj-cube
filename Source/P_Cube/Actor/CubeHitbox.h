@@ -21,14 +21,24 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	void SetHitboxCollision(UPrimitiveComponent* CollisionComponent);
 
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	void ResetIgnoreActors();
+
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
 	FDamageEffectParams DamageEffectParams;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Ability")
+	UGameplayAbility* LinkedAbility;
+
+	bool bDamageTypeIsHeal = false;
 
 	AActor* InstigatorPlayer;
 	bool bIsAttackOnlyTarget = false;
 
 	UPROPERTY(BlueprintReadWrite)
 	AActor* TargetActor;
+
+	void SetOnlyPlayer(const bool OnlyPlayer);
 
 protected:
 	virtual void BeginPlay() override;
@@ -70,4 +80,6 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	AActor* GetTargetActor() const;
+
+	bool bOnlyPlayer = false;
 };

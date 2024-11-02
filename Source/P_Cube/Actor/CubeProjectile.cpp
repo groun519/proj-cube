@@ -38,6 +38,7 @@ void ACubeProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	SetLifeSpan(LifeSpan);
+	SetReplicateMovement(true);
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACubeProjectile::OnSphereOverlap);
 
 	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(
@@ -66,6 +67,7 @@ void ACubeProjectile::Destroyed()
 
 void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if ( DamageEffectParams.SourceAbilitySystemComponent == nullptr ) return;
 	for (AActor* ignore : IgnoreActors) 
 		if ( OtherActor == ignore ) return;
 
@@ -75,7 +77,7 @@ void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
 	if ( SourceAvatarActor == OtherActor ) return;
-	if ( !UCubeAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor) ) return;
+	if ( !UCubeAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor) && !bDamageTypeIsHeal ) return;
 	if ( !bHit ) OnHit();
 
 
@@ -85,20 +87,19 @@ void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		{
 			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
 			UCubeAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); // damage 이펙트 적용.
-			IgnoreActors.Add(OtherActor);
 		}
 
-		if (bDestroyOnOverlap)
+		if (bDestroyOnOverlap) 
 		{
 			Destroy();
 			if (GetLifeSpan() > 0) LoopingSoundComponent->Stop();
 		}
-
-		// false <- 제거를 안 함으로서 관통되게 함.
+		else // false <- 제거를 안 함으로서 관통되게 함.
+		{
+			IgnoreActors.Add(OtherActor);
+		}
 	}
 	else bHit = true;
-
-	LastOtherActor = OtherActor;
 }
 
 AActor* ACubeProjectile::GetInstigatorPlayer() const
@@ -109,5 +110,66 @@ AActor* ACubeProjectile::GetInstigatorPlayer() const
 AActor* ACubeProjectile::GetTargetActor() const
 {
 	return TargetActor;
+}
+
+TArray<AActor*> ACubeProjectile::FindNearestActorsByTag(const FName TagName, const FVector Location, const float Radius, const int32 findingPlayers, const bool bDrawDebugSphere)
+{
+	TArray<AActor*> NearbyPlayers;
+	TArray<FOverlapResult> OverlapResults;
+
+	FCollisionShape CollShape;
+	CollShape.SetSphere(Radius);
+	FCollisionQueryParams QueryParams;
+	//QueryParams.AddIgnoredActor(this);
+
+	bool bOverlap = GetWorld()->OverlapMultiByObjectType(
+		OverlapResults,
+		Location,
+		FQuat::Identity,
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_Pawn), // Assuming you are looking for pawns
+		CollShape,
+		QueryParams
+	);
+
+	if ( bOverlap )
+	{
+		for ( auto& OverlapResult : OverlapResults )
+		{
+			AActor* OverlappedActor = OverlapResult.GetActor();
+			if ( OverlappedActor && OverlappedActor->ActorHasTag(TagName) )
+			{
+				NearbyPlayers.Add(OverlappedActor);
+			}
+		}
+
+		// 배열을 위치에 따라 정렬, 가장 가까운 플레이어가 배열의 시작에 오도록
+		NearbyPlayers.Sort([ Location ] (AActor& A, AActor& B) -> bool
+		{
+			return FVector::DistSquared(Location, A.GetActorLocation()) < FVector::DistSquared(Location, B.GetActorLocation());
+		});
+
+		// 배열의 크기를 PlayerNum으로 조정
+		if ( NearbyPlayers.Num() > findingPlayers )
+		{
+			NearbyPlayers.SetNum(findingPlayers);
+		}
+	}
+
+	if ( bDrawDebugSphere )
+	{
+		DrawDebugSphere(
+		GetWorld(),
+		Location,
+		Radius,
+		12, // Segments
+		FColor::Yellow,
+		false, // Persistent lines
+		10.0f, // Duration
+		0, // Depth priority
+		0.0f // Thickness
+		);
+	}
+
+	return NearbyPlayers;
 }
 

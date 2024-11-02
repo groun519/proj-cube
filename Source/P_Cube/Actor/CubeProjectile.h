@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "P_Cube/CubeAbilityTypes.h"
+#include "P_Cube/Actor/CubeHitActor.h"
 #include "GameFramework/Actor.h"
 #include "CubeProjectile.generated.h"
 
@@ -12,7 +13,7 @@ class USphereComponent;
 class UProjectileMovementComponent;
 
 UCLASS()
-class P_CUBE_API ACubeProjectile : public AActor
+class P_CUBE_API ACubeProjectile : public ACubeHitActor
 {
 	GENERATED_BODY()
 	
@@ -24,6 +25,11 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
 	FDamageEffectParams DamageEffectParams;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Ability")
+	UGameplayAbility* LinkedAbility;
+
+	bool bDamageTypeIsHeal = false;
 
 	AActor* InstigatorPlayer;
 	bool bIsAttackOnlyTarget = false;
@@ -51,9 +57,6 @@ private:
 	bool bDestroyOnOverlap = false;
 
 	bool bHit = false;
-	AActor* LastOtherActor = nullptr;
-
-	TArray<AActor*> IgnoreActors;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNiagaraSystem> ImpactEffect; // 제거될 때 생성할 이펙트
@@ -72,4 +75,7 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	AActor* GetTargetActor() const;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<AActor*> FindNearestActorsByTag(const FName TagName, const FVector Location, const float Radius, const int32 findingPlayers, const bool bDrawDebugSphere);
 };

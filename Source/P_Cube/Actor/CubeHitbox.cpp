@@ -43,13 +43,18 @@ void ACubeHitbox::SetHitboxCollision(UPrimitiveComponent* NewCollisionComponent)
     }
 }
 
+void ACubeHitbox::ResetIgnoreActors()
+{
+	IgnoreActors.Empty();
+}
+
 // Called when the game starts or when spawned
 void ACubeHitbox::BeginPlay()
 {
 	Super::BeginPlay();
-
 	SetLifeSpan(LifeSpan);
-	//Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACubeHitbox::OnSphereOverlap);
+	SetReplicateMovement(true);
+	HitboxCollision->OnComponentBeginOverlap.AddDynamic(this, &ACubeHitbox::OnCollisionOverlap);
 
 	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(
 		LoopingSound, 
@@ -77,6 +82,7 @@ void ACubeHitbox::Destroyed()
 
 void ACubeHitbox::OnCollisionOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if ( DamageEffectParams.SourceAbilitySystemComponent == nullptr ) return;
 	for (AActor* ignore : IgnoreActors) 
 		if ( OtherActor == ignore ) return;
 
@@ -86,12 +92,14 @@ void ACubeHitbox::OnCollisionOverlap(UPrimitiveComponent* OverlappedComponent, A
 
 	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
 	if ( SourceAvatarActor == OtherActor ) return;
-	if ( !UCubeAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor) ) return;
+	if ( !UCubeAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor) && !bDamageTypeIsHeal ) return;
 	if ( !bHit ) OnHit();
 
 
 	if (HasAuthority())
 	{
+		if ( bOnlyPlayer && !OtherActor->ActorHasTag("Player") ) return;
+
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
 			/*const bool bKnockback = DamageEffectParams.bKnockback;
@@ -122,6 +130,11 @@ void ACubeHitbox::OnCollisionOverlap(UPrimitiveComponent* OverlappedComponent, A
 	LastOtherActor = OtherActor;
 }
 
+void ACubeHitbox::SetOnlyPlayer(const bool OnlyPlayer)
+{
+	bOnlyPlayer = OnlyPlayer;
+}
+
 AActor* ACubeHitbox::GetInstigatorPlayer() const
 {
 	return InstigatorPlayer;
@@ -131,4 +144,6 @@ AActor* ACubeHitbox::GetTargetActor() const
 {
 	return TargetActor;
 }
+
+
 
