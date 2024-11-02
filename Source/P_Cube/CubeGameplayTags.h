@@ -165,6 +165,9 @@ public:
 	FGameplayTag Abilities_LongBow_Attack;
 	FGameplayTag Abilities_LongBow_Basic;
 	FGameplayTag Abilities_LongBow_Unique;
+	FGameplayTag Abilities_Hammer_Attack;
+	FGameplayTag Abilities_Hammer_Basic;
+	FGameplayTag Abilities_Hammer_Unique;
 	FGameplayTag Abilities_Assassin_Attack;
 	FGameplayTag Abilities_Assassin_Basic;
 	FGameplayTag Abilities_Assassin_Unique;
@@ -209,6 +212,9 @@ public:
 	FGameplayTag Cooldown_LongBow_Attack;
 	FGameplayTag Cooldown_LongBow_Basic;
 	FGameplayTag Cooldown_LongBow_Unique;
+	FGameplayTag Cooldown_Hammer_Attack;
+	FGameplayTag Cooldown_Hammer_Basic;
+	FGameplayTag Cooldown_Hammer_Unique;
 	FGameplayTag Cooldown_Assassin_Attack;
 	FGameplayTag Cooldown_Assassin_Basic;
 	FGameplayTag Cooldown_Assassin_Unique;
