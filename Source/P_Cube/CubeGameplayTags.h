@@ -162,6 +162,12 @@ public:
 	FGameplayTag Abilities_RedFlag_Attack;
 	FGameplayTag Abilities_RedFlag_Basic;
 	FGameplayTag Abilities_RedFlag_Unique;
+	FGameplayTag Abilities_LongBow_Attack;
+	FGameplayTag Abilities_LongBow_Basic;
+	FGameplayTag Abilities_LongBow_Unique;
+	FGameplayTag Abilities_Hammer_Attack;
+	FGameplayTag Abilities_Hammer_Basic;
+	FGameplayTag Abilities_Hammer_Unique;
 
 	FGameplayTag Cooldown_FIreStaff_Attack;
 	FGameplayTag Cooldown_FIreStaff_Basic;
@@ -199,6 +205,12 @@ public:
 	FGameplayTag Cooldown_RedFlag_Attack;
 	FGameplayTag Cooldown_RedFlag_Basic;
 	FGameplayTag Cooldown_RedFlag_Unique;
+	FGameplayTag Cooldown_LongBow_Attack;
+	FGameplayTag Cooldown_LongBow_Basic;
+	FGameplayTag Cooldown_LongBow_Unique;
+	FGameplayTag Cooldown_Hammer_Attack;
+	FGameplayTag Cooldown_Hammer_Basic;
+	FGameplayTag Cooldown_Hammer_Unique;
 
 	FGameplayTag CombatSocket_ActorLocation;
 	FGameplayTag CombatSocket_Weapon;

@@ -555,6 +555,18 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FName("Abilities.RedFlag.Unique"),
 		FString("RedFlag's Unique Ability Tag")
 	);
+	GameplayTags.Abilities_Hammer_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Hammer.Attack"),
+		FString("Hammer's Attack Ability Tag")
+	);
+	GameplayTags.Abilities_Hammer_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Hammer.Basic"),
+		FString("Hammer's Basic Ability Tag")
+	);
+	GameplayTags.Abilities_Hammer_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Hammer.Unique"),
+		FString("Hammer's Unique Ability Tag")
+	);
 
 	/*GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Attack);
 	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Basic);
@@ -758,6 +770,18 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Cooldown_RedFlag_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldown.RedFlag.Unique"),
 		FString("RedFlag's Unique Cooldown Tag")
+	);
+	GameplayTags.Cooldown_Hammer_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Hammer.Attack"),
+		FString("Hammer's Attack Cooldown Tag")
+	);
+	GameplayTags.Cooldown_Hammer_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Hammer.Basic"),
+		FString("Hammer's Basic Cooldown Tag")
+	);
+	GameplayTags.Cooldown_Hammer_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Hammer.Unique"),
+		FString("Hammer's Unique Cooldown Tag")
 	);
 
 	/*
