@@ -26,6 +26,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
 	FDamageEffectParams DamageEffectParams;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Ability")
+	UGameplayAbility* LinkedAbility;
+
+	bool bDamageTypeIsHeal = false;
+
 	AActor* InstigatorPlayer;
 	bool bIsAttackOnlyTarget = false;
 
@@ -73,5 +78,4 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	TArray<AActor*> FindNearestActorsByTag(const FName TagName, const FVector Location, const float Radius, const int32 findingPlayers, const bool bDrawDebugSphere);
-
 };

@@ -27,6 +27,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
 	FDamageEffectParams DamageEffectParams;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Ability")
+	UGameplayAbility* LinkedAbility;
+
+	bool bDamageTypeIsHeal = false;
+
 	AActor* InstigatorPlayer;
 	bool bIsAttackOnlyTarget = false;
 
