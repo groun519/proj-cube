@@ -1,10 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CubeCharacter.h"
 
 #include "AbilitySystemComponent.h"
 #include "P_Cube/AbilitySystem/CubeAbilitySystemComponent.h"
+#include "P_Cube/AbilitySystem/CubeAttributeSet.h"
 #include "P_Cube/AbilitySystem/Data/LevelUpInfo.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "P_Cube/Player/CubePlayerController.h"
@@ -12,6 +13,8 @@
 #include "NiagaraComponent.h"
 #include "P_Cube/UI/HUD/CubeHUD.h"
 
+#include "P_Cube/UI/Widget/CubeUserWidget.h"
+#include "Components/WidgetComponent.h"
 
 #include "P_Cube/Weapon.h"
 #include <Components/CapsuleComponent.h>
@@ -62,23 +65,26 @@ ACubeCharacter::ACubeCharacter()
 
 
 	
-	// ¸Ó¸® À§ À§Á¬.
+	// ë¨¸ë¦¬ ìœ„ ìœ„ì ¯.
 	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidget"));
 	OverheadWidget->SetupAttachment(RootComponent);
 
 	HaveWeapon = false;
 	WeaponNum = 0;
 	n = 0;
+
+	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar"); // ì²´ë ¥ë°” ìœ„ì ¯ ìƒì„±
+	HealthBar->SetupAttachment(GetRootComponent());
 }
 
 void ACubeCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	// InitAbilityActorInfo() : ¼­¹öÀÇ ability actor Á¤º¸ ÃÊ±âÈ­ (AbilitySystemComponent, AttributeSet)
+	// InitAbilityActorInfo() : ì„œë²„ì˜ ability actor ì •ë³´ ì´ˆê¸°í™” (AbilitySystemComponent, AttributeSet)
 	InitAbilityActorInfo();
 
-	// Ä³¸¯ÅÍ ¾îºô¸®Æ¼ Ãß°¡
+	// ìºë¦­í„° ì–´ë¹Œë¦¬í‹° ì¶”ê°€
 	AddCharacterAbilities();
 }
 
@@ -86,7 +92,7 @@ void ACubeCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	// Å¬¶óÀÌ¾ğÆ®ÀÇ ability actor Á¤º¸ ÃÊ±âÈ­ (AbilitySystemComponent, AttributeSet)
+	// í´ë¼ì´ì–¸íŠ¸ì˜ ability actor ì •ë³´ ì´ˆê¸°í™” (AbilitySystemComponent, AttributeSet)
 	InitAbilityActorInfo();
 }
 
@@ -172,9 +178,9 @@ int32 ACubeCharacter::GetSkillPoints_Implementation() const
 
 int32 ACubeCharacter::GetPlayerLevel_Implementation()
 {
-	const ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>(); // state¸¦ °¡Á®¿À°í,
+	const ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>(); // stateë¥¼ ê°€ì ¸ì˜¤ê³ ,
 	check(CubePlayerState);
-	return CubePlayerState->GetPlayerLevel(); // state¿¡¼­ ·¹º§ ¾òÀº ÈÄ ¸®ÅÏ.
+	return CubePlayerState->GetPlayerLevel(); // stateì—ì„œ ë ˆë²¨ ì–»ì€ í›„ ë¦¬í„´.
 }
 
 void ACubeCharacter::SetCombatTarget_Implementation(AActor* InCombatTarget)
@@ -187,10 +193,10 @@ AActor* ACubeCharacter::GetCombatTarget_Implementation() const
 	return CombatTarget;
 }
 
-void ACubeCharacter::InitAbilityActorInfo() // ¾îºô¸®Æ¼ ½Ã½ºÅÛ ÄÄÆ÷³ÍÆ®, ¾îÆ®¸®ºäÆ®¼Â ÃÊ±âÈ­
+void ACubeCharacter::InitAbilityActorInfo() // ì–´ë¹Œë¦¬í‹° ì‹œìŠ¤í…œ ì»´í¬ë„ŒíŠ¸, ì–´íŠ¸ë¦¬ë·°íŠ¸ì…‹ ì´ˆê¸°í™”
 {
 	ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>();
-	check(CubePlayerState); // Àß °¡Á®¿Ô´ÂÁö Ã¼Å©
+	check(CubePlayerState); // ì˜ ê°€ì ¸ì™”ëŠ”ì§€ ì²´í¬
 	CubePlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(CubePlayerState, this);
 	Cast<UCubeAbilitySystemComponent>(CubePlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
 	AbilitySystemComponent = CubePlayerState->GetAbilitySystemComponent();
@@ -226,19 +232,36 @@ void ACubeCharacter::BeginPlay()
 		CurWeapon->Weapon->SetVisibility(HaveWeapon);
 	}
 
-	//WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
-	//WeaponMesh->SetupAttachment(GetMesh(), WeaponSocket);
+	// ì²´ë ¥ì´ ë³€ê²½ë ë•Œë§ˆë‹¤ ì—…ë°ì´íŠ¸í•˜ëŠ” ë¡œì§
+	if ( UCubeUserWidget* CubeUserWidget = Cast<UCubeUserWidget>(HealthBar->GetUserWidgetObject()) )
+	{
+		CubeUserWidget->SetWidgetController(this);
+	}
 
-	/*WeaponMesh->SetupAttachment(RootComponent);
-	WeaponMesh->SetCanEverAffectNavigation(false);
-	WeaponMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);*/
+	if ( const UCubeAttributeSet* CubeAS = Cast<UCubeAttributeSet>(AttributeSet) )
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CubeAS->GetHealthAttribute()).AddLambda(
+			[ this ] (const FOnAttributeChangeData& Data)
+			{
+				OnHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CubeAS->GetMaxHealthAttribute()).AddLambda(
+			[ this ] (const FOnAttributeChangeData& Data)
+			{
+				OnMaxHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+		OnHealthChanged.Broadcast(CubeAS->GetHealth());
+		OnMaxHealthChanged.Broadcast(CubeAS->GetMaxHealth());
+	}
 }
 
 void ACubeCharacter::SetWeaponVisibility()
 {
 	CurWeapon->Weapon->SetVisibility(HaveWeapon);
 	CurWeapon->ChangeWeaponMesh(WeaponNum);
-	// ¹Ù²ï AWeaponÀÇ ¸Ş½¬´Â ÀÚµ¿ÀûÀ¸·Î Àû¿ëµÊ
+	// ë°”ë€ AWeaponì˜ ë©”ì‰¬ëŠ” ìë™ì ìœ¼ë¡œ ì ìš©ë¨
 }
 
 void ACubeCharacter::Attack()
@@ -266,6 +289,6 @@ void ACubeCharacter::MoveDest(const FVector Destination)
 
 bool ACubeCharacter::IsPlayingMontage(int _n)
 {
-	// ¸ùÅ¸ÁÖ°¡ ÇöÀç Àç»ı ÁßÀÎÁö ¿©ºÎ¸¦ ¹İÈ¯ÇÏ´Â ÄÚµå
+	// ëª½íƒ€ì£¼ê°€ í˜„ì¬ ì¬ìƒ ì¤‘ì¸ì§€ ì—¬ë¶€ë¥¼ ë°˜í™˜í•˜ëŠ” ì½”ë“œ
 	return GetMesh()->GetAnimInstance()->Montage_IsPlaying(BagicAttackMontages[_n]);
 }

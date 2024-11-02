@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -58,10 +58,10 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
-	TObjectPtr<USkeletalMeshComponent> Weapon; // ¹«±â ½ºÄÌ·¹Å» ¸Ş½Ã
+	TObjectPtr<USkeletalMeshComponent> Weapon; // ë¬´ê¸° ìŠ¤ì¼ˆë ˆíƒˆ ë©”ì‹œ
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
-	FName WeaponTipSocketName; // ÀÌÆåÆ® ¹ß»ç À§Ä¡.
+	FName WeaponTipSocketName; // ì´í™íŠ¸ ë°œì‚¬ ìœ„ì¹˜.
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	FName LeftHandSocketName;
@@ -80,7 +80,7 @@ protected:
 	virtual void InitAbilityActorInfo();
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
-	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes; // ±âº» ´É·ÂÄ¡(Primary) ÃÊ±âÈ­ È¿°ú
+	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes; // ê¸°ë³¸ ëŠ¥ë ¥ì¹˜(Primary) ì´ˆê¸°í™” íš¨ê³¼
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;

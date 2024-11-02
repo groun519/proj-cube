@@ -1,14 +1,17 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "P_Cube/Weapon.h"
 #include "CubeCharacterBase.h"
+#include "P_Cube/UI/WidgetController/OverlayWidgetController.h"
+
 #include "P_Cube/Interaction/PlayerInterface.h"
+#include "P_Cube/Weapon.h"
 #include "CubeCharacter.generated.h"
 
 class UNiagaraComponent;
+class UWidgetComponent;
 
 UCLASS()
 class P_CUBE_API ACubeCharacter : public ACubeCharacterBase, public IPlayerInterface
@@ -46,10 +49,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
 
-
-
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")
 	TObjectPtr<AActor> CombatTarget;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnHealthChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnMaxHealthChanged;
+
+
 
 	UPROPERTY(EditAnywhere)
 	bool HaveWeapon;
@@ -69,6 +78,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UWidgetComponent> HealthBar;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
