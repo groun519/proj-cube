@@ -17,10 +17,10 @@ void UCubeActiveSkill::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-AActor* UCubeActiveSkill::SpawnProjectile(const FName ProjectileName, const FName DamageName, const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, bool bOverrideYaw, float YawOverride, AActor* InstigatorPlayer, bool bIsOnlyAttackTargetActor, AActor* TargetActor) // 투사체 생성
+void UCubeActiveSkill::SpawnProjectile(const FName ProjectileName, const FName DamageName, const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, bool bOverrideYaw, float YawOverride, AActor* InstigatorPlayer, bool bIsOnlyAttackTargetActor, AActor* TargetActor) // 투사체 생성
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
-	if (!bIsServer) return nullptr;
+	if (!bIsServer) return;
 
 	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(
 		GetAvatarActorFromActorInfo(),
@@ -61,9 +61,15 @@ AActor* UCubeActiveSkill::SpawnProjectile(const FName ProjectileName, const FNam
 
 	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor, DamageName);
 
-	Projectile->FinishSpawning(SpawnTransform);
+	FString DamageNameString = DamageName.ToString();
+	if ( DamageNameString.Contains("Heal") )
+	{
+		Projectile->bDamageTypeIsHeal = true;
+	}
 
-	return Projectile;
+	Projectile->LinkedAbility = this;
+
+	Projectile->FinishSpawning(SpawnTransform);
 }
 
 
@@ -97,6 +103,14 @@ void UCubeActiveSkill::SpawnHitBox(const FName HitboxName, const FName DamageNam
 	}
 
 	Hitbox->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor, DamageName);
+
+	FString DamageNameString = DamageName.ToString();
+	if ( DamageNameString.Contains("Heal"))
+	{
+		Hitbox->bDamageTypeIsHeal = true;
+	}
+
+	Hitbox->LinkedAbility = this;
 
 	Hitbox->FinishSpawning(SpawnTransform);
 }
