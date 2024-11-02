@@ -569,6 +569,12 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FString("Assassin's Unique Ability Tag")
 	);
 
+	GameplayTags.Abilities_Scroll_Blink = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Scroll.Bink"),
+		FString("Scroll_Blink Tag")
+	);
+	
+
 	/*GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Attack);
 	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Basic);
 	GameplayTags.AbilityTags.Add(GameplayTags.Abilities_FIreStaff_Unique);
@@ -784,6 +790,10 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Cooldown_Assassin_Unique = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldown.Assassin.Unique"),
 		FString("Assassin's Unique Cooldown Tag")
+	);
+	GameplayTags.Cooldown_Scroll_Blink = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Scroll.Blink"),
+		FString("Scroll_Blink Cooldown Tag")
 	);
 
 	/*
