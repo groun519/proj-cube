@@ -70,4 +70,8 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	AActor* GetTargetActor() const;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<AActor*> FindNearestActorsByTag(const FName TagName, const FVector Location, const float Radius, const int32 findingPlayers, const bool bDrawDebugSphere);
+
 };

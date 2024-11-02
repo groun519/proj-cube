@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CubeEnemy.h"
@@ -30,7 +30,7 @@ ACubeEnemy::ACubeEnemy()
 
 	AttributeSet = CreateDefaultSubobject<UCubeAttributeSet>("AttributeSet");
 
-	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar"); // Ã¼·Â¹Ù À§Á¬ »ı¼º
+	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar"); // ì²´ë ¥ë°” ìœ„ì ¯ ìƒì„±
 	HealthBar->SetupAttachment(GetRootComponent()); 
 }
 
@@ -103,7 +103,7 @@ void ACubeEnemy::BeginPlay()
 		UCubeAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent, CharacterClass);
 	}
 
-	// Ã¼·ÂÀÌ º¯°æµÉ¶§¸¶´Ù ¾÷µ¥ÀÌÆ®ÇÏ´Â ·ÎÁ÷
+	// ì²´ë ¥ì´ ë³€ê²½ë ë•Œë§ˆë‹¤ ì—…ë°ì´íŠ¸í•˜ëŠ” ë¡œì§
 	if (UCubeUserWidget* CubeUserWidget = Cast<UCubeUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
 		CubeUserWidget->SetWidgetController(this);
@@ -141,7 +141,7 @@ void ACubeEnemy::InitAbilityActorInfo()
 
 	if (HasAuthority())
 	{
-		InitializeDefaultAttributes(); // ¸ó½ºÅÍ attribute ÃÊ±âÈ­. (CubeCharacterBase ÇÔ¼ö.)
+		InitializeDefaultAttributes(); // ëª¬ìŠ¤í„° attribute ì´ˆê¸°í™”. (CubeCharacterBase í•¨ìˆ˜.)
 	}
 }
 
