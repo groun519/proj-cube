@@ -63,6 +63,9 @@ public:
 
 	int32 MinionCount = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Class Defaults")
+	ECharacterClass CharacterClass = ECharacterClass::Dummy;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -121,8 +124,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	UNiagaraSystem* BloodEffect;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
-	ECharacterClass CharacterClass = ECharacterClass::Dummy;
+	
 
 private:
 
