@@ -158,8 +158,27 @@ void ACubeCharacterBase::AddCharacterAbilities()
 	UCubeAbilitySystemComponent* CubeASC = CastChecked<UCubeAbilitySystemComponent>(AbilitySystemComponent);
 	if (!HasAuthority()) return;
 
-	CubeASC->AddCharacterAbilities(StartupAbilities);
+	//CubeASC->AddCharacterAbilities(StartupAbilities);
 	CubeASC->AddCharacterPassiveAbilities(StartupPassiveAbilities);
+	
+
+	if ( CharacterClass == ECharacterClass::Warrior )
+	{
+		CubeASC->AddCharacterAbilities(StartupAbilitiesMap[ "Warrior" ].Abilities);
+	}
+	else if ( CharacterClass == ECharacterClass::Ranger )
+	{
+		CubeASC->AddCharacterAbilities(StartupAbilitiesMap[ "Ranger" ].Abilities);
+	}
+	else if ( CharacterClass == ECharacterClass::Wizard )
+	{
+		CubeASC->AddCharacterAbilities(StartupAbilitiesMap[ "Wizard" ].Abilities);
+	}
+	else if ( CharacterClass == ECharacterClass::Healer )
+	{
+		CubeASC->AddCharacterAbilities(StartupAbilitiesMap[ "Healer" ].Abilities);
+	}
+	else CubeASC->AddCharacterAbilities(StartupAbilitiesMap[ "Test" ].Abilities);
 }
 
 void ACubeCharacterBase::Dissolve()

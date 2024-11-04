@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "P_Cube/UI/HUD/CubeHUD.h"
@@ -13,7 +13,7 @@ UOverlayWidgetController* ACubeHUD::GetOverlayWidgetController(const FWidgetCont
 	if (OverlayWidgetController == nullptr)
 	{
 		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
-		OverlayWidgetController->SetWidgetControllerParams(WCParams); // ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯, ÇÃ·¹ÀÌ¾î ½ºÅ×ÀÌÆ®, ¾îºô¸®Æ¼ ½Ã½ºÅÛ, ¾îÆ®¸®ºäÆ®¼ÂÀÇ Á¤º¸´ë·Î À§Á¬À» ¼³Á¤ÇÔ.
+		OverlayWidgetController->SetWidgetControllerParams(WCParams); // í”Œë ˆì´ì–´ ì»¨íŠ¸ë¡¤ëŸ¬, í”Œë ˆì´ì–´ ìŠ¤í…Œì´íŠ¸, ì–´ë¹Œë¦¬í‹° ì‹œìŠ¤í…œ, ì–´íŠ¸ë¦¬ë·°íŠ¸ì…‹ì˜ ì •ë³´ëŒ€ë¡œ ìœ„ì ¯ì„ ì„¤ì •í•¨.
 
 		OverlayWidgetController->BindCallbacksToDependencies();
 	}
@@ -44,7 +44,7 @@ USkillMenuWidgetController* ACubeHUD::GetSkillMenuWidgetController(const FWidget
 
 void ACubeHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)
 {
-	// ¸¸¾à ¿À¹ö·¹ÀÌ À§Á¬ Å¬·¡½º³ª À§Á¬ ÄÁÆ®·Ñ·¯ Å¬·¡½º¸¦ ÇÒ´çÇÏÁö ¾Ê¾Ò´Ù¸é, checkf¹®À¸·Î ·Î±×¸¦ ÅëÇØ ¾Ë·ÁÁÜ.
+	// ë§Œì•½ ì˜¤ë²„ë ˆì´ ìœ„ì ¯ í´ë˜ìŠ¤ë‚˜ ìœ„ì ¯ ì»¨íŠ¸ë¡¤ëŸ¬ í´ë˜ìŠ¤ë¥¼ í• ë‹¹í•˜ì§€ ì•Šì•˜ë‹¤ë©´, checkfë¬¸ìœ¼ë¡œ ë¡œê·¸ë¥¼ í†µí•´ ì•Œë ¤ì¤Œ.
 	checkf(OverlayWidgetClass, TEXT("Overlay Widget Class uninitialized, please fill out BP_AuraHUD"));
 	checkf(OverlayWidgetControllerClass, TEXT("Overlay Widget Controller Class uninitialized, please fill out BP_AuraHUD"));
 
@@ -54,8 +54,8 @@ void ACubeHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
 	const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
 	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
 
-	OverlayWidget->SetWidgetController(WidgetController); // WidgetControllerParams¿¡ ´ã±ä ÇÃ·¹ÀÌ¾îÀÇ Á¤º¸¸¦ Åä´ë·Î À¯ÀúÀ§Á¬µéÀ» ¼³Á¤ÇÔ. (Event Widget Controller Set ºí·çÇÁ¸°Æ®°¡ Æ®¸®°Å µÊ.)
+	OverlayWidget->SetWidgetController(WidgetController); // WidgetControllerParamsì— ë‹´ê¸´ í”Œë ˆì´ì–´ì˜ ì •ë³´ë¥¼ í† ëŒ€ë¡œ ìœ ì €ìœ„ì ¯ë“¤ì„ ì„¤ì •í•¨. (Event Widget Controller Set ë¸”ë£¨í”„ë¦°íŠ¸ê°€ íŠ¸ë¦¬ê±° ë¨.)
 
-	WidgetController->BroadcastInitialValues(); // °ª º¯°æÀ» ºí·çÇÁ¸°Æ®·Î ºê·ÎµåÄ³½ºÆÃ ÇÏ´Â ÇÔ¼ö
-	Widget->AddToViewport(); // ºäÆ÷Æ®¿¡ ¹İ¿µÇÔ.
+	WidgetController->BroadcastInitialValues(); // ê°’ ë³€ê²½ì„ ë¸”ë£¨í”„ë¦°íŠ¸ë¡œ ë¸Œë¡œë“œìºìŠ¤íŒ… í•˜ëŠ” í•¨ìˆ˜
+	Widget->AddToViewport(); // ë·°í¬íŠ¸ì— ë°˜ì˜í•¨.
 }
