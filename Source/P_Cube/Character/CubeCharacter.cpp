@@ -76,6 +76,11 @@ ACubeCharacter::ACubeCharacter()
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar"); // 체력바 위젯 생성
 	HealthBar->SetupAttachment(GetRootComponent());
+
+	ClassArray.Add(ECharacterClass::Warrior);
+	ClassArray.Add(ECharacterClass::Ranger);
+	ClassArray.Add(ECharacterClass::Wizard);
+	ClassArray.Add(ECharacterClass::Healer);
 }
 
 void ACubeCharacter::PossessedBy(AController* NewController)
@@ -224,6 +229,9 @@ void ACubeCharacter::MulticastLevelUpParticles_Implementation() const
 void ACubeCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ECharacterClass AssignedClass = ClassArray[ FCString::Atoi(*GetName().Right(1)) ];
+	CharacterClass = AssignedClass;
 
 	FName WeaponSocket = TEXT("RightHand");
 	CurWeapon = GetWorld()->SpawnActor<AWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
