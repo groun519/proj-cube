@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -11,7 +11,7 @@ class UGameplayEffect;
 class UGameplayAbility;
 
 UENUM(BlueprintType)
-enum class ECharacterClass : uint8 // Å¬·¡½º Á¾·ù
+enum class ECharacterClass : uint8 // í´ë˜ìŠ¤ ì¢…ë¥˜
 {
 	Default,
 	Berserker,
@@ -19,6 +19,10 @@ enum class ECharacterClass : uint8 // Å¬·¡½º Á¾·ù
 	SwordMaster,
 	Assassin,
 
+	Warrior,
+	Ranger,
+	Wizard,
+	Healer,
 
 	Dummy,
 	MeleeEnemy,

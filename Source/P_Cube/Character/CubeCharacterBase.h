@@ -16,6 +16,15 @@ class UGameplayEffect;
 class UGameplayAbility;
 class UAnimMontage;
 
+USTRUCT(BlueprintType)
+struct FStartupAbilities
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> Abilities;
+};
+
 UCLASS()
 class P_CUBE_API ACubeCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
 {
@@ -118,7 +127,9 @@ protected:
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Abilities")
-	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+	TMap<FName, FStartupAbilities> StartupAbilitiesMap;
+	//TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+	
 
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;

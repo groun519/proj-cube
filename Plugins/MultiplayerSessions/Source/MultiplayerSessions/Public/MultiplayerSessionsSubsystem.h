@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,7 +9,7 @@
 #include "MultiplayerSessionsSubsystem.generated.h"
 
 // 
-// Äİ¹é ¹ÙÀÎµùÀ» À§ÇØ Menu Å¬·¡½º¿¡ ´ëÇÑ Ä¿½ºÅÒ µ¨¸®°ÔÀÌÆ® ¼±¾ğ.
+// ì½œë°± ë°”ì¸ë”©ì„ ìœ„í•´ Menu í´ë˜ìŠ¤ì— ëŒ€í•œ ì»¤ìŠ¤í…€ ë¸ë¦¬ê²Œì´íŠ¸ ì„ ì–¸.
 // 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnCreateSessionComplete, bool, bWasSuccessful);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FMultiplayerOnFindSessionsComplete, const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful);
@@ -28,7 +28,7 @@ public:
 	UMultiplayerSessionsSubsystem();
 
 	//
-	// ¼¼¼Ç ±â´É Ã³¸®¸¦ À§ÇØ ¸Ş´º Å¬·¡½º¸¦ ºÒ·¯¿È.
+	// ì„¸ì…˜ ê¸°ëŠ¥ ì²˜ë¦¬ë¥¼ ìœ„í•´ ë©”ë‰´ í´ë˜ìŠ¤ë¥¼ ë¶ˆëŸ¬ì˜´.
 	//
 	void CreateSession(int32 NumPublicConnections, FString MatchType);
 	void FindSessions(int32 MaxSearchResults);
@@ -37,7 +37,7 @@ public:
 	void StartSession();
 
 	// 
-	// Äİ¹é ¹ÙÀÎµùÀ» À§ÇÑ Menu Å¬·¡½º Ä¿½ºÅÒ µ¨¸®°ÔÀÌÆ®.
+	// ì½œë°± ë°”ì¸ë”©ì„ ìœ„í•œ Menu í´ë˜ìŠ¤ ì»¤ìŠ¤í…€ ë¸ë¦¬ê²Œì´íŠ¸.
 	// 
 	FMultiplayerOnCreateSessionComplete MultiplayerOnCreateSessionComplete;
 	FMultiplayerOnFindSessionsComplete MultiplayerOnFindSessionsComplete;
@@ -48,8 +48,8 @@ public:
 protected:
 
 	//
-	// µ¨¸®°ÔÀÌÆ®¸¦ À§ÇÑ ³»ºÎ Äİ¹éÀº ¿Â¶óÀÎ ¼¼¼Ç ³»ºÎ Äİ¹é ¸®½ºÆ®¿¡ Ãß°¡µÉ °Í.
-	// ÀÌ°ÍµéÀº Å¬·¡½º ¹Û¿¡¼­ È£ÃâµÉ ÇÊ¿ä ¾ø´Ù.
+	// ë¸ë¦¬ê²Œì´íŠ¸ë¥¼ ìœ„í•œ ë‚´ë¶€ ì½œë°±ì€ ì˜¨ë¼ì¸ ì„¸ì…˜ ë‚´ë¶€ ì½œë°± ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€ë  ê²ƒ.
+	// ì´ê²ƒë“¤ì€ í´ë˜ìŠ¤ ë°–ì—ì„œ í˜¸ì¶œë  í•„ìš” ì—†ë‹¤.
 	//
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
 	void OnFindSessionComplete(bool bWasSuccessful);
@@ -63,8 +63,8 @@ private:
 	TSharedPtr<FOnlineSessionSearch> LastSessionSearch;
 
 	//
-	// µ¨¸®°ÔÀÌÆ® ¸®½ºÆ®¿¡ ¿Â¶óÀÎ ¼¼¼Ç ÀÎÅÍÆäÀÌ½º¸¦ Ãß°¡ÇÏ±â À§ÇØ
-	// ¸ÖÆ¼ÇÃ·¹ÀÌ¼¼¼Ç¼­ºê½Ã½ºÅÛ Äİ¹éÀ» ¸¸µé¾î bind ÇØ¾ßÇÑ´Ù.
+	// ë¸ë¦¬ê²Œì´íŠ¸ ë¦¬ìŠ¤íŠ¸ì— ì˜¨ë¼ì¸ ì„¸ì…˜ ì¸í„°í˜ì´ìŠ¤ë¥¼ ì¶”ê°€í•˜ê¸° ìœ„í•´
+	// ë©€í‹°í”Œë ˆì´ì„¸ì…˜ì„œë¸Œì‹œìŠ¤í…œ ì½œë°±ì„ ë§Œë“¤ì–´ bind í•´ì•¼í•œë‹¤.
 	//
 	FOnCreateSessionCompleteDelegate CreateSessionCompleteDelegate;
 	FDelegateHandle CreateSessionCompleteDelegateHandle;
