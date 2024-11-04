@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "P_Cube/AbilitySystem/CubeAbilitySystemComponent.h"
+#include "P_Cube/AbilitySystem/CubeAbilitySystemLibrary.h"
 #include "P_Cube/AbilitySystem/CubeAttributeSet.h"
 #include "P_Cube/AbilitySystem/Data/LevelUpInfo.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -59,7 +60,7 @@ ACubeCharacter::ACubeCharacter()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	CharacterClass = ECharacterClass::Berserker;
+	CharacterClass = ECharacterClass::Wizard;
 
 
 
@@ -223,7 +224,7 @@ void ACubeCharacter::MulticastLevelUpParticles_Implementation() const
 void ACubeCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	FName WeaponSocket = TEXT("RightHand");
 	CurWeapon = GetWorld()->SpawnActor<AWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
 	if (nullptr != CurWeapon)
