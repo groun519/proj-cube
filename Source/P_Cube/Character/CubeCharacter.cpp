@@ -230,7 +230,7 @@ void ACubeCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ECharacterClass AssignedClass = ClassArray[ FCString::Atoi(*GetName().Right(1)) ];
+	ECharacterClass AssignedClass = ClassArray[ (FCString::Atoi(*GetName().Right(1)))%4 ];
 	CharacterClass = AssignedClass;
 
 	FName WeaponSocket = TEXT("RightHand");
