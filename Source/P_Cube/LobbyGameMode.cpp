@@ -24,7 +24,7 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 		if (World)
 		{
 			bUseSeamlessTravel = true;
-			World->ServerTravel(FString("/Game/Maps/TestMap?listen"));
+			World->ServerTravel(FString("/Game/Maps/BossMap?listen"));
 		}
 	}
 }
@@ -64,7 +64,7 @@ void ALobbyGameMode::GoTravel(const int32 ReadyPlayers)
 		if ( World )
 		{
 			bUseSeamlessTravel = true;
-			World->ServerTravel(FString("/Game/Maps/TestMap?listen"));
+			World->ServerTravel(FString("/Game/Maps/BossMap?listen"));
 		}
 	}
 }
