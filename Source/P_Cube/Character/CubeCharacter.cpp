@@ -231,7 +231,7 @@ void ACubeCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	//ECharacterClass AssignedClass = ClassArray[ (FCString::Atoi(*GetName().Right(1)))%4 ];
-	ECharacterClass AssignedClass = ClassArray[ 0 ];
+	/*ECharacterClass AssignedClass = ClassArray[ 0 ];
 
 	FString PlayerName = FString("");
 	if ( GetPlayerState() )
@@ -256,7 +256,7 @@ void ACubeCharacter::BeginPlay()
 		AssignedClass = ClassArray[ 4 ];
 	}
 
-	CharacterClass = AssignedClass;
+	CharacterClass = AssignedClass;*/
 
 	FName WeaponSocket = TEXT("RightHand");
 	CurWeapon = GetWorld()->SpawnActor<AWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
