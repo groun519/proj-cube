@@ -230,7 +230,32 @@ void ACubeCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ECharacterClass AssignedClass = ClassArray[ (FCString::Atoi(*GetName().Right(1)))%4 ];
+	//ECharacterClass AssignedClass = ClassArray[ (FCString::Atoi(*GetName().Right(1)))%4 ];
+	ECharacterClass AssignedClass = ClassArray[ 0 ];
+
+	FString PlayerName = FString("");
+	if ( GetPlayerState() )
+	{
+		PlayerName = GetPlayerState()->GetPlayerName();
+	}
+
+	if ( PlayerName == "groun519" )
+	{
+		AssignedClass = ClassArray[ 2 ];
+	}
+	else if ( PlayerName == "Beom" )
+	{
+		AssignedClass = ClassArray[ 1 ];
+	}
+	else if ( PlayerName == "쿄쿄쿄" )
+	{
+		AssignedClass = ClassArray[ 0 ];
+	}
+	else if ( PlayerName == "poppy04" )
+	{
+		AssignedClass = ClassArray[ 4 ];
+	}
+
 	CharacterClass = AssignedClass;
 
 	FName WeaponSocket = TEXT("RightHand");
