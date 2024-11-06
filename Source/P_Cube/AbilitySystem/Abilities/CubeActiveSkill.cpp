@@ -9,6 +9,8 @@
 #include "P_Cube/Actor/CubeProjectile.h"
 #include "P_Cube/Actor/CubeHitbox.h"
 
+#include "P_Cube/Character/CubeCharacterBase.h"
+
 #include "P_Cube/Interaction/CombatInterface.h"
 #include "P_Cube/CubeGameplayTags.h"
 
@@ -141,9 +143,15 @@ TArray<AActor*> UCubeActiveSkill::FindNearestActorsByTag(const FName TagName, co
 			AActor* OverlappedActor = OverlapResult.GetActor();
 			if ( OverlappedActor && OverlappedActor->ActorHasTag(TagName) )
 			{
-				NearbyPlayers.Add(OverlappedActor);
+				ACubeCharacterBase* CubeCharacter = Cast<ACubeCharacterBase>(OverlappedActor);
+				if ( CubeCharacter && !CubeCharacter->Execute_IsDead(OverlappedActor) )
+				{
+					NearbyPlayers.Add(CubeCharacter);
+				}
 			}
 		}
+
+		
 
 		// 배열을 위치에 따라 정렬, 가장 가까운 플레이어가 배열의 시작에 오도록
 		NearbyPlayers.Sort([ Location ] (AActor& A, AActor& B) -> bool
