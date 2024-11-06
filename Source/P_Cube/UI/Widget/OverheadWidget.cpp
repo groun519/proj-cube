@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "OverheadWidget.h"
@@ -44,7 +44,7 @@ void UOverheadWidget::SetPlayerNameText(FString PlayerName)
 	}
 }
 
-void UOverheadWidget::ShowPlayerName(APawn* InPawn)
+FString UOverheadWidget::ShowPlayerName(APawn* InPawn)
 {
 	APlayerState* PlayerState = InPawn->GetPlayerState();
 	FString PlayerName = FString("");
@@ -53,6 +53,8 @@ void UOverheadWidget::ShowPlayerName(APawn* InPawn)
 		PlayerName = PlayerState->GetPlayerName();
 	}
 	SetPlayerNameText(PlayerName);
+
+	return PlayerName;
 }
 
 void UOverheadWidget::NativeDestruct()
