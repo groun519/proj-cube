@@ -60,7 +60,7 @@ ACubeCharacter::ACubeCharacter()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	CharacterClass = ECharacterClass::Wizard;
+	CharacterClass = ECharacterClass::Default;
 
 
 
@@ -91,7 +91,7 @@ void ACubeCharacter::PossessedBy(AController* NewController)
 	InitAbilityActorInfo();
 
 	// 캐릭터 어빌리티 추가
-	AddCharacterAbilities();
+	//AddCharacterAbilities(); <- wnddy
 }
 
 void ACubeCharacter::OnRep_PlayerState()

@@ -179,6 +179,8 @@ void ACubeCharacterBase::AddCharacterAbilities()
 		CubeASC->AddCharacterAbilities(StartupAbilitiesMap[ "Healer" ].Abilities);
 	}
 	else CubeASC->AddCharacterAbilities(StartupAbilitiesMap[ "Test" ].Abilities);
+
+
 }
 
 void ACubeCharacterBase::Dissolve()
