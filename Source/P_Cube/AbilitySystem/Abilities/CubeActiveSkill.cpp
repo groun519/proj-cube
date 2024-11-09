@@ -101,7 +101,7 @@ void UCubeActiveSkill::SpawnHitBox(const FName HitboxName, const FName DamageNam
 	}
 	if ( bOnlyPlayer )
 	{
-		Hitbox->SetOnlyPlayer(true);
+		Hitbox->bOnlyPlayer = true;
 	}
 
 	Hitbox->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor, DamageName);

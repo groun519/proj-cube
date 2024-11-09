@@ -18,10 +18,7 @@ ACubeHitbox::ACubeHitbox()
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
 
-	if ( HitboxCollision )
-	{
-		SetHitboxCollision(HitboxCollision);
-	}
+	SetHitboxCollision(HitboxCollision);
 }
 
 void ACubeHitbox::SetHitboxCollision(UPrimitiveComponent* NewCollisionComponent)
@@ -40,19 +37,22 @@ void ACubeHitbox::SetHitboxCollision(UPrimitiveComponent* NewCollisionComponent)
     {
         HitboxCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
         HitboxCollision->OnComponentBeginOverlap.AddDynamic(this, &ACubeHitbox::OnCollisionOverlap);
-    }
-}
 
-void ACubeHitbox::ResetIgnoreActors()
-{
-	IgnoreActors.Empty();
+		SetRootComponent(HitboxCollision);
+		HitboxCollision->SetCollisionObjectType(ECC_Hitbox); // 충돌 타입을 Projectile로 설정
+		HitboxCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		HitboxCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
+		HitboxCollision->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+		HitboxCollision->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap);
+		HitboxCollision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+    }
 }
 
 // Called when the game starts or when spawned
 void ACubeHitbox::BeginPlay()
 {
 	Super::BeginPlay();
-	SetLifeSpan(LifeSpan);
+	SetLifeSpan(LifeTime);
 	SetReplicateMovement(true);
 	HitboxCollision->OnComponentBeginOverlap.AddDynamic(this, &ACubeHitbox::OnCollisionOverlap);
 
@@ -126,23 +126,6 @@ void ACubeHitbox::OnCollisionOverlap(UPrimitiveComponent* OverlappedComponent, A
 		// false <- 제거를 안 함으로서 관통되게 함.
 	}
 	else bHit = true;
-
-	LastOtherActor = OtherActor;
-}
-
-void ACubeHitbox::SetOnlyPlayer(const bool OnlyPlayer)
-{
-	bOnlyPlayer = OnlyPlayer;
-}
-
-AActor* ACubeHitbox::GetInstigatorPlayer() const
-{
-	return InstigatorPlayer;
-}
-
-AActor* ACubeHitbox::GetTargetActor() const
-{
-	return TargetActor;
 }
 
 
