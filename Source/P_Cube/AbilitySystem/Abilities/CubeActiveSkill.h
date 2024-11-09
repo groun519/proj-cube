@@ -47,11 +47,18 @@ protected:
 		AActor* TargetActor = nullptr
 	);
 
+	/** Projectile Skill's Properties **/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FName, TSubclassOf<ACubeProjectile>> ProjectileClassMap;
 
+	UPROPERTY(EditDefaultsOnly)
+	int32 NumProjectiles = 5;
+	/** end Projectile Skill's Properties **/
+
+	/** Hitbox Skill's Properties **/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FName, TSubclassOf<ACubeHitbox>> HitboxClassMap;
+	/** end Hitbox Skill's Properties **/
 
 private:
 	UFUNCTION(BlueprintCallable)
