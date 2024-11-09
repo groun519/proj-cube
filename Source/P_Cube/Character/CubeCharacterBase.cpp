@@ -18,6 +18,7 @@ ACubeCharacterBase::ACubeCharacterBase()
 	GetCapsuleComponent()->SetGenerateOverlapEvents(false); // 충돌 이벤트 가능하게 설정.
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore); // 메쉬 카메라 충돌 무시 설정.
 	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap); // 투사체 접촉 판정을 Overlap으로 설정.
+	GetMesh()->SetCollisionResponseToChannel(ECC_Hitbox, ECR_Overlap); // 투사체 접촉 판정을 Overlap으로 설정.
 	GetMesh()->SetGenerateOverlapEvents(true); // 충돌 이벤트 가능하게 설정.
 
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
