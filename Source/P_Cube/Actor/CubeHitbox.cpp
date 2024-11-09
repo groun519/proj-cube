@@ -11,14 +11,13 @@
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
+#include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 ACubeHitbox::ACubeHitbox()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
-
-	SetHitboxCollision(HitboxCollision);
 }
 
 void ACubeHitbox::SetHitboxCollision(UPrimitiveComponent* NewCollisionComponent)
@@ -54,14 +53,13 @@ void ACubeHitbox::BeginPlay()
 	Super::BeginPlay();
 	SetLifeSpan(LifeTime);
 	SetReplicateMovement(true);
-	HitboxCollision->OnComponentBeginOverlap.AddDynamic(this, &ACubeHitbox::OnCollisionOverlap);
 
 	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(
-		LoopingSound, 
-		GetRootComponent(), 
-		NAME_None, 
-		FVector::ZeroVector, 
-		EAttachLocation::KeepRelativeOffset, 
+		LoopingSound,
+		GetRootComponent(),
+		NAME_None,
+		FVector::ZeroVector,
+		EAttachLocation::KeepRelativeOffset,
 		true);
 }
 
@@ -82,18 +80,22 @@ void ACubeHitbox::Destroyed()
 
 void ACubeHitbox::OnCollisionOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UE_LOG(LogTemp, Warning, TEXT("OnCollisionOverlap triggered with %s"), *OtherActor->GetName());
+
 	if ( DamageEffectParams.SourceAbilitySystemComponent == nullptr ) return;
 	for (AActor* ignore : IgnoreActors) 
 		if ( OtherActor == ignore ) return;
 
 	if (bIsAttackOnlyTarget)
 		if ( OtherActor != TargetActor ) return;
+	UE_LOG(LogTemp, Warning, TEXT("OnCollisionOverlap triggered with %s"), *OtherActor->GetName());
 
 
 	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
 	if ( SourceAvatarActor == OtherActor ) return;
 	if ( !UCubeAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor) && !bDamageTypeIsHeal ) return;
 	if ( !bHit ) OnHit();
+	UE_LOG(LogTemp, Warning, TEXT("OnCollisionOverlap triggered with %s"), *OtherActor->GetName());
 
 
 	if (HasAuthority())
@@ -128,5 +130,41 @@ void ACubeHitbox::OnCollisionOverlap(UPrimitiveComponent* OverlappedComponent, A
 	else bHit = true;
 }
 
+void ACubeHitbox::SpawnWarningCircle(float Size, float Time)
+{
+	if ( WarningEffect )
+	{
+		// 나이아가라 시스템 스폰
+		UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			GetWorld(),
+			WarningEffect,   // WarningEffect 나이아가라 시스템
+			GetActorLocation(),        // 생성할 위치
+			GetActorRotation(),        // 생성할 회전 값
+			FVector(1.0f)    // 기본 크기
+		);
+
+		if ( NiagaraComp )
+		{
+			// 파라미터 변경
+			NiagaraComp->SetVariableFloat(FName("User.Time"), Time);  // Float 파라미터 설정
+			NiagaraComp->SetVariableFloat(FName("User.Size"), Size);   // Vector 파라미터 설정
+
+			// 일정 시간 후에 나이아가라 시스템 제거
+			FTimerHandle TimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(
+				TimerHandle,
+				[ NiagaraComp ] ()
+				{
+					if ( NiagaraComp )
+					{
+						NiagaraComp->DestroyComponent(); // 나이아가라 컴포넌트 제거
+					}
+				},
+				Time,   // Time 초 후에 실행
+					false   // 반복하지 않음
+					);
+		}
+	}
+}
 
 

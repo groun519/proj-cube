@@ -80,4 +80,5 @@ private:
 
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	void ResetIgnoreActors();
+
 };
