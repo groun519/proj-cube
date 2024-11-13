@@ -25,9 +25,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
 	FDamageEffectParams DamageEffectParams;
 
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UNiagaraSystem> WarningEffect;
-
 protected:
 	virtual void BeginPlay() override;
 	void OnHit();
@@ -41,6 +38,4 @@ protected:
 
 private:
 
-	UFUNCTION(BlueprintCallable, Category = "Warning")
-	void SpawnWarningCircle(float Size /*Sphere Radius를 50으로 나눈 값.*/, float Time);
 };

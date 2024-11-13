@@ -23,6 +23,69 @@ struct FDamageCoeff // 계수를 다루는 구조체
 	bool bIsTarget;
 };
 
+UENUM(BlueprintType)
+enum class ECCType : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Knockback UMETA(DisplayName = "Knockback"),
+	Grab UMETA(DisplayName = "Grab"),
+	Stun UMETA(DisplayName = "Stun"),
+	Slow UMETA(DisplayName = "Slow"),
+	Root UMETA(DisplayName = "Root"),
+	Silence UMETA(DisplayName = "Silence")
+};
+
+USTRUCT(BlueprintType)
+struct FCCEffect
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECCType Type = ECCType::None;
+
+
+	/** Knockback **/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knockback", meta = ( EditCondition = "Type == ECCType::Knockback", EditConditionHides ))
+	float Knockback_Force;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knockback", meta = ( EditCondition = "Type == ECCType::Knockback", EditConditionHides ))
+	FVector Knockback_Direction;
+	/** end Knockback **/
+
+
+	/** Grab **/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Grab", meta = ( EditCondition = "Type == ECCType::Grab", EditConditionHides ))
+	float Grab_Force;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Grab", meta = ( EditCondition = "Type == ECCType::Grab", EditConditionHides ))
+	FVector Grabk_Offset; // 내 위치에서 어디로 그랩되게 할지
+	/** end Grab **/
+
+
+
+	/** Stun **/
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stun", meta = ( EditCondition = "Type == ECCType::Stun", EditConditionHides ))
+	float Stun_Time;*/
+	/** end Stun **/
+
+
+	/** Slow **/
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slow", meta = ( EditCondition = "Type == ECCType::Slow", EditConditionHides ))
+	float Slow_Time;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slow", meta = ( EditCondition = "Type == ECCType::Slow", EditConditionHides ))
+	float Slow_Percent;*/
+	/** end Slow **/
+
+
+	/** Root **/
+	/** end Root **/
+
+
+	/** Silence **/
+	/** end Silence **/
+};
+
 
 USTRUCT(BlueprintType)
 struct FDamageInfo // 피해 정보 구조체
@@ -37,6 +100,9 @@ struct FDamageInfo // 피해 정보 구조체
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FDamageCoeff> Coeffs; // 계수 배열 (여러 계수를 한 피해에 넣을 수 있게 하기 위함.)
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FCCEffect> CrowdControlEffects;
 };
 
 /**

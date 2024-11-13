@@ -15,6 +15,7 @@ class P_CUBE_API ACubeHitActor : public AActor
 	GENERATED_BODY()
 	
 public:
+	ACubeHitActor();
 	
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Ability")
 	UGameplayAbility* LinkedAbility;
@@ -40,6 +41,17 @@ protected:
 	bool bDestroyOnOverlap = false;
 
 	bool bHit = false;
+
+	/** warning effects **/
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UNiagaraSystem> WarningEffect_Circle;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UNiagaraSystem> WarningEffect_Square;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UNiagaraSystem> WarningEffect_Sector;
+	/** end warning effects **/
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNiagaraSystem> ImpactEffect; // 제거될 때 생성할 이펙트
@@ -81,4 +93,14 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	void ResetIgnoreActors();
 
+	/** warning circle functions **/
+	UFUNCTION(BlueprintCallable, Category = "Warning")
+	void SpawnWarningCircle(float Size /*Sphere Radius를 50으로 나눈 값.*/, float Time);
+
+	UFUNCTION(BlueprintCallable, Category = "Warning")
+	void SpawnWarningSquare(float SizeX /*Sphere Radius를 50으로 나눈 값.*/, float SizeY /*Sphere Radius를 50으로 나눈 값.*/, float Time);
+
+	UFUNCTION(BlueprintCallable, Category = "Warning")
+	void SpawnWarningSector(float Size /*Sphere Radius를 50으로 나눈 값.*/, float Angle, float Time);
+	/** end warning circle functions **/
 };

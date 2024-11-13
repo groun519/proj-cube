@@ -11,7 +11,6 @@
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
-#include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 ACubeHitbox::ACubeHitbox()
@@ -128,43 +127,6 @@ void ACubeHitbox::OnCollisionOverlap(UPrimitiveComponent* OverlappedComponent, A
 		// false <- 제거를 안 함으로서 관통되게 함.
 	}
 	else bHit = true;
-}
-
-void ACubeHitbox::SpawnWarningCircle(float Size, float Time)
-{
-	if ( WarningEffect )
-	{
-		// 나이아가라 시스템 스폰
-		UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-			GetWorld(),
-			WarningEffect,   // WarningEffect 나이아가라 시스템
-			GetActorLocation(),        // 생성할 위치
-			GetActorRotation(),        // 생성할 회전 값
-			FVector(1.0f)    // 기본 크기
-		);
-
-		if ( NiagaraComp )
-		{
-			// 파라미터 변경
-			NiagaraComp->SetVariableFloat(FName("User.Time"), Time);  // Float 파라미터 설정
-			NiagaraComp->SetVariableFloat(FName("User.Size"), Size);   // Vector 파라미터 설정
-
-			// 일정 시간 후에 나이아가라 시스템 제거
-			FTimerHandle TimerHandle;
-			GetWorld()->GetTimerManager().SetTimer(
-				TimerHandle,
-				[ NiagaraComp ] ()
-				{
-					if ( NiagaraComp )
-					{
-						NiagaraComp->DestroyComponent(); // 나이아가라 컴포넌트 제거
-					}
-				},
-				Time,   // Time 초 후에 실행
-					false   // 반복하지 않음
-					);
-		}
-	}
 }
 
 
