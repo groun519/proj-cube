@@ -251,7 +251,7 @@ void ACubeHitActor::SpawnWarningSector(float Size, float Angle, float Time)
 			GetWorld(),
 			WarningEffect_Sector,   // WarningEffect 나이아가라 시스템
 			GetActorLocation(),        // 생성할 위치
-			GetActorRotation() + FRotator(0, 0, Angle / 2),       // 생성할 회전 값
+			GetActorRotation(),// + FRotator(0, 0, Angle / 2),       // 생성할 회전 값
 			FVector(1.0f)    // 기본 크기
 		);
 
