@@ -98,7 +98,7 @@ private:
 	void SpawnWarningCircle(float Size /*Sphere Radius를 50으로 나눈 값.*/, float Time);
 
 	UFUNCTION(BlueprintCallable, Category = "Warning")
-	void SpawnWarningSquare(float SizeX /*Sphere Radius를 50으로 나눈 값.*/, float SizeY /*Sphere Radius를 50으로 나눈 값.*/, float Time);
+	void SpawnWarningSquare(float Offset, float SizeX /*Sphere Radius를 50으로 나눈 값.*/, float SizeY /*Sphere Radius를 50으로 나눈 값.*/, float Time);
 
 	UFUNCTION(BlueprintCallable, Category = "Warning")
 	void SpawnWarningSector(float Size /*Sphere Radius를 50으로 나눈 값.*/, float Angle, float Time);
