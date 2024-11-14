@@ -81,6 +81,46 @@ FDamageEffectParams UCubeDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 				Params.AttributeCoeffs.Add(AttCoeff);
 			}
 		}
+
+		if ( DamageInfo.CrowdControlEffects.Num() > 0 )
+		{
+			for ( FCCEffect CCEffect : DamageInfo.CrowdControlEffects )
+			{
+				if ( CCEffect.Type == ECCType::Knockback )
+				{
+					Params.Knockback_ForceMagnitude = CCEffect.Knockback_ForceMagnitude;
+					if ( IsValid(TargetActor) )
+					{
+						FRotator Rotation = ( TargetActor->GetActorLocation() - GetAvatarActorFromActorInfo()->GetActorLocation() ).Rotation();
+						Rotation.Pitch = 0.f;
+						const FVector ToTarget = Rotation.Vector();
+						Params.Knockback_Force = ToTarget * CCEffect.Knockback_ForceMagnitude;
+					}
+				}
+				else if ( CCEffect.Type == ECCType::Grab )
+				{
+					Params.Grab_ForceMagnitude = CCEffect.Grab_ForceMagnitude;
+					if ( IsValid(TargetActor) )
+					{
+						FRotator Rotation = ( GetAvatarActorFromActorInfo()->GetActorLocation() - TargetActor->GetActorLocation() ).Rotation();
+						Rotation.Pitch = 0.f;
+						const FVector ToTarget = Rotation.Vector();
+						Params.Grab_Force = ToTarget * CCEffect.Grab_ForceMagnitude;
+					}
+				}
+				else if ( CCEffect.Type == ECCType::Airborne )
+				{
+					Params.Airborne_ForceMagnitude = CCEffect.Airborne_ForceMagnitude;
+					if ( IsValid(TargetActor) )
+					{
+						FRotator Rotation = FRotator(0, 0, 1);
+						Rotation.Pitch = 90.f;
+						const FVector ToTarget = Rotation.Vector();
+						Params.Airborne_Force = ToTarget * CCEffect.Airborne_ForceMagnitude;
+					}
+				}
+			}
+		}
 	}
 	else
 	{

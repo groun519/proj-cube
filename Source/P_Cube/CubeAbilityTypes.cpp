@@ -57,6 +57,10 @@ bool FCubeGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 		{
 			RepBits |= 1 << 12;
 		}
+		if ( !Knockback_Force.IsZero() )
+		{
+			RepBits |= 1 << 13;
+		}
 	}
 
 	Ar.SerializeBits(&RepBits, 11);
@@ -131,6 +135,10 @@ bool FCubeGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 			}
 		}
 		DamageType->NetSerialize(Ar, Map, bOutSuccess);
+	}
+	if ( RepBits & ( 1 << 15 ) )
+	{
+		Knockback_Force.NetSerialize(Ar, Map, bOutSuccess);
 	}
 
 	if (Ar.IsLoading())

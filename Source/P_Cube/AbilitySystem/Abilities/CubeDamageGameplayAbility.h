@@ -29,10 +29,11 @@ enum class ECCType : uint8
 	None UMETA(DisplayName = "None"),
 	Knockback UMETA(DisplayName = "Knockback"),
 	Grab UMETA(DisplayName = "Grab"),
-	Stun UMETA(DisplayName = "Stun"),
+	Airborne UMETA(DisplayName = "Airborne")/*,
+	/*Stun UMETA(DisplayName = "Stun"),
 	Slow UMETA(DisplayName = "Slow"),
 	Root UMETA(DisplayName = "Root"),
-	Silence UMETA(DisplayName = "Silence")
+	Silence UMETA(DisplayName = "Silence")*/
 };
 
 USTRUCT(BlueprintType)
@@ -46,21 +47,21 @@ struct FCCEffect
 
 	/** Knockback **/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knockback", meta = ( EditCondition = "Type == ECCType::Knockback", EditConditionHides ))
-	float Knockback_Force;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knockback", meta = ( EditCondition = "Type == ECCType::Knockback", EditConditionHides ))
-	FVector Knockback_Direction;
+	float Knockback_ForceMagnitude = 0.f;
 	/** end Knockback **/
-
 
 	/** Grab **/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Grab", meta = ( EditCondition = "Type == ECCType::Grab", EditConditionHides ))
-	float Grab_Force;
+	float Grab_ForceMagnitude = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Grab", meta = ( EditCondition = "Type == ECCType::Grab", EditConditionHides ))
-	FVector Grabk_Offset; // 내 위치에서 어디로 그랩되게 할지
+	FVector Grab_Offset = FVector::ZeroVector; // 내 위치에서 어디로 그랩되게 할지
 	/** end Grab **/
 
+	/** Airborne **/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Airborne", meta = ( EditCondition = "Type == ECCType::Airborne", EditConditionHides ))
+	float Airborne_ForceMagnitude = 0.f;
+	/** end Airborne **/
 
 
 	/** Stun **/
@@ -117,6 +118,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* TargetActor, FName Index);
 
+	UFUNCTION(BlueprintPure)
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr, FName NameIndex = "") const;
 protected:
 
