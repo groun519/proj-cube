@@ -27,47 +27,49 @@ struct FDamageEffectParams
 
 	FDamageEffectParams(){}
 
-	UPROPERTY(/*BlueprintReadWrite, EditAnywhere, Category = "DamageEffectParams"*/)
+	UPROPERTY(BlueprintReadWrite/*BlueprintReadWrite, EditAnywhere, Category = "DamageEffectParams"*/)
 	TObjectPtr<UObject> WorldContextObject = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TSubclassOf<UGameplayEffect> DamageGameplayEffectClass = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UAbilitySystemComponent> SourceAbilitySystemComponent;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UAbilitySystemComponent> TargetAbilitySystemComponent;
 
 	
 
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float AbilityLevel = 1.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FGameplayTag DamageType = FGameplayTag();
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float BaseDamage = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TArray<FCoeffs> AttributeCoeffs;
 
 
+	/** Knockback **/
+	UPROPERTY(BlueprintReadWrite) float Knockback_ForceMagnitude = 0.f;
+	UPROPERTY(BlueprintReadWrite) FVector Knockback_Force = FVector::ZeroVector;
+	/** end Knockback **/
 
-	UPROPERTY()
-	bool bKnockback = false;
+	/** Grab **/
+	UPROPERTY(BlueprintReadWrite) float Grab_ForceMagnitude = 0.f;
+	UPROPERTY(BlueprintReadWrite) FVector Grab_Offset = FVector::ZeroVector;
+	UPROPERTY(BlueprintReadWrite) FVector Grab_Force = FVector::ZeroVector;
+	/** end Grab **/
 
-	UPROPERTY()
-	float KnockbackForce = 0.f;
-
-
-	/*UPROPERTY()
-	float Duration;
-
-	UPROPERTY()
-	float Frequency;*/
+	/** Airborne **/
+	UPROPERTY(BlueprintReadWrite) float Airborne_ForceMagnitude = 0.f;
+	UPROPERTY(BlueprintReadWrite) FVector Airborne_Force = FVector::ZeroVector;
+	/** end Airborne **/
 };
 
 USTRUCT(BlueprintType)
@@ -86,6 +88,9 @@ public:
 	{
 		return DamageType;
 	}
+	FVector GetKnockbackForce() const { return Knockback_Force; }
+	FVector GetGrabForce() const { return Grab_Force; }
+	FVector GetAirborneForce() const { return Airborne_Force; }
 
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
 	void SetIsPhysicalHit(bool bInIsPhysicalHit) { bIsPhysicalHit = bInIsPhysicalHit; }
@@ -96,6 +101,9 @@ public:
 	{
 		DamageType = InDamageType;
 	}
+	void SetKnockbackForce(const FVector& InForce) { Knockback_Force = InForce; }
+	void SetGrabForce(const FVector& InForce) { Grab_Force = InForce; }
+	void SetAirborneForce(const FVector& InForce) { Airborne_Force = InForce; }
 
 	/** Returns the actual struct used for serialization, subclasses must override this! */
 	virtual UScriptStruct* GetScriptStruct() const
@@ -141,6 +149,17 @@ protected:
 
 	TSharedPtr<FGameplayTag> DamageType;
 
+	/** Knockback **/
+	UPROPERTY() FVector Knockback_Force = FVector::ZeroVector;
+	/** end Knockback **/
+
+	/** Grab **/
+	UPROPERTY() FVector Grab_Force = FVector::ZeroVector;
+	/** end Grab **/
+
+	/** Airborne **/
+	UPROPERTY() FVector Airborne_Force = FVector::ZeroVector;
+	/** end Airborne **/
 };
 
 template<>

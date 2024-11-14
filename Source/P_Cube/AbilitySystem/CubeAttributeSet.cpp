@@ -332,6 +332,30 @@ void UCubeAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 			FGameplayTagContainer TagContainer;
 			TagContainer.AddTag(FCubeGameplayTags::Get().Effects_HitReact);
 			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+
+			/** Knockback **/
+			const FVector& KnockbackForce = UCubeAbilitySystemLibrary::GetKnockbackForce(Props.EffectContextHandle);
+			if (!KnockbackForce.IsNearlyZero(1.f))
+			{
+				Props.TargetCharacter->LaunchCharacter(KnockbackForce, true, true);
+			}
+			/** end Knockback **/
+
+			/** Grab **/
+			const FVector& GrabForce = UCubeAbilitySystemLibrary::GetGrabForce(Props.EffectContextHandle);
+			if ( !GrabForce.IsNearlyZero(1.f) )
+			{
+				Props.TargetCharacter->LaunchCharacter(GrabForce, true, true);
+			}
+			/** end Grab **/
+
+			/** Airborne **/
+			const FVector& AirborneForce = UCubeAbilitySystemLibrary::GetAirborneForce(Props.EffectContextHandle);
+			if ( !AirborneForce.IsNearlyZero(1.f) )
+			{
+				Props.TargetCharacter->LaunchCharacter(AirborneForce, true, true);
+			}
+			/** end Airborne **/
 		}
 		const bool bCriticalHit = UCubeAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 		const bool bPhysicalHit = UCubeAbilitySystemLibrary::IsPhysicalHit(Props.EffectContextHandle);

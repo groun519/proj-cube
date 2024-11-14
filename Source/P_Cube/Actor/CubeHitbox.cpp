@@ -103,15 +103,41 @@ void ACubeHitbox::OnCollisionOverlap(UPrimitiveComponent* OverlappedComponent, A
 
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
-			/*const bool bKnockback = DamageEffectParams.bKnockback;
+			/** Knockback **/
+			const bool bKnockback = DamageEffectParams.Knockback_ForceMagnitude != 0.f;
 			if ( bKnockback )
 			{
-				FRotator Rotation = GetActorRotation();
-				Rotation.Pitch = 45.f;
+				const FVector ActorLocation = GetActorLocation();
+				const FVector AttackerLocation = OtherActor->GetActorLocation();
 
-				const FVector KnockbackDirection = Rotation.Vector();
-				const FVector KnockbackForceVec = KnockbackDirection * DamageEffectParams.KnockbackForce;
-			}*/
+				const FVector KnockbackDirection = ( AttackerLocation - ActorLocation ).GetSafeNormal();
+				const FVector KnockbackForce = KnockbackDirection * DamageEffectParams.Knockback_ForceMagnitude;
+				DamageEffectParams.Knockback_Force = KnockbackForce;
+			}
+			/** end Knockback **/
+
+			/** Grab **/
+			const bool bGrab = DamageEffectParams.Grab_ForceMagnitude != 0.f;
+			if ( bGrab )
+			{
+				const FVector ActorLocation = GetActorLocation();
+				const FVector AttackerLocation = OtherActor->GetActorLocation();
+
+				const FVector GrabDirection = ( ActorLocation - AttackerLocation ).GetSafeNormal();
+				const FVector GrabForce = GrabDirection * DamageEffectParams.Grab_ForceMagnitude;
+				DamageEffectParams.Grab_Force = GrabForce;
+			}
+			/** end Grab **/
+
+			/** Airborne **/
+			const bool bAirborn = DamageEffectParams.Airborne_ForceMagnitude != 0.f;
+			if ( bAirborn )
+			{
+				const FVector AirborneDirection = FVector(0, 0, 1);
+				const FVector AirborneForce = AirborneDirection * DamageEffectParams.Airborne_ForceMagnitude;
+				DamageEffectParams.Airborne_Force = AirborneForce;
+			}
+			/** end Airborne **/
 
 			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
 			UCubeAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); // damage 이펙트 적용.
