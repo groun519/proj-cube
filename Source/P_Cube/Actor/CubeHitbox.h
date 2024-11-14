@@ -22,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Collision")
 	void SetHitboxCollision(UPrimitiveComponent* CollisionComponent);
 
+	UFUNCTION(BlueprintCallable, Category = "Collision")
+	void SetHitboxCollisionToFan(USphereComponent* SphereComponent, float Angle, float InnerRadius, bool bDebugFan);
+
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
 	FDamageEffectParams DamageEffectParams;
 
@@ -31,7 +34,34 @@ protected:
 	virtual void Destroyed() override;
 
 	UFUNCTION()
-	void OnCollisionOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnCollisionOverlap(
+		UPrimitiveComponent* OverlappedComponent, 
+		AActor* OtherActor, 
+		UPrimitiveComponent* OtherComp, 
+		int32 OtherBodyIndex, 
+		bool bFromSweep, 
+		const FHitResult& SweepResult
+	);
+
+	UFUNCTION()
+	void OnFanOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor, 
+		UPrimitiveComponent* OtherComp, 
+		int32 OtherBodyIndex, 
+		bool bFromSweep, 
+		const FHitResult& SweepResult
+	);
+
+	UFUNCTION(BlueprintCallable)
+	void DebugFan();
+
+	TObjectPtr<USphereComponent> SphereComp = nullptr;
+	bool bDebugFanRad = false;
+	float Ang = 0.f;
+	float InnerRad = 0.f;
+	FVector ForwardVector;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UPrimitiveComponent> HitboxCollision = nullptr;
