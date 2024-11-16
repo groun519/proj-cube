@@ -105,6 +105,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|DamageEffect")
 	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
 
+	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayMechanics")
+	static TArray<FRotator> EvenlySpacedRotators(const FVector& Forward, const FVector& Axis, float Spread, int32 NumRotators);
+	
+	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayMechanics")
+	static TArray<FVector> EvenlyRotatedVectors(const FVector& Forward, const FVector& Axis, float Spread, int32 NumVectors);
+
 	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|DamageEffect")
 	static FGameplayEffectContextHandle ApplyDebuffEffect(const FDamageEffectParams& DamageEffectParams);
 

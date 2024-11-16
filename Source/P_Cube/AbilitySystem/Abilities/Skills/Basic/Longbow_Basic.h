@@ -19,8 +19,8 @@ public:
 	virtual FString GetBasicDescription(int32 Level) override;
 	virtual FString GetDetailedBasicDescription(int32 Level) override;
 
-	UFUNCTION(BlueprintCallable)
-	void SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, AActor* HomingTarget);
+	/*UFUNCTION(BlueprintCallable)
+	void SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, AActor* HomingTarget);*/
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Longbow_Basic")

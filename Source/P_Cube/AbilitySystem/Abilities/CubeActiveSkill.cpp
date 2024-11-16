@@ -7,19 +7,19 @@
 #include "AbilitySystemComponent.h"
 
 #include "P_Cube/Actor/CubeProjectile.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "P_Cube/Actor/CubeHitbox.h"
 
 #include "P_Cube/Character/CubeCharacterBase.h"
 
 #include "P_Cube/Interaction/CombatInterface.h"
-#include "P_Cube/CubeGameplayTags.h"
 
 void UCubeActiveSkill::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UCubeActiveSkill::SpawnProjectile(const FName ProjectileName, const FName DamageName, const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, bool bOverrideYaw, float YawOverride, AActor* InstigatorPlayer, bool bIsOnlyAttackTargetActor, AActor* TargetActor) // 투사체 생성
+void UCubeActiveSkill::SpawnProjectile(const FName ProjectileName, const FName DamageName, const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, bool bOverrideYaw, float YawOverride, AActor* InstigatorPlayer, bool bIsOnlyAttackTargetActor, AActor* TargetActor, FMultipleProjectilesFeacher MultipleProjectilesFeacher, FHomingFeacher HomingFeacher) // 투사체 생성
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
@@ -60,17 +60,27 @@ void UCubeActiveSkill::SpawnProjectile(const FName ProjectileName, const FName D
 	{
 		Projectile->TargetActor = TargetActor;
 	}
+	if ( MultipleProjectilesFeacher.bUseMultipleProjectilesFeacher )
+	{
+		
+	}
+	if ( HomingFeacher.bUseHomingFeacher )
+	{
 
+	}
+
+	/** 피해량 관련 **/
 	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor, DamageName);
-
 	FString DamageNameString = DamageName.ToString();
 	if ( DamageNameString.Contains("Heal") )
 	{
 		Projectile->bDamageTypeIsHeal = true;
 	}
 
+	/** GA 접근 가능하게 할당 **/
 	Projectile->LinkedAbility = this;
-
+	
+	/** 투사체 스폰 **/
 	Projectile->FinishSpawning(SpawnTransform);
 }
 
