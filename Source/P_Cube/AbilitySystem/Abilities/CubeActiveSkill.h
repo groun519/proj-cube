@@ -23,7 +23,13 @@ struct FMultipleProjectilesFeacher
 	float ProjectileSpread = 90.f;
 
 	UPROPERTY(BlueprintReadWrite)
-	int32 MaxNumProjectiles = 5;
+	int32 NumProjectiles = 1;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 MaxNumProjectiles = 1;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 UpgradeProjectiles = 1;
 };
 
 USTRUCT(BlueprintType)
@@ -39,6 +45,9 @@ struct FHomingFeacher
 
 	UPROPERTY(BlueprintReadWrite)
 	float HomingAccelerationMax = 3200.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	AActor* HomingTarget = nullptr;
 };
 
 /**
