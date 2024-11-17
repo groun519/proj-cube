@@ -7,19 +7,20 @@
 #include "AbilitySystemComponent.h"
 
 #include "P_Cube/Actor/CubeProjectile.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "P_Cube/Actor/CubeHitbox.h"
 
 #include "P_Cube/Character/CubeCharacterBase.h"
 
 #include "P_Cube/Interaction/CombatInterface.h"
-#include "P_Cube/CubeGameplayTags.h"
+#include "P_Cube/AbilitySystem/CubeAbilitySystemLibrary.h"
 
 void UCubeActiveSkill::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UCubeActiveSkill::SpawnProjectile(const FName ProjectileName, const FName DamageName, const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, bool bOverrideYaw, float YawOverride, AActor* InstigatorPlayer, bool bIsOnlyAttackTargetActor, AActor* TargetActor) // 투사체 생성
+void UCubeActiveSkill::SpawnProjectile(const FName ProjectileName, const FName DamageName, const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, bool bOverrideYaw, float YawOverride, AActor* InstigatorPlayer, bool bIsOnlyAttackTargetActor, AActor* TargetActor, FMultipleProjectilesFeacher MultipleProjectilesFeacher, FHomingFeacher HomingFeacher) // 투사체 생성
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
@@ -37,41 +38,106 @@ void UCubeActiveSkill::SpawnProjectile(const FName ProjectileName, const FName D
 		Rotation.Yaw += YawOverride;
 	}
 
-	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(SocketLocation);
-	SpawnTransform.SetRotation(Rotation.Quaternion());
+	const FVector Forward = Rotation.Vector();
 
-	ACubeProjectile* Projectile = GetWorld()->SpawnActorDeferred<ACubeProjectile>(
+	/*FTransform SpawnTransform;
+	SpawnTransform.SetLocation(SocketLocation);
+	SpawnTransform.SetRotation(Rotation.Quaternion());*/
+
+	/*ACubeProjectile* Projectile = GetWorld()->SpawnActorDeferred<ACubeProjectile>(
+		ProjectileClassMap[ ProjectileName ],
+		SpawnTransform,
+		GetOwningActorFromActorInfo(),
+		Cast<APawn>(GetOwningActorFromActorInfo()),
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);*/
+
+	TArray<FRotator> Rotations;
+
+	if ( MultipleProjectilesFeacher.bUseMultipleProjectilesFeacher )
+	{
+		const int32 EffectiveNumProjectiles = 
+			FMath::Min(
+				MultipleProjectilesFeacher.NumProjectiles + ( GetAbilityLevel() - 1 ) * ( MultipleProjectilesFeacher.UpgradeProjectiles ),
+				MultipleProjectilesFeacher.MaxNumProjectiles
+			);
+		Rotations = UCubeAbilitySystemLibrary::EvenlySpacedRotators(Forward, FVector::UpVector, MultipleProjectilesFeacher.ProjectileSpread, EffectiveNumProjectiles);
+	}
+	else
+	{
+		Rotations.Add(Rotation);
+	}
+
+	for ( const FRotator& Rot : Rotations ) // 발사할 투사체 개수만큼 반복 (Rotation: 각 투사체의 발사방향)
+	{
+		FTransform SpawnTransform;
+		SpawnTransform.SetLocation(SocketLocation);
+		SpawnTransform.SetRotation(Rot.Quaternion());
+
+		/** 투사체 객체 설정 **/
+		ACubeProjectile* Projectile = GetWorld()->SpawnActorDeferred<ACubeProjectile>(
 		ProjectileClassMap[ ProjectileName ],
 		SpawnTransform,
 		GetOwningActorFromActorInfo(),
 		Cast<APawn>(GetOwningActorFromActorInfo()),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-	if (InstigatorPlayer)
-	{
-		Projectile->InstigatorPlayer = InstigatorPlayer;
-	}
-	if (bIsOnlyAttackTargetActor)
-	{
-		Projectile->bIsAttackOnlyTarget = bIsOnlyAttackTargetActor;
-	}
-	if (TargetActor)
-	{
-		Projectile->TargetActor = TargetActor;
+		if ( InstigatorPlayer )
+		{
+			Projectile->InstigatorPlayer = InstigatorPlayer;
+		}
+		if ( bIsOnlyAttackTargetActor )
+		{
+			Projectile->bIsAttackOnlyTarget = bIsOnlyAttackTargetActor;
+		}
+		if ( TargetActor )
+		{
+			Projectile->TargetActor = TargetActor;
+		}
+
+		Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor, DamageName);
+		FString DamageNameString = DamageName.ToString();
+		if ( DamageNameString.Contains("Heal") )
+		{
+			Projectile->bDamageTypeIsHeal = true;
+		}
+
+		if ( HomingFeacher.HomingTarget && HomingFeacher.HomingTarget->Implements<UCombatInterface>() )
+		{
+			Projectile->ProjectileMovement->HomingTargetComponent = HomingFeacher.HomingTarget->GetRootComponent();
+		}
+		else
+		{
+			Projectile->HomingTargetSceneComponent = NewObject<USceneComponent>(USceneComponent::StaticClass());
+			Projectile->HomingTargetSceneComponent->SetWorldLocation(ProjectileTargetLocation);
+			Projectile->ProjectileMovement->HomingTargetComponent = Projectile->HomingTargetSceneComponent;
+		}
+		Projectile->ProjectileMovement->HomingAccelerationMagnitude =
+			FMath::FRandRange(
+				HomingFeacher.HomingAccelerationMin,
+				HomingFeacher.HomingAccelerationMax
+			);
+		Projectile->ProjectileMovement->bIsHomingProjectile = HomingFeacher.bUseHomingFeacher;
+
+		/** GA 접근 가능하게 할당 **/
+		Projectile->LinkedAbility = this;
+
+		/** 투사체 스폰 **/
+		Projectile->FinishSpawning(SpawnTransform);
 	}
 
-	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor, DamageName);
+	///** 피해량 관련 **/
+	//Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor, DamageName);
+	//FString DamageNameString = DamageName.ToString();
+	//if ( DamageNameString.Contains("Heal") )
+	//{
+	//	Projectile->bDamageTypeIsHeal = true;
+	//}
 
-	FString DamageNameString = DamageName.ToString();
-	if ( DamageNameString.Contains("Heal") )
-	{
-		Projectile->bDamageTypeIsHeal = true;
-	}
-
-	Projectile->LinkedAbility = this;
-
-	Projectile->FinishSpawning(SpawnTransform);
+	/** GA 접근 가능하게 할당 **/
+	/*Projectile->LinkedAbility = this;*/
+	
+	/** 투사체 스폰 **/
+	/*Projectile->FinishSpawning(SpawnTransform);*/
 }
 
 

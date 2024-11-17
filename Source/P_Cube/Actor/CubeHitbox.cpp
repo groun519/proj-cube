@@ -92,7 +92,10 @@ void ACubeHitbox::BeginPlay()
 		EAttachLocation::KeepRelativeOffset,
 		true);
 
-	ForwardVector = LinkedAbility->GetAvatarActorFromActorInfo()->GetActorForwardVector();
+	if ( LinkedAbility )
+	{
+		ForwardVector = LinkedAbility->GetAvatarActorFromActorInfo()->GetActorForwardVector();
+	}
 
 	if ( bDebugFanRad )
 	{

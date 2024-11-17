@@ -203,7 +203,7 @@ void ACubeHitActor::SpawnWarningCircle(float Size, float Time)
 	}
 }
 
-void ACubeHitActor::SpawnWarningSquare(float XOffset, float SizeX, float SizeY, float Time)
+void ACubeHitActor::SpawnWarningSquare(float OffsetX, float OffsetZ, float SizeX, float SizeY, float Time)
 {
 	if ( WarningEffect_Square )
 	{
@@ -211,7 +211,7 @@ void ACubeHitActor::SpawnWarningSquare(float XOffset, float SizeX, float SizeY, 
 		UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 			GetWorld(),
 			WarningEffect_Square,   // WarningEffect 나이아가라 시스템
-			GetActorLocation() + GetActorForwardVector() * XOffset,  // 생성할 위치
+			GetActorLocation() + GetActorForwardVector() * OffsetX + FVector(0, 0, OffsetZ),  // 생성할 위치
 			GetActorRotation(),        // 생성할 회전 값
 			FVector(1.0f)    // 기본 크기
 		);

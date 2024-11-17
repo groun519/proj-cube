@@ -11,6 +11,45 @@ class ACubeHitbox;
 class UGameplayEffect;
 struct FGameplayTag;
 
+USTRUCT(BlueprintType)
+struct FMultipleProjectilesFeacher
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bUseMultipleProjectilesFeacher = false;
+
+	UPROPERTY(BlueprintReadWrite)
+	float ProjectileSpread = 90.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 NumProjectiles = 1;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 MaxNumProjectiles = 1;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 UpgradeProjectiles = 1;
+};
+
+USTRUCT(BlueprintType)
+struct FHomingFeacher
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bUseHomingFeacher = false;
+
+	UPROPERTY(BlueprintReadWrite)
+	float HomingAccelerationMin = 1600.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	float HomingAccelerationMax = 3200.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	AActor* HomingTarget = nullptr;
+};
+
 /**
  * 
  */
@@ -34,7 +73,9 @@ protected:
 		float YawOverride = 0.f, 
 		AActor* InstigatorPlayer = nullptr,
 		bool bIsOnlyAttackTargetActor = false, 
-		AActor* TargetActor = nullptr
+		AActor* TargetActor = nullptr,
+		FMultipleProjectilesFeacher MultipleProjectilesFeacher = FMultipleProjectilesFeacher(),
+		FHomingFeacher HomingFeacher = FHomingFeacher()
 	);
 
 	UFUNCTION(BlueprintCallable, Category = "Hitbox")
@@ -50,9 +91,6 @@ protected:
 	/** Projectile Skill's Properties **/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FName, TSubclassOf<ACubeProjectile>> ProjectileClassMap;
-
-	UPROPERTY(EditDefaultsOnly)
-	int32 NumProjectiles = 5;
 	/** end Projectile Skill's Properties **/
 
 	/** Hitbox Skill's Properties **/
