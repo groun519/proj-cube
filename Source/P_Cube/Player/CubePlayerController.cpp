@@ -5,6 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
+#include "NiagaraFunctionLibrary.h"
 #include "P_Cube/AbilitySystem/CubeAbilitySystemComponent.h"
 #include "Components/SplineComponent.h"
 #include "P_Cube/Input/CubeInputComponent.h"
@@ -112,6 +113,7 @@ void ACubePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
                     bAutoRunning = true;
                 }
             }
+            UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
         }
         FollowTime = 0.f;
         bTargeting = false;

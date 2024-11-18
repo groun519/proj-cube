@@ -23,28 +23,30 @@ UCubeAttributeSet::UCubeAttributeSet()
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_PhysicalPower, GetPhysicalPowerAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_MagicalPower, GetMagicalPowerAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_AttackSpeed, GetAttackSpeedAttribute);
-
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Armor, GetArmorAttribute);
-	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_ArmorRate, GetArmorRateAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_MagicResistance, GetMagicResistanceAttribute);
-	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MagicResistanceRate, GetMagicResistanceRateAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_ArmorPenetration, GetArmorPenetrationAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_ArmorPenetrationRate, GetArmorPenetrationRateAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_MagicResistancePenetration, GetMagicResistancePenetrationAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_MagicResistancePenetrationRate, GetMagicResistancePenetrationRateAttribute);
-
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_CriticalChance, GetCriticalChanceAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_CriticalDamage, GetCriticalChanceAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_MovementSpeed, GetMovementSpeedAttribute);
-	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MovementSpeedIncreaseRate, GetMovementSpeedIncreaseRateAttribute);
-	//TagsToAttributes.Add(GameplayTags.Attributes_Primary_CriticalDamage, GetCriticalChanceAttribute); <- 쿨감 추가할것.
-	//쿨감값 / 쿨감퍼도 있어야겠네 ;; 아 그리고 마저rate도 그래프 만들어야한다.
+	TagsToAttributes.Add(GameplayTags.Attributes_Primary_CooldownReduction, GetCooldownReductionAttribute);
 
-	// 얘네들은 나중에 체젠 마젠 각각 체력바 마나바 오른쪽 끝에 텍스트로 표시할 것. 당연히 그전에 텍스트로 maxhealth maxmana 받아와 중앙에 표시하고.
+	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_ArmorRate, GetArmorRateAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MagicResistanceRate, GetMagicResistanceRateAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MaxHealth, GetMaxHealthAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MaxMana, GetMaxManaAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_HealthRegeneration, GetHealthRegenerationAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_ManaRegeneration, GetManaRegenerationAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MovementSpeedIncreaseRate, GetMovementSpeedIncreaseRateAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_CooldownReductionRate, GetCooldownReductionRateAttribute);
+	//TagsToAttributes.Add(GameplayTags.Attributes_Primary_CriticalDamage, GetCriticalChanceAttribute); <- 쿨감 추가할것.
+	//쿨감값 / 쿨감퍼도 있어야겠네 ;; 아 그리고 마저rate도 그래프 만들어야한다.
+
+	// 얘네들은 나중에 체젠 마젠 각각 체력바 마나바 오른쪽 끝에 텍스트로 표시할 것. 당연히 그전에 텍스트로 maxhealth maxmana 받아와 중앙에 표시하고.
+	
 }
 
 void UCubeAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const // 서버에서 변경사항이 발생해 복제 될 속성(attribute)들의 정보를 가져오는 함수.
@@ -64,6 +66,7 @@ void UCubeAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, ArmorPenetrationRate, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, MagicResistancePenetration, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, MagicResistancePenetrationRate, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, CooldownReduction, COND_None, REPNOTIFY_Always);
 
 	// Secondary
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, ArmorRate, COND_None, REPNOTIFY_Always);
@@ -71,6 +74,7 @@ void UCubeAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, MovementSpeedIncreaseRate, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, HealthRegeneration, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, ManaRegeneration, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, CooldownReductionRate, COND_None, REPNOTIFY_Always);
 
 	// Vital
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, Health, COND_None, REPNOTIFY_Always); // 속성의 변경사항이 생기면 속성을 복제(항상)하고, OnRep_함수를 호출함.
@@ -283,6 +287,11 @@ void UCubeAttributeSet::OnRep_MagicResistancePenetrationRate(const FGameplayAttr
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UCubeAttributeSet, MagicResistancePenetrationRate, OldMagicResistancePenetrationRate);
 }
 
+void UCubeAttributeSet::OnRep_CooldownReduction(const FGameplayAttributeData& OldCooldownReduction) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCubeAttributeSet, CooldownReduction, OldCooldownReduction);
+}
+
 //Secondary
 void UCubeAttributeSet::OnRep_ArmorRate(const FGameplayAttributeData& OldArmorRate) const
 {
@@ -307,6 +316,11 @@ void UCubeAttributeSet::OnRep_HealthRegeneration(const FGameplayAttributeData& O
 void UCubeAttributeSet::OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UCubeAttributeSet, ManaRegeneration, OldManaRegeneration);
+}
+
+void UCubeAttributeSet::OnRep_CooldownReductionRate(const FGameplayAttributeData& OldCooldownReductionRate) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCubeAttributeSet, CooldownReductionRate, OldCooldownReductionRate);
 }
 
 void UCubeAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)

@@ -73,6 +73,11 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FString("Increases Magic Armor Penetration Rate")
 	);
 
+	GameplayTags.Attributes_Primary_CooldownReduction = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Primary.CooldownReduction"),
+		FString("Increases Cooldown Reduction")
+	);
+
 	/*
 	 * Secondary Attributes
 	 */
@@ -110,6 +115,11 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Attributes_Secondary_MaxMana = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Attributes.Secondary.MaxMana"),
 		FString("Maximum amount of Mana obtainable")
+	);
+
+	GameplayTags.Attributes_Secondary_CooldownReductionRate = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Secondary.CooldownReductionRate"),
+		FString("Cooldown %")
 	);
 
 	/*
