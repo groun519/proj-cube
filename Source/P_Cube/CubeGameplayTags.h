@@ -67,6 +67,7 @@ public:
 	FGameplayTag Attributes_Primary_ArmorPenetrationRate;
 	FGameplayTag Attributes_Primary_MagicResistancePenetration;
 	FGameplayTag Attributes_Primary_MagicResistancePenetrationRate;
+	FGameplayTag Attributes_Primary_CooldownReduction;
 
 	FGameplayTag Attributes_Secondary_ArmorRate;
 	FGameplayTag Attributes_Secondary_MagicResistanceRate;
@@ -75,6 +76,7 @@ public:
 	FGameplayTag Attributes_Secondary_ManaRegeneration;
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
+	FGameplayTag Attributes_Secondary_CooldownReductionRate;
 
 	FGameplayTag Attributes_Vital_Health;
 	FGameplayTag Attributes_Vital_Mana;
