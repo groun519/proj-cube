@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "P_Cube/interaction/CombatInterface.h"
@@ -7,4 +7,4 @@
 
 
 
-// TODO : ³ªÁß¿¡ ¿©±â´Ù ÇÃ·¹ÀÌ¾î À§Ä¡ getter ¸¸µé±î ½ÍÀ½.
+// TODO : ë‚˜ì¤‘ì— ì—¬ê¸°ë‹¤ í”Œë ˆì´ì–´ ìœ„ì¹˜ getter ë§Œë“¤ê¹Œ ì‹¶ìŒ.

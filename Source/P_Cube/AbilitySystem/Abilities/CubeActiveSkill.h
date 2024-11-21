@@ -57,7 +57,27 @@ UCLASS()
 class P_CUBE_API UCubeActiveSkill : public UCubeDamageGameplayAbility
 {
 	GENERATED_BODY()
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void StoreMouseDataInfo(const FHitResult& HitResult);
+
+	UFUNCTION(BlueprintCallable)
+	void StoreOwnerVariables();
+
 protected:
+
+	UPROPERTY(BlueprintReadWrite, Category = "Holding")
+	FVector MouseHitLocation;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Holding")
+	TObjectPtr<AActor> MouseHitActor;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Holding")
+	TObjectPtr<APlayerController> OwnerPlayerController;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Holding")
+	TObjectPtr<ACharacter> OwnerCharacter;
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 

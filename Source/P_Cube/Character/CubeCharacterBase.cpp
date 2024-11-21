@@ -133,6 +133,40 @@ ECharacterClass ACubeCharacterBase::GetCharacterClass_Implementation()
 	return CharacterClass;
 }
 
+USkeletalMeshComponent* ACubeCharacterBase::GetWeapon_Implementation()
+{
+	return Weapon;
+}
+
+void ACubeCharacterBase::SetBaseWeapon_Implementation(USkeletalMesh* NewMesh, FTransform Offset)
+{
+	if ( Weapon && NewMesh )
+	{
+		BaseWeaponMesh = Weapon->SkeletalMesh;
+		Weapon->SetSkeletalMesh(NewMesh);
+		BaseWeaponOffset = Offset;
+		Weapon->SetRelativeTransform(Offset);
+	}
+}
+
+void ACubeCharacterBase::ChangeWeapon_Implementation(USkeletalMesh* NewMesh, FTransform Offset)
+{
+	if ( Weapon && NewMesh )
+	{
+		Weapon->SetSkeletalMesh(NewMesh);
+		Weapon->SetRelativeTransform(Offset);
+	}
+}
+
+void ACubeCharacterBase::ResetWeapon_Implementation()
+{
+	if ( Weapon && BaseWeaponMesh )
+	{
+		Weapon->SetSkeletalMesh(BaseWeaponMesh);
+		Weapon->SetRelativeTransform(BaseWeaponOffset);
+	}
+}
+
 void ACubeCharacterBase::InitAbilityActorInfo()
 {
 }

@@ -7,3 +7,4 @@
 #define CUSTOM_DEPTH_RED 250.f
 #define ECC_Projectile ECollisionChannel::ECC_GameTraceChannel1 // Projectile 채널 (1)
 #define ECC_Hitbox ECollisionChannel::ECC_GameTraceChannel2 // (2)
+#define ECC_Target ECollisionChannel::ECC_GameTraceChannel3 // (2)
