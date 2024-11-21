@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -90,4 +90,19 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	ECharacterClass GetCharacterClass();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetInShockLoop(bool bInLoop);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	USkeletalMeshComponent* GetWeapon();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SetBaseWeapon(USkeletalMesh* NewMesh, FTransform Offset);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ChangeWeapon(USkeletalMesh* NewMesh, FTransform Offset);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ResetWeapon();
 };

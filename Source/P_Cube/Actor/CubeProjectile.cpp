@@ -54,13 +54,22 @@ void ACubeProjectile::OnHit()
 {
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-	if ( LoopingSoundComponent ) LoopingSoundComponent->Stop();
+	if ( LoopingSoundComponent )
+	{
+		LoopingSoundComponent->Stop();
+		LoopingSoundComponent->DestroyComponent();
+	}
 	// if (GetLifeSpan() > 0)
 	bHit = true;
 }
 
 void ACubeProjectile::Destroyed()
 {
+	if ( LoopingSoundComponent )
+	{
+		LoopingSoundComponent->Stop();
+		LoopingSoundComponent->DestroyComponent();
+	}
 	if ( !bHit && !HasAuthority() ) OnHit();
 	Super::Destroyed();
 }
