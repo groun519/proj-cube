@@ -5,6 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
+#include "NiagaraFunctionLibrary.h"
 #include "P_Cube/AbilitySystem/CubeAbilitySystemComponent.h"
 #include "Components/SplineComponent.h"
 #include "P_Cube/Input/CubeInputComponent.h"
@@ -59,6 +60,14 @@ void ACubePlayerController::BeginPlay()
 
 void ACubePlayerController::CursorTrace()
 {
+    if ( GetASC() && GetASC()->HasMatchingGameplayTag(FCubeGameplayTags::Get().Player_Block_CursorTrace) )
+    {
+        if ( LastActor ) LastActor->UnHighlightActor();
+        if ( ThisActor ) ThisActor->UnHighlightActor();
+        LastActor = nullptr;
+        ThisActor = nullptr;
+        return;
+    }
     GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
     if (!CursorHit.bBlockingHit) return;
 
@@ -74,6 +83,10 @@ void ACubePlayerController::CursorTrace()
 
 void ACubePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
+    if ( GetASC() && GetASC()->HasMatchingGameplayTag(FCubeGameplayTags::Get().Player_Block_InputPressed) )
+    {
+        return;
+    }
     if (InputTag.MatchesTagExact(FCubeGameplayTags::Get().InputTag_RMB)) // RMB와 키가 일치하면, 태그 부여
     {
         bTargeting = ThisActor ? true : false; // ThisActor가 존재하면 T, 아니면 F 를 bTargeting에 할당.
@@ -83,6 +96,10 @@ void ACubePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 void ACubePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
+    if ( GetASC() && GetASC()->HasMatchingGameplayTag(FCubeGameplayTags::Get().Player_Block_InputReleased) )
+    {
+        return;
+    }
     if (!InputTag.MatchesTagExact(FCubeGameplayTags::Get().InputTag_RMB))
     {
         if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
@@ -112,14 +129,23 @@ void ACubePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
                     bAutoRunning = true;
                 }
             }
+            if ( GetASC() && !GetASC()->HasMatchingGameplayTag(FCubeGameplayTags::Get().Player_Block_InputPressed) )
+            {
+                UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
+            }
         }
         FollowTime = 0.f;
         bTargeting = false;
     }
+    if ( GetASC() ) GetASC()->AbilityInputTagPressed(InputTag);
 }
 
 void ACubePlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
+    if ( GetASC() && GetASC()->HasMatchingGameplayTag(FCubeGameplayTags::Get().Player_Block_InputHeld) )
+    {
+        return;
+    }
     if (!InputTag.MatchesTagExact(FCubeGameplayTags::Get().InputTag_RMB)) // RMB가 아닐 경우
     {
         if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);

@@ -8,6 +8,7 @@
 #include "CubePlayerController.generated.h"
 
 // 전방선언
+class UNiagaraSystem;
 class UDamageTextComponent;
 class UInputMappingContext; 
 class UInputAction;
@@ -81,6 +82,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> Spline; // 경로 곡선
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UNiagaraSystem> ClickNiagaraSystem;
 
 	void AutoRun();
 

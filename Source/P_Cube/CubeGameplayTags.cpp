@@ -73,6 +73,11 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FString("Increases Magic Armor Penetration Rate")
 	);
 
+	GameplayTags.Attributes_Primary_CooldownReduction = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Primary.CooldownReduction"),
+		FString("Increases Cooldown Reduction")
+	);
+
 	/*
 	 * Secondary Attributes
 	 */
@@ -110,6 +115,11 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Attributes_Secondary_MaxMana = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Attributes.Secondary.MaxMana"),
 		FString("Maximum amount of Mana obtainable")
+	);
+
+	GameplayTags.Attributes_Secondary_CooldownReductionRate = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Secondary.CooldownReductionRate"),
+		FString("Cooldown %")
 	);
 
 	/*
@@ -866,5 +876,29 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Montage_Attack_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Montage.Attack.4"),
 		FString("Attack 4")
+	);
+
+	/*
+	 * Player Tags
+	 */
+
+	GameplayTags.Player_Block_CursorTrace = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.Block.CursorTrace"),
+		FString("Block tracing under the cursor")
+	);
+
+	GameplayTags.Player_Block_InputHeld = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.Block.InputHeld"),
+		FString("Block Input Held callback for input")
+	);
+
+	GameplayTags.Player_Block_InputPressed = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.Block.InputPressed"),
+		FString("Block Input Pressed callback for input")
+	);
+
+	GameplayTags.Player_Block_InputReleased = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Player.Block.InputReleased"),
+		FString("Block Input Released callback for input")
 	);
 }

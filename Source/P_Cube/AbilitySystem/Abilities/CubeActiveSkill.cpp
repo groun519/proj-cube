@@ -15,6 +15,28 @@
 #include "P_Cube/Interaction/CombatInterface.h"
 #include "P_Cube/AbilitySystem/CubeAbilitySystemLibrary.h"
 
+void UCubeActiveSkill::StoreMouseDataInfo(const FHitResult& HitResult)
+{
+	if ( HitResult.bBlockingHit )
+	{
+		MouseHitLocation = HitResult.ImpactPoint;
+		MouseHitActor = HitResult.GetActor();
+	}
+	else
+	{
+		CancelAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true);
+	}
+}
+
+void UCubeActiveSkill::StoreOwnerVariables()
+{
+	if ( CurrentActorInfo )
+	{
+		OwnerPlayerController = CurrentActorInfo->PlayerController.Get();
+		OwnerCharacter = Cast<ACharacter>(CurrentActorInfo->AvatarActor);
+	}
+}
+
 void UCubeActiveSkill::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);

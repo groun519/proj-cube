@@ -128,6 +128,10 @@ public:
 	FGameplayAttributeData MagicResistancePenetrationRate;
 	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, MagicResistancePenetrationRate);
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CooldownReduction, Category = "Primary Attributes")
+	FGameplayAttributeData CooldownReduction;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, CooldownReduction);
+
 	/*
 	 * Secondary Attributes
 	 */
@@ -151,6 +155,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ManaRegeneration, Category = "Secondary Attributes")
 	FGameplayAttributeData ManaRegeneration;
 	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, ManaRegeneration);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CooldownReductionRate, Category = "Secondary Attributes")
+	FGameplayAttributeData CooldownReductionRate;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, CooldownReductionRate);
 
 	/*
 	 * Vital Attributes
@@ -235,6 +243,9 @@ public:
 	UFUNCTION()
 	void OnRep_MagicResistancePenetrationRate(const FGameplayAttributeData& OldMagicResistancePenetrationRate) const;
 
+	UFUNCTION()
+	void OnRep_CooldownReduction(const FGameplayAttributeData& OldCooldownReduction) const;
+
 	// Secondary
 
 	UFUNCTION()
@@ -251,6 +262,9 @@ public:
 
 	UFUNCTION()
 	void OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const;
+
+	UFUNCTION()
+	void OnRep_CooldownReductionRate(const FGameplayAttributeData& OldCooldownReductionRate) const;
 
 private:
 	void HandleIncomingDamage(const FEffectProperties& Props);

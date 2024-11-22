@@ -67,6 +67,7 @@ public:
 	FGameplayTag Attributes_Primary_ArmorPenetrationRate;
 	FGameplayTag Attributes_Primary_MagicResistancePenetration;
 	FGameplayTag Attributes_Primary_MagicResistancePenetrationRate;
+	FGameplayTag Attributes_Primary_CooldownReduction;
 
 	FGameplayTag Attributes_Secondary_ArmorRate;
 	FGameplayTag Attributes_Secondary_MagicResistanceRate;
@@ -75,6 +76,7 @@ public:
 	FGameplayTag Attributes_Secondary_ManaRegeneration;
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
+	FGameplayTag Attributes_Secondary_CooldownReductionRate;
 
 	FGameplayTag Attributes_Vital_Health;
 	FGameplayTag Attributes_Vital_Mana;
@@ -126,99 +128,54 @@ public:
 	FGameplayTag Abilities_Type_Scroll;
 	FGameplayTag Abilities_Type_None;
 
-	FGameplayTag Abilities_FIreStaff_Attack;
-	FGameplayTag Abilities_FIreStaff_Basic;
-	FGameplayTag Abilities_FIreStaff_Unique;
-	FGameplayTag Abilities_GravityStaff_Attack;
-	FGameplayTag Abilities_GravityStaff_Basic;
-	FGameplayTag Abilities_GravityStaff_Unique;
-	FGameplayTag Abilities_LightStaff_Attack;
-	FGameplayTag Abilities_LightStaff_Basic;
-	FGameplayTag Abilities_LightStaff_Unique;
-	FGameplayTag Abilities_MagicShield_Attack;
-	FGameplayTag Abilities_MagicShield_Basic;
-	FGameplayTag Abilities_MagicShield_Unique;
-	FGameplayTag Abilities_HugeShield_Attack;
-	FGameplayTag Abilities_HugeShield_Basic;
-	FGameplayTag Abilities_HugeShield_Unique;
-	FGameplayTag Abilities_Rappier_Attack;
-	FGameplayTag Abilities_Rappier_Basic;
-	FGameplayTag Abilities_Rappier_Unique;
-	FGameplayTag Abilities_ShortBow_Attack;
-	FGameplayTag Abilities_ShortBow_Basic;
-	FGameplayTag Abilities_ShortBow_Unique;
-	FGameplayTag Abilities_Revolver_Attack;
-	FGameplayTag Abilities_Revolver_Basic;
-	FGameplayTag Abilities_Revolver_Unique;
-	FGameplayTag Abilities_SkullStaff_Attack;
-	FGameplayTag Abilities_SkullStaff_Basic;
-	FGameplayTag Abilities_SkullStaff_Unique;
-	FGameplayTag Abilities_Ninja_Attack;
-	FGameplayTag Abilities_Ninja_Basic;
-	FGameplayTag Abilities_Ninja_Unique;
-	FGameplayTag Abilities_WorldTreesBranch_Attack;
-	FGameplayTag Abilities_WorldTreesBranch_Basic;
-	FGameplayTag Abilities_WorldTreesBranch_Unique;
-	FGameplayTag Abilities_RedFlag_Attack;
-	FGameplayTag Abilities_RedFlag_Basic;
-	FGameplayTag Abilities_RedFlag_Unique;
-	FGameplayTag Abilities_LongBow_Attack;
-	FGameplayTag Abilities_LongBow_Basic;
-	FGameplayTag Abilities_LongBow_Unique;
-	FGameplayTag Abilities_Hammer_Attack;
-	FGameplayTag Abilities_Hammer_Basic;
-	FGameplayTag Abilities_Hammer_Unique;
-	FGameplayTag Abilities_Assassin_Attack;
-	FGameplayTag Abilities_Assassin_Basic;
-	FGameplayTag Abilities_Assassin_Unique;
-	FGameplayTag Abilities_Scroll_Blink;
 
-	FGameplayTag Cooldown_FIreStaff_Attack;
-	FGameplayTag Cooldown_FIreStaff_Basic;
-	FGameplayTag Cooldown_FIreStaff_Unique;
-	FGameplayTag Cooldown_GravityStaff_Attack;
-	FGameplayTag Cooldown_GravityStaff_Basic;
-	FGameplayTag Cooldown_GravityStaff_Unique;
-	FGameplayTag Cooldown_LightStaff_Attack;
-	FGameplayTag Cooldown_LightStaff_Basic;
-	FGameplayTag Cooldown_LightStaff_Unique;
-	FGameplayTag Cooldown_MagicShield_Attack;
-	FGameplayTag Cooldown_MagicShield_Basic;
-	FGameplayTag Cooldown_MagicShield_Unique;
-	FGameplayTag Cooldown_HugeShield_Attack;
-	FGameplayTag Cooldown_HugeShield_Basic;
-	FGameplayTag Cooldown_HugeShield_Unique;
-	FGameplayTag Cooldown_Rappier_Attack;
-	FGameplayTag Cooldown_Rappier_Basic;
-	FGameplayTag Cooldown_Rappier_Unique;
-	FGameplayTag Cooldown_ShortBow_Attack;
-	FGameplayTag Cooldown_ShortBow_Basic;
-	FGameplayTag Cooldown_ShortBow_Unique;
-	FGameplayTag Cooldown_Revolver_Attack;
-	FGameplayTag Cooldown_Revolver_Basic;
-	FGameplayTag Cooldown_Revolver_Unique;
-	FGameplayTag Cooldown_SkullStaff_Attack;
-	FGameplayTag Cooldown_SkullStaff_Basic;
-	FGameplayTag Cooldown_SkullStaff_Unique;
-	FGameplayTag Cooldown_Ninja_Attack;
-	FGameplayTag Cooldown_Ninja_Basic;
-	FGameplayTag Cooldown_Ninja_Unique;
-	FGameplayTag Cooldown_WorldTreesBranch_Attack;
-	FGameplayTag Cooldown_WorldTreesBranch_Basic;
-	FGameplayTag Cooldown_WorldTreesBranch_Unique;
-	FGameplayTag Cooldown_RedFlag_Attack;
-	FGameplayTag Cooldown_RedFlag_Basic;
-	FGameplayTag Cooldown_RedFlag_Unique;
-	FGameplayTag Cooldown_LongBow_Attack;
-	FGameplayTag Cooldown_LongBow_Basic;
-	FGameplayTag Cooldown_LongBow_Unique;
-	FGameplayTag Cooldown_Hammer_Attack;
-	FGameplayTag Cooldown_Hammer_Basic;
-	FGameplayTag Cooldown_Hammer_Unique;
-	FGameplayTag Cooldown_Assassin_Attack;
-	FGameplayTag Cooldown_Assassin_Basic;
-	FGameplayTag Cooldown_Assassin_Unique;
+	/** Offensive Skill Ability Tags **/
+	FGameplayTag Abilities_FIreStaff_Attack;			FGameplayTag Abilities_FIreStaff_Basic;				FGameplayTag Abilities_FIreStaff_Unique;
+	FGameplayTag Abilities_GravityStaff_Attack;			FGameplayTag Abilities_GravityStaff_Basic;			FGameplayTag Abilities_GravityStaff_Unique;
+	FGameplayTag Abilities_LightStaff_Attack;			FGameplayTag Abilities_LightStaff_Basic;			FGameplayTag Abilities_LightStaff_Unique;
+	FGameplayTag Abilities_MagicShield_Attack;			FGameplayTag Abilities_MagicShield_Basic;			FGameplayTag Abilities_MagicShield_Unique;
+	FGameplayTag Abilities_HugeShield_Attack;			FGameplayTag Abilities_HugeShield_Basic;			FGameplayTag Abilities_HugeShield_Unique;
+	FGameplayTag Abilities_Rappier_Attack;				FGameplayTag Abilities_Rappier_Basic;				FGameplayTag Abilities_Rappier_Unique;
+	FGameplayTag Abilities_ShortBow_Attack;				FGameplayTag Abilities_ShortBow_Basic;				FGameplayTag Abilities_ShortBow_Unique;
+	FGameplayTag Abilities_Revolver_Attack;				FGameplayTag Abilities_Revolver_Basic;				FGameplayTag Abilities_Revolver_Unique;
+	FGameplayTag Abilities_SkullStaff_Attack;			FGameplayTag Abilities_SkullStaff_Basic;			FGameplayTag Abilities_SkullStaff_Unique;
+	FGameplayTag Abilities_Ninja_Attack;				FGameplayTag Abilities_Ninja_Basic;					FGameplayTag Abilities_Ninja_Unique;
+	FGameplayTag Abilities_WorldTreesBranch_Attack;		FGameplayTag Abilities_WorldTreesBranch_Basic;		FGameplayTag Abilities_WorldTreesBranch_Unique;
+	FGameplayTag Abilities_RedFlag_Attack;				FGameplayTag Abilities_RedFlag_Basic;				FGameplayTag Abilities_RedFlag_Unique;
+	FGameplayTag Abilities_LongBow_Attack;				FGameplayTag Abilities_LongBow_Basic;				FGameplayTag Abilities_LongBow_Unique;
+	FGameplayTag Abilities_Hammer_Attack;				FGameplayTag Abilities_Hammer_Basic;				FGameplayTag Abilities_Hammer_Unique;
+	FGameplayTag Abilities_Assassin_Attack;				FGameplayTag Abilities_Assassin_Basic;				FGameplayTag Abilities_Assassin_Unique;
+	FGameplayTag Abilities_SledgeHammer_Attack;			FGameplayTag Abilities_SledgeHammer_Basic;			FGameplayTag Abilities_SledgeHammer_Unique;
+	/** end Offensive Skill Ability Tags **/
+
+	/** Offensive Skill Cooldown Tags **/
+	FGameplayTag Cooldown_FIreStaff_Attack;				FGameplayTag Cooldown_FIreStaff_Basic;				FGameplayTag Cooldown_FIreStaff_Unique;
+	FGameplayTag Cooldown_GravityStaff_Attack;			FGameplayTag Cooldown_GravityStaff_Basic;			FGameplayTag Cooldown_GravityStaff_Unique;
+	FGameplayTag Cooldown_LightStaff_Attack;			FGameplayTag Cooldown_LightStaff_Basic;				FGameplayTag Cooldown_LightStaff_Unique;
+	FGameplayTag Cooldown_MagicShield_Attack;			FGameplayTag Cooldown_MagicShield_Basic;			FGameplayTag Cooldown_MagicShield_Unique;
+	FGameplayTag Cooldown_HugeShield_Attack;			FGameplayTag Cooldown_HugeShield_Basic;				FGameplayTag Cooldown_HugeShield_Unique;
+	FGameplayTag Cooldown_Rappier_Attack;				FGameplayTag Cooldown_Rappier_Basic;				FGameplayTag Cooldown_Rappier_Unique;
+	FGameplayTag Cooldown_ShortBow_Attack;				FGameplayTag Cooldown_ShortBow_Basic;				FGameplayTag Cooldown_ShortBow_Unique;
+	FGameplayTag Cooldown_Revolver_Attack;				FGameplayTag Cooldown_Revolver_Basic;				FGameplayTag Cooldown_Revolver_Unique;
+	FGameplayTag Cooldown_SkullStaff_Attack;			FGameplayTag Cooldown_SkullStaff_Basic;				FGameplayTag Cooldown_SkullStaff_Unique;
+	FGameplayTag Cooldown_Ninja_Attack;					FGameplayTag Cooldown_Ninja_Basic;					FGameplayTag Cooldown_Ninja_Unique;
+	FGameplayTag Cooldown_WorldTreesBranch_Attack;		FGameplayTag Cooldown_WorldTreesBranch_Basic;		FGameplayTag Cooldown_WorldTreesBranch_Unique;
+	FGameplayTag Cooldown_RedFlag_Attack;				FGameplayTag Cooldown_RedFlag_Basic;				FGameplayTag Cooldown_RedFlag_Unique;
+	FGameplayTag Cooldown_LongBow_Attack;				FGameplayTag Cooldown_LongBow_Basic;				FGameplayTag Cooldown_LongBow_Unique;
+	FGameplayTag Cooldown_Hammer_Attack;				FGameplayTag Cooldown_Hammer_Basic;					FGameplayTag Cooldown_Hammer_Unique;
+	FGameplayTag Cooldown_Assassin_Attack;				FGameplayTag Cooldown_Assassin_Basic;				FGameplayTag Cooldown_Assassin_Unique;
+	FGameplayTag Cooldown_SledgeHammer_Attack;			FGameplayTag Cooldown_SledgeHammer_Basic;			FGameplayTag Cooldown_SledgeHammer_Unique;
+	/** end Offensive Skill Cooldown Tags **/
+
+	/** Offensive Skill Ability Tags **/
+	FGameplayTag Abilities_Scroll_Blink;
+	/** end Offensive Skill Ability Tags **/
+
+	/** Offensive Skill Cooldown Tags **/
 	FGameplayTag Cooldown_Scroll_Blink;
+	/** end Offensive Skill Cooldown Tags **/
+
+
 
 	FGameplayTag CombatSocket_ActorLocation;
 	FGameplayTag CombatSocket_Weapon;
@@ -236,6 +193,12 @@ public:
 	TMap<FGameplayTag, FDebuffInfo> DebuffTagsToDebuffInfos;
 
 	FGameplayTag Effects_HitReact;
+
+	FGameplayTag Player_Block_InputPressed;
+	FGameplayTag Player_Block_InputHeld;
+	FGameplayTag Player_Block_InputReleased;
+	FGameplayTag Player_Block_CursorTrace;
+
 private:
 	static FCubeGameplayTags GameplayTags;
 };
