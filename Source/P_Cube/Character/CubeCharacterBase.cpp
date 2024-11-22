@@ -8,6 +8,8 @@
 #include "P_Cube/P_Cube.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "P_Cube/AbilitySystem/CubeAttributeSet.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ACubeCharacterBase::ACubeCharacterBase()
 {
@@ -59,9 +61,29 @@ void ACubeCharacterBase::MulticastHandleDeath_Implementation() // 래그돌  함
 	Dissolve(); // 사라지는 이펙트
 }
 
+void ACubeCharacterBase::MulticastUpdateMovementSpeed_Implementation(float NewSpeed)
+{ 
+	if ( UCharacterMovementComponent* MovementComp = GetCharacterMovement() )
+	{
+		MovementComp->MaxWalkSpeed = NewSpeed;
+	}
+}
+
 void ACubeCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if ( const UCubeAttributeSet* CubeAS = Cast<UCubeAttributeSet>(AttributeSet) )
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CubeAS->GetMovementSpeedIncreaseRateAttribute()).AddLambda(
+			[ this ] (const FOnAttributeChangeData& Data)
+			{
+				const float NewSpeed = BaseSpeed * Data.NewValue;
+				GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
+				MulticastUpdateMovementSpeed(NewSpeed);
+			}
+		);
+	}
 }
 
 FVector ACubeCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
