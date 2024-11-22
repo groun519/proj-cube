@@ -70,6 +70,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Class Defaults")
 	ECharacterClass CharacterClass = ECharacterClass::Dummy;
 
+	/** Movement Speed **/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Speed")
+	float BaseSpeed = 500;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastUpdateMovementSpeed(float NewSpeed);
+	/** Movement Speed **/
+
 protected:
 	virtual void BeginPlay() override;
 

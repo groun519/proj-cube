@@ -42,8 +42,6 @@ UCubeAttributeSet::UCubeAttributeSet()
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_ManaRegeneration, GetManaRegenerationAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MovementSpeedIncreaseRate, GetMovementSpeedIncreaseRateAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_CooldownReductionRate, GetCooldownReductionRateAttribute);
-	//TagsToAttributes.Add(GameplayTags.Attributes_Primary_CriticalDamage, GetCriticalChanceAttribute); <- 쿨감 추가할것.
-	//쿨감값 / 쿨감퍼도 있어야겠네 ;; 아 그리고 마저rate도 그래프 만들어야한다.
 
 	// 얘네들은 나중에 체젠 마젠 각각 체력바 마나바 오른쪽 끝에 텍스트로 표시할 것. 당연히 그전에 텍스트로 maxhealth maxmana 받아와 중앙에 표시하고.
 	
@@ -300,7 +298,7 @@ void UCubeAttributeSet::OnRep_ArmorRate(const FGameplayAttributeData& OldArmorRa
 
 void UCubeAttributeSet::OnRep_MagicResistanceRate(const FGameplayAttributeData& OldMagicResistanceRate) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UCubeAttributeSet, ArmorRate, OldMagicResistanceRate);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCubeAttributeSet, MagicResistanceRate, OldMagicResistanceRate);
 }
 
 void UCubeAttributeSet::OnRep_MovementSpeedIncreaseRate(const FGameplayAttributeData& OldMovementSpeedIncreaseRate) const
