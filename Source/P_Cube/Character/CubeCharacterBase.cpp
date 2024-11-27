@@ -44,6 +44,11 @@ void ACubeCharacterBase::Die()
 	MulticastHandleDeath();
 }
 
+FOnDeathSignature& ACubeCharacterBase::GetOnDeathDelegate()
+{
+	return OnDeathDelegate;
+}
+
 void ACubeCharacterBase::MulticastHandleDeath_Implementation() // 래그돌  함수
 {
 	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation(), GetActorRotation());
@@ -59,6 +64,8 @@ void ACubeCharacterBase::MulticastHandleDeath_Implementation() // 래그돌  함
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Dissolve(); // 사라지는 이펙트
+	bDead = true; // 이거 추가한 부분 강의 다시봐야함.
+	OnDeathDelegate.Broadcast(this);
 }
 
 void ACubeCharacterBase::MulticastUpdateMovementSpeed_Implementation(float NewSpeed)

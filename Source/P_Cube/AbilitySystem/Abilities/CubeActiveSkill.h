@@ -81,6 +81,12 @@ protected:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	void ApplyDamageByName(
+		AActor* Target,
+		FName DamageName
+		) const;
+
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	void SpawnProjectile(
 		const FName ProjectileName, 

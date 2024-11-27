@@ -141,6 +141,56 @@ FTaggedMontage UCubeDamageGameplayAbility::GetRandomTaggedMontageFromArray(const
 	return FTaggedMontage();
 }
 
+bool UCubeDamageGameplayAbility::ApplyCrowdControll(FDamageEffectParams& DEP, AActor* TargetActor, AActor* AvatarActor) const
+{
+	if ( AvatarActor->HasAuthority() )
+	{
+		if ( UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor) )
+		{
+			/** Knockback **/
+			const bool bKnockback = DEP.Knockback_ForceMagnitude != 0.f;
+			if ( bKnockback )
+			{
+				const FVector ActorLocation = AvatarActor->GetActorLocation();
+				const FVector AttackerLocation = TargetActor->GetActorLocation();
+
+				const FVector KnockbackDirection = ( AttackerLocation - ActorLocation ).GetSafeNormal();
+				const FVector KnockbackForce = KnockbackDirection * DEP.Knockback_ForceMagnitude;
+				DEP.Knockback_Force = KnockbackForce;
+			}
+			/** end Knockback **/
+
+			/** Grab **/
+			const bool bGrab = DEP.Grab_ForceMagnitude != 0.f;
+			if ( bGrab )
+			{
+				const FVector ActorLocation = AvatarActor->GetActorLocation();
+				const FVector AttackerLocation = TargetActor->GetActorLocation();
+
+				const FVector GrabDirection = ( ActorLocation - AttackerLocation ).GetSafeNormal();
+				const FVector GrabForce = GrabDirection * DEP.Grab_ForceMagnitude;
+				DEP.Grab_Force = GrabForce;
+			}
+			/** end Grab **/
+
+			/** Airborne **/
+			const bool bAirborn = DEP.Airborne_ForceMagnitude != 0.f;
+			if ( bAirborn )
+			{
+				const FVector AirborneDirection = FVector(0, 0, 1);
+				const FVector AirborneForce = AirborneDirection * DEP.Airborne_ForceMagnitude;
+				DEP.Airborne_Force = AirborneForce;
+			}
+			/** end Airborne **/
+
+			DEP.TargetAbilitySystemComponent = TargetASC;
+			return true;
+		}
+		else return false;
+	}
+	else return false;
+}
+
 //float UCubeDamageGameplayAbility::GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType)
 //{
 //	checkf(DamageTypes.Contains(DamageType), TEXT("GameplayAbilit [%s] does not contain DamageType [%s]"), *GetNameSafe(this), *DamageType.ToString());

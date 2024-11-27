@@ -39,6 +39,7 @@ public:
 	/** Combat Interface */
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	virtual void Die() override;
+	virtual FOnDeathSignature& GetOnDeathDelegate() override;
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
@@ -53,6 +54,8 @@ public:
 	virtual void ChangeWeapon_Implementation(USkeletalMesh* NewMesh, FTransform Offset) override;
 	virtual void ResetWeapon_Implementation() override;
 	/** end Combat Interface */
+
+	FOnDeathSignature OnDeathDelegate;
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
