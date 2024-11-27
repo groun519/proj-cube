@@ -104,6 +104,9 @@ struct FDamageInfo // 피해 정보 구조체
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FCCEffect> CrowdControlEffects;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<TSubclassOf<UGameplayEffect>> Effects;
 };
 
 /**
@@ -120,6 +123,8 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr, FName NameIndex = "") const;
+
+	bool ApplyCrowdControll(FDamageEffectParams& DEP, AActor* TargetActor, AActor* AvatarActor) const;
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -129,7 +134,7 @@ protected:
 	TMap<FName, FDamageInfo> DamageInfoMap;
 
 	UFUNCTION(BlueprintPure)
-	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
+	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;	
 
 	//float GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType); -> 없앰.
 };

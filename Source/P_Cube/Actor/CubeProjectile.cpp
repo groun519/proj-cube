@@ -89,64 +89,20 @@ void ACubeProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if ( !UCubeAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor) && !bDamageTypeIsHeal ) return;
 	if ( !bHit ) OnHit();
 
-
-	if (HasAuthority())
+	if ( LinkedAbility->ApplyCrowdControll(DamageEffectParams, OtherActor, SourceAvatarActor) )
 	{
-		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
-		{
-			/** Knockback **/
-			const bool bKnockback = DamageEffectParams.Knockback_ForceMagnitude != 0.f;
-			if ( bKnockback )
-			{
-				FRotator Rotation = GetActorRotation();
-				Rotation.Pitch = 0.f;
-
-				const FVector KnockbackDirection = Rotation.Vector();
-				const FVector KnockbackForce = KnockbackDirection * DamageEffectParams.Knockback_ForceMagnitude;
-				DamageEffectParams.Knockback_Force = KnockbackForce;
-			}
-			/** end Knockback **/
-
-			/** Grab **/
-			const bool bGrab = DamageEffectParams.Grab_ForceMagnitude != 0.f;
-			if ( bGrab )
-			{
-				FRotator Rotation = GetActorRotation();
-				Rotation.Pitch = 0.f;
-
-				const FVector GrabDirection = Rotation.Vector();
-				const FVector GrabForce = GrabDirection * DamageEffectParams.Grab_ForceMagnitude;
-				DamageEffectParams.Grab_Force = GrabForce;
-			}
-			/** end Grab **/
-
-			/** Airborne **/
-			const bool bAirborne = DamageEffectParams.Airborne_ForceMagnitude != 0.f;
-			if ( bAirborne )
-			{
-				FRotator Rotation = GetActorRotation();
-				Rotation.Pitch = 90.f;
-
-				const FVector AirborneDirection = Rotation.Vector();
-				const FVector AirborneForce = AirborneDirection * DamageEffectParams.Airborne_ForceMagnitude;
-				DamageEffectParams.Airborne_Force = AirborneForce;
-			}
-			/** end Airborne **/
-
-			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
-			UCubeAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); // damage 이펙트 적용.
-		}
-
-		if (bDestroyOnOverlap) 
-		{
-			Destroy();
-			if (GetLifeSpan() > 0) LoopingSoundComponent->Stop();
-		}
-		else // false <- 제거를 안 함으로서 관통되게 함.
-		{
-			IgnoreActors.Add(OtherActor);
-		}
+		UCubeAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); // damage 이펙트 적용.
 	}
 	else bHit = true;
+
+	if ( bDestroyOnOverlap )
+	{
+		Destroy();
+		if ( GetLifeSpan() > 0 ) LoopingSoundComponent->Stop();
+	}
+	else // false <- 제거를 안 함으로서 관통되게 함.
+	{
+		IgnoreActors.Add(OtherActor);
+	}
 }
 

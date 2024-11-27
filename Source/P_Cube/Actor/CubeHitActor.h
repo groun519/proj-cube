@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "P_Cube/CubeAbilityTypes.h"
+#include "P_Cube/AbilitySystem/Abilities/CubeDamageGameplayAbility.h"
 #include "GameFramework/Actor.h"
 #include "CubeHitActor.generated.h"
 
@@ -18,7 +19,7 @@ public:
 	ACubeHitActor();
 	
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Ability")
-	UGameplayAbility* LinkedAbility;
+	UCubeDamageGameplayAbility* LinkedAbility;
 
 	AActor* InstigatorPlayer;
 

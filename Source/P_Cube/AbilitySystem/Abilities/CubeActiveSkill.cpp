@@ -42,6 +42,43 @@ void UCubeActiveSkill::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
+void UCubeActiveSkill::ApplyDamageByName(AActor* Target, FName DamageName) const
+{
+	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
+	if ( !bIsServer ) return;
+
+	FDamageEffectParams DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(Target, DamageName);
+
+	FString DamageNameString = DamageName.ToString();
+	bool bDamageTypeIsHeal = false;
+	if ( DamageNameString.Contains("Heal") )
+	{
+		bDamageTypeIsHeal = true;
+	}
+
+	if ( DamageEffectParams.SourceAbilitySystemComponent == nullptr ) return;
+
+	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+	//if ( SourceAvatarActor == Target ) return; 자기자신 안때리게 하는건데 굳이?
+	if ( !UCubeAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, Target) && !bDamageTypeIsHeal ) return;
+
+	AActor* AvatarActor = GetAvatarActorFromActorInfo();
+
+	if ( ApplyCrowdControll(DamageEffectParams, Target, AvatarActor) )
+	{
+		UCubeAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); // damage 이펙트 적용.
+	}
+
+	for ( TSubclassOf<UGameplayEffect> Effect : DamageInfoMap[ DamageName ].Effects )
+	{
+		if ( Effect && DamageEffectParams.TargetAbilitySystemComponent )
+		{
+			FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingGameplayEffectSpec(Effect, 1.0f);
+			DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*EffectSpecHandle.Data.Get(), DamageEffectParams.TargetAbilitySystemComponent);
+		}
+	}
+}
+
 void UCubeActiveSkill::SpawnProjectile(const FName ProjectileName, const FName DamageName, const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, bool bOverrideYaw, float YawOverride, AActor* InstigatorPlayer, bool bIsOnlyAttackTargetActor, AActor* TargetActor, FMultipleProjectilesFeacher MultipleProjectilesFeacher, FHomingFeacher HomingFeacher) // 투사체 생성
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();

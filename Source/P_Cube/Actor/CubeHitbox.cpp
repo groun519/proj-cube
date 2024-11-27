@@ -128,80 +128,34 @@ void ACubeHitbox::Destroyed()
 
 void ACubeHitbox::OnCollisionOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnCollisionOverlap triggered with %s"), *OtherActor->GetName());
-
 	if ( DamageEffectParams.SourceAbilitySystemComponent == nullptr ) return;
 	for (AActor* ignore : IgnoreActors) 
 		if ( OtherActor == ignore ) return;
 
 	if (bIsAttackOnlyTarget)
 		if ( OtherActor != TargetActor ) return;
-	UE_LOG(LogTemp, Warning, TEXT("OnCollisionOverlap triggered with %s"), *OtherActor->GetName());
-
 
 	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
 	if ( SourceAvatarActor == OtherActor ) return;
 	if ( !UCubeAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor) && !bDamageTypeIsHeal ) return;
 	if ( !bHit ) OnHit();
-	UE_LOG(LogTemp, Warning, TEXT("OnCollisionOverlap triggered with %s"), *OtherActor->GetName());
+	if ( bOnlyPlayer && !OtherActor->ActorHasTag("Player") ) return;
 
-
-	if (HasAuthority())
+	if ( LinkedAbility->ApplyCrowdControll(DamageEffectParams, OtherActor, SourceAvatarActor) )
 	{
-		if ( bOnlyPlayer && !OtherActor->ActorHasTag("Player") ) return;
-
-		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
-		{
-			/** Knockback **/
-			const bool bKnockback = DamageEffectParams.Knockback_ForceMagnitude != 0.f;
-			if ( bKnockback )
-			{
-				const FVector ActorLocation = GetActorLocation();
-				const FVector AttackerLocation = OtherActor->GetActorLocation();
-
-				const FVector KnockbackDirection = ( AttackerLocation - ActorLocation ).GetSafeNormal();
-				const FVector KnockbackForce = KnockbackDirection * DamageEffectParams.Knockback_ForceMagnitude;
-				DamageEffectParams.Knockback_Force = KnockbackForce;
-			}
-			/** end Knockback **/
-
-			/** Grab **/
-			const bool bGrab = DamageEffectParams.Grab_ForceMagnitude != 0.f;
-			if ( bGrab )
-			{
-				const FVector ActorLocation = GetActorLocation();
-				const FVector AttackerLocation = OtherActor->GetActorLocation();
-
-				const FVector GrabDirection = ( ActorLocation - AttackerLocation ).GetSafeNormal();
-				const FVector GrabForce = GrabDirection * DamageEffectParams.Grab_ForceMagnitude;
-				DamageEffectParams.Grab_Force = GrabForce;
-			}
-			/** end Grab **/
-
-			/** Airborne **/
-			const bool bAirborn = DamageEffectParams.Airborne_ForceMagnitude != 0.f;
-			if ( bAirborn )
-			{
-				const FVector AirborneDirection = FVector(0, 0, 1);
-				const FVector AirborneForce = AirborneDirection * DamageEffectParams.Airborne_ForceMagnitude;
-				DamageEffectParams.Airborne_Force = AirborneForce;
-			}
-			/** end Airborne **/
-
-			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
-			UCubeAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); // damage 이펙트 적용.
-			IgnoreActors.Add(OtherActor);
-		}
-
-		if (bDestroyOnOverlap)
-		{
-			Destroy();
-			if (GetLifeSpan() > 0) LoopingSoundComponent->Stop();
-		}
-
-		// false <- 제거를 안 함으로서 관통되게 함.
+		UCubeAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); // damage 이펙트 적용.
 	}
 	else bHit = true;
+
+	if ( bDestroyOnOverlap )
+	{
+		Destroy();
+		if ( GetLifeSpan() > 0 ) LoopingSoundComponent->Stop();
+	}
+	else // false <- 제거를 안 함으로서 관통되게 함.
+	{
+		IgnoreActors.Add(OtherActor);
+	}
 }
 
 void ACubeHitbox::OnFanOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
