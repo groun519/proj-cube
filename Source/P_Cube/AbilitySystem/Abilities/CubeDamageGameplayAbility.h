@@ -29,10 +29,10 @@ enum class ECCType : uint8
 	None UMETA(DisplayName = "None"),
 	Knockback UMETA(DisplayName = "Knockback"),
 	Grab UMETA(DisplayName = "Grab"),
-	Airborne UMETA(DisplayName = "Airborne")/*,
-	/*Stun UMETA(DisplayName = "Stun"),
+	Airborne UMETA(DisplayName = "Airborne"),
+	Stun UMETA(DisplayName = "Stun"),
 	Slow UMETA(DisplayName = "Slow"),
-	Root UMETA(DisplayName = "Root"),
+	/*Root UMETA(DisplayName = "Root"),
 	Silence UMETA(DisplayName = "Silence")*/
 };
 
@@ -65,17 +65,17 @@ struct FCCEffect
 
 
 	/** Stun **/
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stun", meta = ( EditCondition = "Type == ECCType::Stun", EditConditionHides ))
-	float Stun_Time;*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stun", meta = ( EditCondition = "Type == ECCType::Stun", EditConditionHides ))
+	float Stun_Time;
 	/** end Stun **/
 
 
 	/** Slow **/
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slow", meta = ( EditCondition = "Type == ECCType::Slow", EditConditionHides ))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slow", meta = ( EditCondition = "Type == ECCType::Slow", EditConditionHides ))
 	float Slow_Time;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slow", meta = ( EditCondition = "Type == ECCType::Slow", EditConditionHides ))
-	float Slow_Percent;*/
+	float Slow_Rate;
 	/** end Slow **/
 
 

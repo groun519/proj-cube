@@ -161,6 +161,33 @@ FVector UCubeAbilitySystemLibrary::GetAirborneForce(const FGameplayEffectContext
 	return FVector::ZeroVector;
 }
 
+float UCubeAbilitySystemLibrary::GetStunTime(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if ( const FCubeGameplayEffectContext* CubeEffectContext = static_cast< const FCubeGameplayEffectContext* >( EffectContextHandle.Get() ) )
+	{
+		return CubeEffectContext->GetStunTime();
+	}
+	return 0.f;
+}
+
+float UCubeAbilitySystemLibrary::GetSlowTime(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if ( const FCubeGameplayEffectContext* CubeEffectContext = static_cast< const FCubeGameplayEffectContext* >( EffectContextHandle.Get() ) )
+	{
+		return CubeEffectContext->GetSlowTime();
+	}
+	return 0.f;
+}
+
+float UCubeAbilitySystemLibrary::GetSlowRate(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if ( const FCubeGameplayEffectContext* CubeEffectContext = static_cast< const FCubeGameplayEffectContext* >( EffectContextHandle.Get() ) )
+	{
+		return CubeEffectContext->GetSlowRate();
+	}
+	return 0.f;
+}
+
 bool UCubeAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
 {
 	if (const FCubeGameplayEffectContext* CubeEffectContext = static_cast<const FCubeGameplayEffectContext*>(EffectContextHandle.Get()))
@@ -227,6 +254,30 @@ void UCubeAbilitySystemLibrary::SetAirborneForce(UPARAM(ref)FGameplayEffectConte
 	if ( FCubeGameplayEffectContext* CubeEffectContext = static_cast< FCubeGameplayEffectContext* >( EffectContextHandle.Get() ) )
 	{
 		CubeEffectContext->SetAirborneForce(InForce);
+	}
+}
+
+void UCubeAbilitySystemLibrary::SetStunTime(UPARAM(ref)FGameplayEffectContextHandle& EffectContextHandle, const float InTime)
+{
+	if ( FCubeGameplayEffectContext* CubeEffectContext = static_cast< FCubeGameplayEffectContext* >( EffectContextHandle.Get() ) )
+	{
+		CubeEffectContext->SetStunTime(InTime);
+	}
+}
+
+void UCubeAbilitySystemLibrary::SetSlowTime(UPARAM(ref)FGameplayEffectContextHandle & EffectContextHandle, const float InTime)
+{
+	if ( FCubeGameplayEffectContext* CubeEffectContext = static_cast< FCubeGameplayEffectContext* >( EffectContextHandle.Get() ) )
+	{
+		CubeEffectContext->SetSlowTime(InTime);
+	}
+}
+
+void UCubeAbilitySystemLibrary::SetSlowRate(UPARAM(ref)FGameplayEffectContextHandle& EffectContextHandle, const float InRate)
+{
+	if ( FCubeGameplayEffectContext* CubeEffectContext = static_cast< FCubeGameplayEffectContext* >( EffectContextHandle.Get() ) )
+	{
+		CubeEffectContext->SetSlowRate(InRate);
 	}
 }
 
@@ -304,6 +355,7 @@ FGameplayEffectContextHandle UCubeAbilitySystemLibrary::ApplyDamageEffect(const 
 
 	FGameplayEffectContextHandle EffectContexthandle = DamageEffectParams.SourceAbilitySystemComponent->MakeEffectContext();
 	EffectContexthandle.AddSourceObject(SourceAvatarActor);
+
 	const FGameplayEffectSpecHandle SpecHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContexthandle);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.DamageType, DamageEffectParams.BaseDamage);
 
@@ -322,8 +374,10 @@ FGameplayEffectContextHandle UCubeAbilitySystemLibrary::ApplyDamageEffect(const 
 	SetKnockbackForce(EffectContexthandle, DamageEffectParams.Knockback_Force);
 	SetGrabForce(EffectContexthandle, DamageEffectParams.Grab_Force);
 	SetAirborneForce(EffectContexthandle, DamageEffectParams.Airborne_Force);
+	SetStunTime(EffectContexthandle, DamageEffectParams.Stun_Time);
 
 	DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
+
 	return EffectContexthandle;
 }
 

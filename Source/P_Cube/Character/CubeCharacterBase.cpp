@@ -8,8 +8,10 @@
 #include "P_Cube/P_Cube.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "P_Cube/AbilitySystem/CubeAttributeSet.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 
 ACubeCharacterBase::ACubeCharacterBase()
 {
@@ -26,6 +28,17 @@ ACubeCharacterBase::ACubeCharacterBase()
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	/*StunDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>("StunDebuffComponent");
+	StunDebuffComponent->SetupAttachment(GetRootComponent());
+	StunDebuffComponent->DebuffTag = GameplayTags.Debuff_Stun;*/
+}
+
+void ACubeCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACubeCharacterBase, bIsStunned);
 }
 
 UAbilitySystemComponent* ACubeCharacterBase::GetAbilitySystemComponent() const
@@ -68,12 +81,9 @@ void ACubeCharacterBase::MulticastHandleDeath_Implementation() // 래그돌  함
 	OnDeathDelegate.Broadcast(this);
 }
 
-void ACubeCharacterBase::MulticastUpdateMovementSpeed_Implementation(float NewSpeed)
-{ 
-	if ( UCharacterMovementComponent* MovementComp = GetCharacterMovement() )
-	{
-		MovementComp->MaxWalkSpeed = NewSpeed;
-	}
+void ACubeCharacterBase::OnRep_Stunned()
+{
+
 }
 
 void ACubeCharacterBase::BeginPlay()
@@ -193,6 +203,20 @@ void ACubeCharacterBase::ResetWeapon_Implementation()
 	{
 		Weapon->SetSkeletalMesh(BaseWeaponMesh);
 		Weapon->SetRelativeTransform(BaseWeaponOffset);
+	}
+}
+
+void ACubeCharacterBase::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bIsStunned = NewCount > 0;
+	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : BaseSpeed;
+}
+
+void ACubeCharacterBase::MulticastUpdateMovementSpeed_Implementation(float NewSpeed)
+{
+	if ( UCharacterMovementComponent* MovementComp = GetCharacterMovement() )
+	{
+		MovementComp->MaxWalkSpeed = NewSpeed;
 	}
 }
 

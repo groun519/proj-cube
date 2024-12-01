@@ -70,6 +70,15 @@ struct FDamageEffectParams
 	UPROPERTY(BlueprintReadWrite) float Airborne_ForceMagnitude = 0.f;
 	UPROPERTY(BlueprintReadWrite) FVector Airborne_Force = FVector::ZeroVector;
 	/** end Airborne **/
+
+	/** Stun **/
+	UPROPERTY(BlueprintReadWrite) float Stun_Time = 0.f;
+	/** end Stun **/
+
+	/** Slow **/
+	UPROPERTY(BlueprintReadWrite) float Slow_Time = 0.f;
+	UPROPERTY(BlueprintReadWrite) float Slow_Rate = 0.f;
+	/** end Slow **/
 };
 
 USTRUCT(BlueprintType)
@@ -79,31 +88,35 @@ struct FCubeGameplayEffectContext : public FGameplayEffectContext
 
 public:
 
+	/** Get **/
 	bool IsCriticalHit() const { return bIsCriticalHit; }
 	bool IsPhysicalHit() const { return bIsPhysicalHit; }
 	bool IsMagicalHit() const { return bIsMagicalHit; }
 	bool IsPureHit() const { return bIsPureHit; }
 	bool IsHealHit() const { return bIsHealHit; }
-	TSharedPtr<FGameplayTag> GetDamageType() const
-	{
-		return DamageType;
-	}
+	TSharedPtr<FGameplayTag> GetDamageType() const { return DamageType; }
+
 	FVector GetKnockbackForce() const { return Knockback_Force; }
 	FVector GetGrabForce() const { return Grab_Force; }
 	FVector GetAirborneForce() const { return Airborne_Force; }
+	float GetStunTime() const {return Stun_Time;}
+	float GetSlowTime() const {return Slow_Time;}
+	float GetSlowRate() const {return Slow_Rate;}
 
+	/** Set **/
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
 	void SetIsPhysicalHit(bool bInIsPhysicalHit) { bIsPhysicalHit = bInIsPhysicalHit; }
 	void SetIsMagicalHit(bool bInIsMagicalHit) { bIsMagicalHit = bInIsMagicalHit; }
 	void SetIsPureHit(bool bInIsPureHit) { bIsPureHit = bInIsPureHit; }
 	void SetIsHealHit(bool bInIsHealHit) { bIsHealHit = bInIsHealHit; }
-	void SetDamageType(TSharedPtr<FGameplayTag> InDamageType)
-	{
-		DamageType = InDamageType;
-	}
+	void SetDamageType(TSharedPtr<FGameplayTag> InDamageType) { DamageType = InDamageType; }
+
 	void SetKnockbackForce(const FVector& InForce) { Knockback_Force = InForce; }
 	void SetGrabForce(const FVector& InForce) { Grab_Force = InForce; }
 	void SetAirborneForce(const FVector& InForce) { Airborne_Force = InForce; }
+	void SetStunTime(const float& InTime) { Stun_Time = InTime; }
+	void SetSlowTime(const float& InTime) { Slow_Time = InTime; }
+	void SetSlowRate(const float& InRate) { Slow_Rate = InRate; }
 
 	/** Returns the actual struct used for serialization, subclasses must override this! */
 	virtual UScriptStruct* GetScriptStruct() const
@@ -160,6 +173,15 @@ protected:
 	/** Airborne **/
 	UPROPERTY() FVector Airborne_Force = FVector::ZeroVector;
 	/** end Airborne **/
+
+	/** Stun **/
+	UPROPERTY() float Stun_Time = 0.f;
+	/** end Stun **/
+
+	/** Slow **/
+	UPROPERTY() float Slow_Time = 0.f;
+	UPROPERTY() float Slow_Rate = 0.f; // 0~1
+	/** end Slow **/
 };
 
 template<>

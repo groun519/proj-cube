@@ -15,6 +15,7 @@
 #include "P_Cube/Player/CubePlayerController.h"
 
 #include "P_Cube/CubeLogChannels.h"
+#include <GameplayEffectComponents/TargetTagsGameplayEffectComponent.h>
 
 UCubeAttributeSet::UCubeAttributeSet()
 {
@@ -368,6 +369,29 @@ void UCubeAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 				Props.TargetCharacter->LaunchCharacter(AirborneForce, true, true);
 			}
 			/** end Airborne **/
+
+			/** Stun **/
+			const float StunTime = UCubeAbilitySystemLibrary::GetStunTime(Props.EffectContextHandle);
+			if ( StunTime != 0.f )
+			{
+				Debuff(
+					Props,
+					FCubeGameplayTags::Get().Debuff_Stun,
+					StunTime,
+					0.f
+					);
+			}
+			/** end Stun **/
+
+			/** Slow **/
+			const float SlowTime = UCubeAbilitySystemLibrary::GetSlowTime(Props.EffectContextHandle);
+			if ( SlowTime != 0.f )
+			{
+				const float SlowRate = UCubeAbilitySystemLibrary::GetSlowRate(Props.EffectContextHandle);
+
+				// 나중에 둔화 기능 정의할 것.
+			}
+			/** end Slow **/
 		}
 		const bool bCriticalHit = UCubeAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 		const bool bPhysicalHit = UCubeAbilitySystemLibrary::IsPhysicalHit(Props.EffectContextHandle);
@@ -405,30 +429,125 @@ void UCubeAttributeSet::HandleIncomingXP(const FEffectProperties & Props)
 	}
 }
 
-void UCubeAttributeSet::Debuff(const FEffectProperties& Props, const FGameplayTag& Debuff,
-	const float DebuffDamage, const float DebuffDuration,
-	const float DebuffFrequency, const FGameplayTag& DamageType)
+void UCubeAttributeSet::Debuff(
+	const FEffectProperties& Props, 
+	const FGameplayTag& DebuffTag, 
+	const float DebuffDuration, 
+	const float DebuffFrequency, 
+	FGameplayTag DamageType, 
+	float BaseDamage, 
+	TArray<FDebuffCoeffs> DebuffCoeffs
+)
 {
 	const FCubeGameplayTags& GameplayTags = FCubeGameplayTags::Get();
 	FGameplayEffectContextHandle EffectContext = Props.SourceASC->MakeEffectContext();
 	EffectContext.AddSourceObject(Props.SourceAvatarActor);
 
-	FString DebuffName = FString::Printf(TEXT("DynamicDebuff_%s"), *Debuff.ToString());
-	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DebuffName));
+	FString DebuffName = FString::Printf(TEXT("Dynamic%s"), *DebuffTag.ToString());
+	FName DebuffEffectName = FName(*DebuffName);
 
+	// Step 1: Create a query to find matching effects
+	FGameplayEffectQuery Query;
+	Query.CustomMatchDelegate.BindLambda([ DebuffEffectName ] (const FActiveGameplayEffect& Effect)
+	{
+			return Effect.Spec.Def && Effect.Spec.Def->GetFName() == DebuffEffectName;
+	});
+
+	// Get the active effects that match the query
+	const TArray<FActiveGameplayEffectHandle>& ActiveEffects = Props.TargetASC->GetActiveEffects(Query);
+
+	// Step 2: Collect handles of matching effects
+	TArray<FActiveGameplayEffectHandle> ActiveEffectsToRemove;
+	for ( const FActiveGameplayEffectHandle& Handle : ActiveEffects )
+	{
+		ActiveEffectsToRemove.Add(Handle);
+	}
+
+	// Step 3: Remove matching effects
+	if ( ActiveEffectsToRemove.Num() > 0 )
+	{
+		for ( const FActiveGameplayEffectHandle& HandleToRemove : ActiveEffectsToRemove )
+		{
+			Props.TargetASC->RemoveActiveGameplayEffect(HandleToRemove);
+		}
+	}
+
+
+
+	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DebuffName));
 	Effect->DurationPolicy = EGameplayEffectDurationType::HasDuration;
 	Effect->Period = DebuffFrequency;
 	Effect->DurationMagnitude = FScalableFloat(DebuffDuration);
-	Effect->InheritableOwnedTagsContainer.AddTag(Debuff);
+
+
+	UTargetTagsGameplayEffectComponent& AssetTagsComponent = Effect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
+	FInheritedTagContainer InheritedTagContainer;
+	InheritedTagContainer.Added.AddTag(DebuffTag);
+
+	if ( DebuffTag.MatchesTagExact(GameplayTags.Debuff_Stun) )
+	{
+		// Stunned, so block input
+		InheritedTagContainer.Added.AddTag(GameplayTags.Player_Block_CursorTrace);
+		InheritedTagContainer.Added.AddTag(GameplayTags.Player_Block_InputHeld);
+		InheritedTagContainer.Added.AddTag(GameplayTags.Player_Block_InputPressed);
+		InheritedTagContainer.Added.AddTag(GameplayTags.Player_Block_InputReleased);
+	}
+	AssetTagsComponent.SetAndApplyTargetTagChanges(InheritedTagContainer);
+
 	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
 	Effect->StackLimitCount = 1;
 
-	const int32 Index = Effect->Modifiers.Num();
-	Effect->Modifiers.Add(FGameplayModifierInfo());
-	FGameplayModifierInfo& ModifierInfo = Effect->Modifiers[ Index ];
-	ModifierInfo.ModifierMagnitude = FScalableFloat(DebuffDamage);
-	ModifierInfo.ModifierOp = EGameplayModOp::Additive;
-	ModifierInfo.Attribute = UCubeAttributeSet::GetIncomingDamageAttribute();
+	// 여기부터 피해 추가
+	if ( DamageType.IsValid() )
+	{
+		/** Add Modifier **/
+		const int32 Index = Effect->Modifiers.Num();
+		Effect->Modifiers.Add(FGameplayModifierInfo());
+		FGameplayModifierInfo& ModifierInfo = Effect->Modifiers[ Index ];
+		/** end Add Modifier **/
+
+		/** Add Base Damage**/
+		ModifierInfo.ModifierMagnitude = FScalableFloat(BaseDamage);
+		ModifierInfo.ModifierOp = EGameplayModOp::Additive;
+		ModifierInfo.Attribute = UCubeAttributeSet::GetIncomingDamageAttribute();
+		/** end Add Base Damage**/
+
+		/** Add Attribute Based Damages **/
+		for ( const FDebuffCoeffs& DebuffCoeff : DebuffCoeffs )
+		{
+			// Attribute Capture Definition 설정: FDebuffCoeffs에 있는 Attribute 사용
+			if ( !DebuffCoeff.Attribute.IsValid() )
+			{
+				continue; // 유효하지 않은 Attribute일 경우 스킵
+			}
+
+			FGameplayEffectAttributeCaptureDefinition CaptureDefinition(
+				DebuffCoeff.Attribute, // DebuffCoeff에 있는 Attribute 사용
+				EGameplayEffectAttributeCaptureSource::Source, // 소스에서 값을 가져옴
+				true // 스냅샷 여부
+			);
+
+			// AttributeBasedMagnitude 설정
+			FAttributeBasedFloat AttributeBasedData;
+			AttributeBasedData.BackingAttribute = CaptureDefinition;
+			AttributeBasedData.Coefficient = DebuffCoeff.Coeff;
+			AttributeBasedData.PreMultiplyAdditiveValue = 0.0f; // 필요 시 설정
+			AttributeBasedData.PostMultiplyAdditiveValue = 0.0f; // 필요 시 설정
+
+			// Attribute Based Magnitude 생성자 사용
+			FGameplayEffectModifierMagnitude AttributeBasedMagnitude(AttributeBasedData);
+
+			// Modifier에 Attribute Based Magnitude를 적용
+			const int32 AttributeIndex = Effect->Modifiers.Num();
+			Effect->Modifiers.Add(FGameplayModifierInfo());
+			FGameplayModifierInfo& AttributeModifierInfo = Effect->Modifiers[ AttributeIndex ];
+
+			AttributeModifierInfo.ModifierMagnitude = AttributeBasedMagnitude;
+			AttributeModifierInfo.ModifierOp = EGameplayModOp::Additive;
+			AttributeModifierInfo.Attribute = UCubeAttributeSet::GetIncomingDamageAttribute(); // 최종적으로 수정할 속성 설정
+		}
+		/** end Add Attribute Based Damages **/
+	}
 
 	if ( FGameplayEffectSpec* MutableSpec = new FGameplayEffectSpec(Effect, EffectContext, 1.f) )
 	{

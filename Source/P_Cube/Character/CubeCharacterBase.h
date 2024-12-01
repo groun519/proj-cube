@@ -32,7 +32,7 @@ class P_CUBE_API ACubeCharacterBase : public ACharacter, public IAbilitySystemIn
 
 public:
 	ACubeCharacterBase();
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override; // AbilitySytem getter.
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; } // AttributeSet getter.
 
@@ -63,6 +63,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;
 
+	UPROPERTY(ReplicatedUsing = OnRep_Stunned, BlueprintReadOnly)
+	bool bIsStunned = false;
+	
+	UFUNCTION()
+	virtual void OnRep_Stunned();
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	USoundBase* DeathSound;
 
@@ -72,14 +78,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Class Defaults")
 	ECharacterClass CharacterClass = ECharacterClass::Dummy;
-
-	/** Movement Speed **/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Speed")
-	float BaseSpeed = 500;
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastUpdateMovementSpeed(float NewSpeed);
-	/** Movement Speed **/
 
 protected:
 	virtual void BeginPlay() override;
@@ -102,6 +100,16 @@ protected:
 	FName RightHandSocketName;
 
 	bool bDead = false;
+
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+
+	/** Movement Speed **/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Speed")
+	float BaseSpeed = 500.f;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastUpdateMovementSpeed(float NewSpeed);
+	/** Movement Speed **/
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent; // ASC
@@ -144,8 +152,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	UNiagaraSystem* BloodEffect;
-
-	
 
 private:
 
