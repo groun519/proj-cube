@@ -20,6 +20,24 @@
 */
 
 USTRUCT()
+struct FDebuffCoeffs
+{
+	GENERATED_BODY()
+
+		FDebuffCoeffs()
+	{
+		Attribute = FGameplayAttribute();
+		Coeff = 0.f;
+	}
+
+	UPROPERTY()
+		FGameplayAttribute Attribute = FGameplayAttribute();
+
+	UPROPERTY()
+		float Coeff = 0.f;
+};
+
+USTRUCT()
 struct FEffectProperties // 이펙트의 속성을 담는 구조체.
 {
 	GENERATED_BODY()
@@ -269,11 +287,17 @@ public:
 private:
 	void HandleIncomingDamage(const FEffectProperties& Props);
 	void HandleIncomingXP(const FEffectProperties& Props);
-	void Debuff(const FEffectProperties& Props, const FGameplayTag& Debuff,
-		const float DebuffDamage,
+	void Debuff(
+		/** 필수 매개변수 **/
+		const FEffectProperties& Props,
+		const FGameplayTag& DebuffTag,
 		const float DebuffDuration,
 		const float DebuffFrequency,
-		const FGameplayTag& DamageType
+
+		/** 안필수 매개변수 (피해를 추가하고 싶을때) **/
+		FGameplayTag DamageType = FGameplayTag(),
+		float BaseDamage = 0.f,
+		TArray<FDebuffCoeffs> DebuffCoeffs = TArray<FDebuffCoeffs>{ FDebuffCoeffs() }
 		);
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit, bool bHealHit) const;

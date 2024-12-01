@@ -4,6 +4,7 @@
 #include "CubeCharacter.h"
 
 #include "AbilitySystemComponent.h"
+#include "P_Cube/CubeGameplayTags.h"
 #include "P_Cube/AbilitySystem/CubeAbilitySystemComponent.h"
 #include "P_Cube/AbilitySystem/CubeAbilitySystemLibrary.h"
 #include "P_Cube/AbilitySystem/CubeAttributeSet.h"
@@ -207,6 +208,8 @@ void ACubeCharacter::InitAbilityActorInfo() // 어빌리티 시스템 컴포넌�
 	Cast<UCubeAbilitySystemComponent>(CubePlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
 	AbilitySystemComponent = CubePlayerState->GetAbilitySystemComponent();
 	AttributeSet = CubePlayerState->GetAttributeSet();
+	//OnAscRegistered.Broadcast(AbilitySystemComponent); <- 이게뭘까 . .
+	AbilitySystemComponent->RegisterGameplayTagEvent(FCubeGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACubeCharacter::StunTagChanged);
 
 	if (ACubePlayerController* CubePlayerController = Cast<ACubePlayerController>(GetController()))
 	{
@@ -229,34 +232,6 @@ void ACubeCharacter::MulticastLevelUpParticles_Implementation() const
 void ACubeCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//ECharacterClass AssignedClass = ClassArray[ (FCString::Atoi(*GetName().Right(1)))%4 ];
-	/*ECharacterClass AssignedClass = ClassArray[ 0 ];
-
-	FString PlayerName = FString("");
-	if ( GetPlayerState() )
-	{
-		PlayerName = GetPlayerState()->GetPlayerName();
-	}
-
-	if ( PlayerName == "groun519" )
-	{
-		AssignedClass = ClassArray[ 2 ];
-	}
-	else if ( PlayerName == "Beom" )
-	{
-		AssignedClass = ClassArray[ 1 ];
-	}
-	else if ( PlayerName == "쿄쿄쿄" )
-	{
-		AssignedClass = ClassArray[ 0 ];
-	}
-	else if ( PlayerName == "poppy04" )
-	{
-		AssignedClass = ClassArray[ 4 ];
-	}
-
-	CharacterClass = AssignedClass;*/
 
 	FName WeaponSocket = TEXT("RightHand");
 	CurWeapon = GetWorld()->SpawnActor<AWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
@@ -291,6 +266,29 @@ void ACubeCharacter::BeginPlay()
 	}
 }
 
+void ACubeCharacter::OnRep_Stunned()
+{
+	if ( UCubeAbilitySystemComponent* CubeASC = Cast<UCubeAbilitySystemComponent>(AbilitySystemComponent) )
+	{
+		const FCubeGameplayTags& GameplayTags = FCubeGameplayTags::Get();
+		FGameplayTagContainer BlockedTags;
+		BlockedTags.AddTag(GameplayTags.Player_Block_CursorTrace);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputHeld);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputPressed);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputReleased);
+		if ( bIsStunned )
+		{
+			CubeASC->AddLooseGameplayTags(BlockedTags);
+			//StunDebuffComponent->Activate();
+		}
+		else
+		{
+			CubeASC->RemoveLooseGameplayTags(BlockedTags);
+			//StunDebuffComponent->Deactivate();
+		}
+	}
+}
+
 void ACubeCharacter::SetWeaponVisibility()
 {
 	CurWeapon->Weapon->SetVisibility(HaveWeapon);
@@ -304,12 +302,7 @@ void ACubeCharacter::Attack()
 	{
 		float PlayRate = 0.7f;
 		PlayAnimMontage(BagicAttackMontages[n], PlayRate);
-		//UE_LOG(LogTemp, Warning, TEXT("Attack success"));
-		//UE_LOG(LogTemp, Warning, TEXT("Montage Name: %s"), *BagicAttackMontages[n]->GetName());
-		//UE_LOG(LogTemp, Warning, TEXT("AnimNum: %d"), n);
 	}
-
-	// For example, play attack animation, apply damage to the target, etc.
 }
 
 void ACubeCharacter::MoveDest(const FVector Destination)

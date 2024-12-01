@@ -32,6 +32,8 @@ ACubeEnemy::ACubeEnemy()
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar"); // 체력바 위젯 생성
 	HealthBar->SetupAttachment(GetRootComponent()); 
+
+	BaseSpeed = 250.f;
 }
 
 void ACubeEnemy::PossessedBy(AController* NewController)
@@ -86,7 +88,7 @@ AActor* ACubeEnemy::GetCombatTarget_Implementation() const
 void ACubeEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	bHitReacting = NewCount > 0;
-	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseSpeed;
 	if (CubeAIController && CubeAIController->GetBlackboardComponent())
 	{
 		CubeAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
@@ -96,7 +98,7 @@ void ACubeEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCou
 void ACubeEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = BaseSpeed;
 	InitAbilityActorInfo();
 	if (HasAuthority())
 	{
@@ -139,6 +141,9 @@ void ACubeEnemy::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UCubeAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 
+	// Stun 태그가 추가 혹은 제거될 때, StunTagChanged()를 호출하도록 설정.
+	AbilitySystemComponent->RegisterGameplayTagEvent(FCubeGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACubeEnemy::StunTagChanged);
+
 	if (HasAuthority())
 	{
 		InitializeDefaultAttributes(); // 몬스터 attribute 초기화. (CubeCharacterBase 함수.)
@@ -148,4 +153,14 @@ void ACubeEnemy::InitAbilityActorInfo()
 void ACubeEnemy::InitializeDefaultAttributes() const
 {
 	UCubeAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
+}
+
+void ACubeEnemy::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	Super::StunTagChanged(CallbackTag, NewCount);
+
+	if ( CubeAIController && CubeAIController->GetBlackboardComponent() )
+	{
+		CubeAIController->GetBlackboardComponent()->SetValueAsBool(FName("Stunned"), bIsStunned); // 블랙보드의 Stunned boolean을 동기화.
+	}
 }

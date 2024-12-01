@@ -57,6 +57,15 @@ public:
 	static FVector GetAirborneForce(const FGameplayEffectContextHandle& EffectContextHandle);
 
 	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayEffects")
+	static float GetStunTime(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayEffects")
+	static float GetSlowTime(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayEffects")
+	static float GetSlowRate(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayEffects")
 	static bool IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle);
 
 	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayEffects")
@@ -80,6 +89,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayEffects")
 	static void SetAirborneForce(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FVector& InForce);
+
+	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayEffects")
+	static void SetStunTime(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const float InTime);
+
+	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayEffects")
+	static void SetSlowTime(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const float InTime);
+
+	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayEffects")
+	static void SetSlowRate(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const float InRate);
+
 
 	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|GameplayEffects")
 	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCriticalHit);

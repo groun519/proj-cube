@@ -119,6 +119,10 @@ FDamageEffectParams UCubeDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 						Params.Airborne_Force = ToTarget * CCEffect.Airborne_ForceMagnitude;
 					}
 				}
+				else if ( CCEffect.Type == ECCType::Stun )
+				{
+					Params.Stun_Time = CCEffect.Stun_Time;
+				}
 			}
 		}
 	}
@@ -182,6 +186,18 @@ bool UCubeDamageGameplayAbility::ApplyCrowdControll(FDamageEffectParams& DEP, AA
 				DEP.Airborne_Force = AirborneForce;
 			}
 			/** end Airborne **/
+
+			/** Stun **/
+			const bool bStun = DEP.Stun_Time != 0.f;
+			if ( bStun )
+			{
+
+			}
+			/** end Stun **/
+
+			/** Slow **/
+
+			/** end Slow **/
 
 			DEP.TargetAbilitySystemComponent = TargetASC;
 			return true;
