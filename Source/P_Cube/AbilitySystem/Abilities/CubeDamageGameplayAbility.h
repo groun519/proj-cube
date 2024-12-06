@@ -31,9 +31,7 @@ enum class ECCType : uint8
 	Grab UMETA(DisplayName = "Grab"),
 	Airborne UMETA(DisplayName = "Airborne"),
 	Stun UMETA(DisplayName = "Stun"),
-	Slow UMETA(DisplayName = "Slow"),
-	/*Root UMETA(DisplayName = "Root"),
-	Silence UMETA(DisplayName = "Silence")*/
+	Slow UMETA(DisplayName = "Slow")
 };
 
 USTRUCT(BlueprintType)
