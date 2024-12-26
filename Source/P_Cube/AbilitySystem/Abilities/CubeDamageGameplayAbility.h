@@ -8,6 +8,19 @@
 #include "P_Cube/Interaction/CombatInterface.h"
 #include "CubeDamageGameplayAbility.generated.h"
 
+UENUM(BlueprintType)
+enum class ERunes : uint8
+{
+	Rune_Specialization,
+	Rune_Size_Increase,
+	Rune_Count_Increase,
+	Rune_Repeat,
+	Rune_Damage_Increase,
+	Rune_Speed_Increase,
+	Rune_Duration_Increase,
+	None
+};
+
 USTRUCT(BlueprintType)
 struct FDamageCoeff // 계수를 다루는 구조체
 {
@@ -124,6 +137,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr, FName NameIndex = "") const;
 
+	UFUNCTION(BlueprintCallable, Category = "Stuff", Meta = ( ExpandEnumAsExecs = "Runes" ))
+	void SetRuneValues(FGameplayTag RuneTag, ERunes& Runes);
+
 	bool ApplyCrowdControll(FDamageEffectParams& DEP, AActor* TargetActor, AActor* AvatarActor) const;
 protected:
 
@@ -135,6 +151,9 @@ protected:
 
 	UFUNCTION(BlueprintPure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;	
+
+
+	
 
 	//float GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType); -> 없앰.
 };

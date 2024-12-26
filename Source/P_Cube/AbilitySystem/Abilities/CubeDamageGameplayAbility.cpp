@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "P_Cube/CubeGameplayTags.h"
 
 void UCubeDamageGameplayAbility::CauseDamage(AActor* TargetActor, FName Index) // TargetActor에게 Index번째의 피해정보를 토대로 피해를 적용함.
 {
@@ -132,6 +133,21 @@ FDamageEffectParams UCubeDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	}
 
 	return Params;
+}
+
+void UCubeDamageGameplayAbility::SetRuneValues(FGameplayTag RuneTag, ERunes& Runes)
+{
+			if (RuneTag.GetTagName() == FName("Rune.Specialization"		))	{ Runes = ERunes::Rune_Specialization;		}
+	else	if (RuneTag.GetTagName() == FName("Rune.Size.Increase"		))	{ Runes = ERunes::Rune_Size_Increase;		}
+	else	if (RuneTag.GetTagName() == FName("Rune.Count.Increase"		))	{ Runes = ERunes::Rune_Count_Increase;		}
+	else	if (RuneTag.GetTagName() == FName("Rune.Repeat"				))	{ Runes = ERunes::Rune_Repeat;				}
+	else	if (RuneTag.GetTagName() == FName("Rune.Damage.Increase"	))	{ Runes = ERunes::Rune_Damage_Increase;		}
+	else	if (RuneTag.GetTagName() == FName("Rune.Speed.Increase"		))	{ Runes = ERunes::Rune_Speed_Increase;		}
+	else	if (RuneTag.GetTagName() == FName("Rune.Duration.Increase"	))	{ Runes = ERunes::Rune_Duration_Increase;	}
+	else
+			{
+				Runes = ERunes::None;
+			}
 }
 
 FTaggedMontage UCubeDamageGameplayAbility::GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const

@@ -371,8 +371,8 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	);
 
 	GameplayTags.Abilities_Status_Fixed = UGameplayTagsManager::Get().AddNativeGameplayTag(
-	FName("Abilities.Status.Fixed"),
-	FString("Fixed Status")
+		FName("Abilities.Status.Fixed"),
+		FString("Fixed Status")
 	);
 
 	GameplayTags.Abilities_Type_None = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -396,6 +396,50 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	);
 
 
+	/** Rune Tags **/
+	GameplayTags.Rune_Specialization = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Rune.Specialization"),
+		FString("Special abilities are added to skills")
+	);
+
+	GameplayTags.Rune_Size_Increase = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Rune.Size.Increase"),
+		FString("The size of skill projectiles and the range of AoE skills increase")
+	);
+
+	GameplayTags.Rune_Count_Increase = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Rune.Count.Increase"),
+		FString("The number of skill projectiles or the number of summons for summoning skills increases")
+	);
+
+	GameplayTags.Rune_Repeat = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Rune.Repeat"),
+		FString("The number of skill projectiles fired or the number of hits confirmed by AoE skills increases")
+	);
+
+	GameplayTags.Rune_Damage_Increase = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Rune.Damage.Increase"),
+		FString("The final damage of the skill increases")
+	);
+
+	GameplayTags.Rune_Speed_Increase = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Rune.Speed.Increase"),
+		FString("Skill animation speed increases")
+	);
+
+	GameplayTags.Rune_Duration_Increase = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Rune.Duration.Increase"),
+		FString("The total retention time of the skill increases")
+	);
+
+	GameplayTags.Runes.Add(GameplayTags.Rune_Specialization);
+	GameplayTags.Runes.Add(GameplayTags.Rune_Size_Increase);
+	GameplayTags.Runes.Add(GameplayTags.Rune_Count_Increase);
+	GameplayTags.Runes.Add(GameplayTags.Rune_Repeat);
+	GameplayTags.Runes.Add(GameplayTags.Rune_Damage_Increase);
+	GameplayTags.Runes.Add(GameplayTags.Rune_Speed_Increase);
+	GameplayTags.Runes.Add(GameplayTags.Rune_Duration_Increase);
+	/** end Rune Tags **/
 
 
 	GameplayTags.Abilities_FIreStaff_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -829,6 +873,20 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FName("Cooldown.Scroll.Blink"),
 		FString("Scroll_Blink Cooldown Tag")
 	);
+
+	/** Passive Abilities **/
+
+	GameplayTags.Abilities_Passive_ManaArrow = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Passive.ManaArrow"),
+		FString("ManaArrow Passive Ability Tag")
+	);
+
+	/** end Passive Abilities **/
+
+
+
+
+
 
 	/*
 	 * Combat Sockets

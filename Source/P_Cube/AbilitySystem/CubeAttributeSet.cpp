@@ -342,9 +342,12 @@ void UCubeAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 		}
 		else
 		{
-			FGameplayTagContainer TagContainer;
-			TagContainer.AddTag(FCubeGameplayTags::Get().Effects_HitReact);
-			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			if ( Props.TargetCharacter->Implements<UCombatInterface>())
+			{
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FCubeGameplayTags::Get().Effects_HitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
 
 			/** Knockback **/
 			const FVector& KnockbackForce = UCubeAbilitySystemLibrary::GetKnockbackForce(Props.EffectContextHandle);

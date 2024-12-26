@@ -114,7 +114,6 @@ public:
 
 	FGameplayTag Abilities_None;
 
-	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
 
 	FGameplayTag Abilities_HitReact;
@@ -128,8 +127,18 @@ public:
 	FGameplayTag Abilities_Type_Scroll;
 	FGameplayTag Abilities_Type_None;
 
+	/** Rune Tags **/
+	FGameplayTag Rune_Specialization;
+	FGameplayTag Rune_Size_Increase;
+	FGameplayTag Rune_Count_Increase;
+	FGameplayTag Rune_Repeat;
+	FGameplayTag Rune_Damage_Increase;
+	FGameplayTag Rune_Speed_Increase;
+	FGameplayTag Rune_Duration_Increase;
+	/** end Rune Tags **/
 
 	/** Offensive Skill Ability Tags **/
+	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_FIreStaff_Attack;			FGameplayTag Abilities_FIreStaff_Basic;				FGameplayTag Abilities_FIreStaff_Unique;
 	FGameplayTag Abilities_GravityStaff_Attack;			FGameplayTag Abilities_GravityStaff_Basic;			FGameplayTag Abilities_GravityStaff_Unique;
 	FGameplayTag Abilities_LightStaff_Attack;			FGameplayTag Abilities_LightStaff_Basic;			FGameplayTag Abilities_LightStaff_Unique;
@@ -167,13 +176,17 @@ public:
 	FGameplayTag Cooldown_SledgeHammer_Attack;			FGameplayTag Cooldown_SledgeHammer_Basic;			FGameplayTag Cooldown_SledgeHammer_Unique;
 	/** end Offensive Skill Cooldown Tags **/
 
-	/** Offensive Skill Ability Tags **/
-	FGameplayTag Abilities_Scroll_Blink;
-	/** end Offensive Skill Ability Tags **/
+	/** Passive Skill Ability Tags **/
+	FGameplayTag Abilities_Passive_ManaArrow;
+	/** end Passive Skill Ability Tags **/
 
-	/** Offensive Skill Cooldown Tags **/
+	/** Scroll Skill Ability Tags **/
+	FGameplayTag Abilities_Scroll_Blink;
+	/** end Scroll Skill Ability Tags **/
+
+	/** Scroll Skill Cooldown Tags **/
 	FGameplayTag Cooldown_Scroll_Blink;
-	/** end Offensive Skill Cooldown Tags **/
+	/** end Scroll Skill Cooldown Tags **/
 
 
 
@@ -189,6 +202,7 @@ public:
 
 	TArray<FGameplayTag> DamageTypes;
 	TArray<FGameplayTag> DamageCoeffAttributes;
+	TArray<FGameplayTag> Runes;
 	TMap<FGameplayTag, FResistanceInfo> DamageTypesToResistanceInfos;
 	TMap<FGameplayTag, FDebuffInfo> DebuffTagsToDebuffInfos;
 
