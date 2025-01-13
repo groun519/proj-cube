@@ -147,7 +147,7 @@ void UOverlayWidgetController::OnXPChanged(int32 NewXP)
 
 void UOverlayWidgetController::ShouldEnableUniqueButton(const FGameplayTag& AbilityStatus, int32 SkillPoints, bool& bShouldAddUniqueButton)
 {
-	const FCubeGameplayTags GameplayTags = FCubeGameplayTags::Get();
+	/*const FCubeGameplayTags GameplayTags = FCubeGameplayTags::Get();
 	bShouldAddUniqueButton = false;
 	if (AbilityStatus.MatchesTagExact(GameplayTags.Abilities_Status_Fixed))
 	{
@@ -162,7 +162,7 @@ void UOverlayWidgetController::ShouldEnableUniqueButton(const FGameplayTag& Abil
 		{
 			bShouldAddUniqueButton = true;
 		}
-	}
+	}*/
 }
 
 void UOverlayWidgetController::SpendSkillPointButtonPressed(const FGameplayTag& UniqueAbilityTag, const FGameplayTag& SlotTag)
@@ -202,19 +202,39 @@ void UOverlayWidgetController::SwapSkillSlot(const FGameplayTag& AbilityTag)
 	const FGameplayTag SelectedStatus = GetCubeASC()->GetStatusFromAbilityTag(SelectedSwapWeaponAbility);
 	if ( SelectedStatus.MatchesTagExact(FCubeGameplayTags::Get().Abilities_Status_Equipped) ) // 만약 이미 가지고 있는 스킬이라면?
 	{
-		SelectedSwapSlot = GetCubeASC()->GetInputTagFromAbilityTag(SelectedWeaponAbility); // 옮길 스킬의 슬롯 찾기
+		SelectedSwapSlot = GetCubeASC()->GetSlotFromAbilityTag(SelectedWeaponAbility); // 옮길 스킬의 슬롯 찾기
 	}
 
 	// TODO : 스킬 슬롯과 스킬을 알고 있으니, 옮길 슬롯 위치와 슬롯 위치의 스킬을 받아와 서로 스왑하기.
 }
 
-void UOverlayWidgetController::EquipSkillBoxPressed(const FGameplayTag& SlotTag, const FGameplayTag& AbilityType)
+void UOverlayWidgetController::EquipSkillBoxPressed(const FGameplayTag& SlotTag, const FGameplayTag& SlotAbilityType) // 슬롯의 스킬타입
 {
 	if ( !bWaitingForEquipSelection ) return; // 장비 상태가 아니면 리턴.
 	// Check selected ability against the slot's ability type.
 	// (don't equip an offensive spell in a passive slot and vice versa)
 	const FGameplayTag& SelectedAbilityType = AbilityInfo->FindAbilityInfoForTag(SelectedWeaponAbility).AbilityType; // 선택한 스킬의 타입을 저장.
-	if ( !SelectedAbilityType.MatchesTagExact(AbilityType) ) return; // 스킬 타입이 스크롤인지 일반인지 다시 한번 체크하고, 다르다면 리턴.
+
+	const bool bIsSameType =
+		SelectedAbilityType.MatchesTagExact(SlotAbilityType)
+		||
+		(
+			SelectedAbilityType == FCubeGameplayTags::Get().Abilities_Type_Offensive
+			||
+			SelectedAbilityType == FCubeGameplayTags::Get().Abilities_Type_Passive
+		)
+		||
+		(
+			SlotAbilityType == FCubeGameplayTags::Get().Abilities_Type_Offensive
+			||
+			SlotAbilityType == FCubeGameplayTags::Get().Abilities_Type_Passive
+		);
+
+	if ( !bIsSameType ) return;
+
+	GetCubeASC()->ServerAddAbility(SelectedWeaponAbility);
+
+	//if ( !SelectedAbilityType.MatchesTagExact(SlotAbilityType) ) return;
 
 	GetCubeASC()->ServerEquipAbility(SelectedWeaponAbility, SlotTag, false); // 서버 단위로 작동하는 스킬 장비 함수를 호출.
 }
@@ -235,7 +255,7 @@ void UOverlayWidgetController::OnAbilityEquipped(const FGameplayTag & AbilityTag
 	const FCubeGameplayTags& GameplayTags = FCubeGameplayTags::Get();
 
 	FCubeAbilityInfo LastSlotInfo;
-	LastSlotInfo.StatusTag = GameplayTags.Abilities_Status_UnEquipped;
+	LastSlotInfo.StatusTag = GameplayTags.Abilities_Status_Locked;
 	LastSlotInfo.InputTag = PreviousSlot;
 	LastSlotInfo.AbilityTag = GameplayTags.Abilities_None;
 	// Broadcast empty info if PreviousSlot is a valid slot. Only if equipping an already-equipped spell

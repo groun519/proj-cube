@@ -104,7 +104,7 @@ public:
 	void SwapSkillSlot(const FGameplayTag& AbilityTag);
 
 	UFUNCTION(BlueprintCallable)
-	void EquipSkillBoxPressed(const FGameplayTag& SlotTag, const FGameplayTag& AbilityType);
+	void EquipSkillBoxPressed(const FGameplayTag& SlotTag, const FGameplayTag& SlotAbilityType);
 	
 	UFUNCTION(BlueprintCallable)
 	FGameplayTag GetUniqueTagByBasicTag(const FGameplayTag& BasicTag);
@@ -127,7 +127,7 @@ protected:
 private:
 
 	static void ShouldEnableUniqueButton(const FGameplayTag& AbilityStatus, int32 SkillPoints, bool& bShouldAddUniqueButton);
-	FSelectedUniqueAbility SelectedUniqueAbility = { FCubeGameplayTags::Get().Abilities_None,  FCubeGameplayTags::Get().Abilities_Status_UnEquipped };
+	FSelectedUniqueAbility SelectedUniqueAbility = { FCubeGameplayTags::Get().Abilities_None,  FCubeGameplayTags::Get().Abilities_Status_Locked };
 	int32 CurrentSkillPoints = 0;
 
 	bool bWaitingForEquipSelection = false;

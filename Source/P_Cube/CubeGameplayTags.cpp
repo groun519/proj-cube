@@ -360,19 +360,19 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FString("Hit React Ability")
 	);
 
-	GameplayTags.Abilities_Status_UnEquipped = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Abilities.Status.UnEquipped"),
-		FString("UnEquipped Status")
+	GameplayTags.Abilities_Status_Locked = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.Locked"),
+		FString("Locked Status")
+	);
+
+	GameplayTags.Abilities_Status_UnLocked = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Status.UnLocked"),
+		FString("UnLocked Status")
 	);
 
 	GameplayTags.Abilities_Status_Equipped = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Status.Equipped"),
 		FString("Equipped Status")
-	);
-
-	GameplayTags.Abilities_Status_Fixed = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Abilities.Status.Fixed"),
-		FString("Fixed Status")
 	);
 
 	GameplayTags.Abilities_Type_None = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -634,6 +634,17 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FName("Abilities.Assassin.Unique"),
 		FString("Assassin's Unique Ability Tag")
 	);
+
+	GameplayTags.Abilities_Explosion = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Explosion"),
+		FString("Explosion Ability Tag")
+	);
+	GameplayTags.Cooldown_Explosion = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Explosion"),
+		FString("Explosion Cooldown Tag")
+	);
+
+
 
 	GameplayTags.Abilities_Scroll_Blink = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Scroll.Bink"),

@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "P_Cube/AbilitySystem/Passive/PassiveNiagaraComponent.h"
 #include "P_Cube/AbilitySystem/Abilities/CubeDamageGameplayAbility.h"
+
 #include "CubePassiveAbility.generated.h"
 
 /**
@@ -18,4 +20,12 @@ public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	
 	void ReceiveDeactivate(const FGameplayTag& AbilityTag);
+
+	TObjectPtr<UPassiveNiagaraComponent> PassiveNiagaraComp;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UNiagaraSystem> PassiveNiagara;
+
+	UPROPERTY(EditDefaultsOnly)
+	FGameplayTag PassiveTag;
 };

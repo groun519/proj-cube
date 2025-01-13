@@ -17,6 +17,7 @@ class IEnemyInterface;
 class UCubeInputConfig;
 class UCubeAbilitySystemComponent;
 class USplineComponent;
+class ADecalEffectActor;
 
 /**
  *
@@ -39,6 +40,11 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit, bool bHealHit);
 
+	UFUNCTION(BlueprintCallable)
+	void ShowDecalEffectActor(UMaterialInterface* DecalMaterial = nullptr);
+
+	UFUNCTION(BlueprintCallable)
+	void HideDecalEffectActor();
 protected:
 	virtual void BeginPlay();
 	virtual void SetupInputComponent() override;
@@ -90,4 +96,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ADecalEffectActor> DecalEffectActorClass;
+
+	UPROPERTY()
+	TObjectPtr<ADecalEffectActor> DecalEffectActor;
+
+	void UpdateDecalEffectActorLocation();
 };

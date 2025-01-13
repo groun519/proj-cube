@@ -9,6 +9,7 @@
 #include "P_Cube/Interaction/CombatInterface.h"
 #include "CubeCharacterBase.generated.h"
 
+class UPassiveNiagaraComponent;
 class UNiagaraSystem;
 class UAbilitySystemComponent;
 class UAttributeSet;
@@ -32,6 +33,7 @@ class P_CUBE_API ACubeCharacterBase : public ACharacter, public IAbilitySystemIn
 
 public:
 	ACubeCharacterBase();
+	virtual void Tick(float DeltaTime) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override; // AbilitySytem getter.
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; } // AttributeSet getter.
@@ -53,7 +55,10 @@ public:
 	virtual void SetBaseWeapon_Implementation(USkeletalMesh* NewMesh, FTransform Offset) override;
 	virtual void ChangeWeapon_Implementation(USkeletalMesh* NewMesh, FTransform Offset) override;
 	virtual void ResetWeapon_Implementation() override;
+	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override;
 	/** end Combat Interface */
+
+	FOnASCRegistered OnAscRegistered;
 
 	FOnDeathSignature OnDeathDelegate;
 
@@ -78,6 +83,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Class Defaults")
 	ECharacterClass CharacterClass = ECharacterClass::Dummy;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USceneComponent> EffectAttachComponent;
 
 protected:
 	virtual void BeginPlay() override;
@@ -153,16 +161,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	UNiagaraSystem* BloodEffect;
 
+
+
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TMap<FName, FStartupAbilities> StartupAbilitiesMap;
 	//TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 	
-
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
+
+	
 };

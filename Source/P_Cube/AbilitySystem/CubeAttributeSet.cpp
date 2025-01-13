@@ -418,13 +418,22 @@ void UCubeAttributeSet::HandleIncomingXP(const FEffectProperties & Props)
 		const int32 NumLevelUps = NewLevel - CurrentLevel;
 		if ( NumLevelUps > 0 )
 		{
-			const int32 MoneyReward = IPlayerInterface::Execute_GetMoneyReward(Props.SourceCharacter, CurrentLevel);
-			const int32 SkillPointsReward = IPlayerInterface::Execute_GetSkillPointsReward(Props.SourceCharacter, CurrentLevel);
 			IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelUps);
+
+			int32 MoneyReward = 0;
+			int32 SkillPointsReward = 0;
+			for ( int32 i = 0; i < NumLevelUps; ++i )
+			{
+				MoneyReward += IPlayerInterface::Execute_GetMoneyReward(Props.SourceCharacter, CurrentLevel + i);
+				SkillPointsReward += IPlayerInterface::Execute_GetSkillPointsReward(Props.SourceCharacter, CurrentLevel + i);
+			}
+
 			IPlayerInterface::Execute_AddToMoney(Props.SourceCharacter, MoneyReward);
 			IPlayerInterface::Execute_AddToSkillPoints(Props.SourceCharacter, SkillPointsReward);
+
 			bLevelUpHealthReward = true;
 			bLevelUpManaReward = true;
+
 			IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
 		}
 

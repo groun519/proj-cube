@@ -118,9 +118,9 @@ public:
 
 	FGameplayTag Abilities_HitReact;
 
-	FGameplayTag Abilities_Status_UnEquipped;
+	FGameplayTag Abilities_Status_Locked;
+	FGameplayTag Abilities_Status_UnLocked;
 	FGameplayTag Abilities_Status_Equipped;
-	FGameplayTag Abilities_Status_Fixed;
 
 	FGameplayTag Abilities_Type_Offensive;
 	FGameplayTag Abilities_Type_Passive;
@@ -155,6 +155,8 @@ public:
 	FGameplayTag Abilities_Hammer_Attack;				FGameplayTag Abilities_Hammer_Basic;				FGameplayTag Abilities_Hammer_Unique;
 	FGameplayTag Abilities_Assassin_Attack;				FGameplayTag Abilities_Assassin_Basic;				FGameplayTag Abilities_Assassin_Unique;
 	FGameplayTag Abilities_SledgeHammer_Attack;			FGameplayTag Abilities_SledgeHammer_Basic;			FGameplayTag Abilities_SledgeHammer_Unique;
+	
+	FGameplayTag Abilities_Explosion;
 	/** end Offensive Skill Ability Tags **/
 
 	/** Offensive Skill Cooldown Tags **/
@@ -174,6 +176,8 @@ public:
 	FGameplayTag Cooldown_Hammer_Attack;				FGameplayTag Cooldown_Hammer_Basic;					FGameplayTag Cooldown_Hammer_Unique;
 	FGameplayTag Cooldown_Assassin_Attack;				FGameplayTag Cooldown_Assassin_Basic;				FGameplayTag Cooldown_Assassin_Unique;
 	FGameplayTag Cooldown_SledgeHammer_Attack;			FGameplayTag Cooldown_SledgeHammer_Basic;			FGameplayTag Cooldown_SledgeHammer_Unique;
+	
+	FGameplayTag Cooldown_Explosion;
 	/** end Offensive Skill Cooldown Tags **/
 
 	/** Passive Skill Ability Tags **/

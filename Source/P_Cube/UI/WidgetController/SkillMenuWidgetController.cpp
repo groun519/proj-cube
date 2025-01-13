@@ -61,7 +61,7 @@ void USkillMenuWidgetController::SkillBoxSelected(const FGameplayTag& AbilityTag
 	const bool bSpecValid = AbilitySpec != nullptr;
 	if (!bTagValid || bTagNone || !bSpecValid)
 	{
-		AbilityStatus = GameplayTags.Abilities_Status_UnEquipped; // 원래 Locked였는데 무슨 쓸모인지 잘 모르겠음
+		AbilityStatus = GameplayTags.Abilities_Status_Locked; // 원래 Locked였는데 무슨 쓸모인지 잘 모르겠음
 	}
 	else
 	{
@@ -79,7 +79,7 @@ void USkillMenuWidgetController::SkillBoxSelected(const FGameplayTag& AbilityTag
 void USkillMenuWidgetController::BoxDeselect()
 {
 	SelectedAbility.Ability = FCubeGameplayTags::Get().Abilities_None;
-	SelectedAbility.Status = FCubeGameplayTags::Get().Abilities_Status_UnEquipped;
+	SelectedAbility.Status = FCubeGameplayTags::Get().Abilities_Status_Locked;
 	SkillMenuBoxSelectedDelegate.Broadcast(FString(), FString());
 }
 

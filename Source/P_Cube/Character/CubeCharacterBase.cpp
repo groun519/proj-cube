@@ -32,6 +32,15 @@ ACubeCharacterBase::ACubeCharacterBase()
 	/*StunDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>("StunDebuffComponent");
 	StunDebuffComponent->SetupAttachment(GetRootComponent());
 	StunDebuffComponent->DebuffTag = GameplayTags.Debuff_Stun;*/
+	
+	EffectAttachComponent = CreateDefaultSubobject<USceneComponent>("EffectAttachPoint");
+	EffectAttachComponent->SetupAttachment(GetRootComponent());
+}
+
+void ACubeCharacterBase::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	EffectAttachComponent->SetWorldRotation(FRotator::ZeroRotator);
 }
 
 void ACubeCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -204,6 +213,11 @@ void ACubeCharacterBase::ResetWeapon_Implementation()
 		Weapon->SetSkeletalMesh(BaseWeaponMesh);
 		Weapon->SetRelativeTransform(BaseWeaponOffset);
 	}
+}
+
+FOnASCRegistered ACubeCharacterBase::GetOnASCRegisteredDelegate()
+{
+	return OnAscRegistered;
 }
 
 void ACubeCharacterBase::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)

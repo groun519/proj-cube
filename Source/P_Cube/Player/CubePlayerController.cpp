@@ -7,6 +7,8 @@
 #include "NavigationSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "P_Cube/AbilitySystem/CubeAbilitySystemComponent.h"
+#include "P_Cube/Actor/DecalEffectActor.h"
+#include "Components/DecalComponent.h"
 #include "Components/SplineComponent.h"
 #include "P_Cube/Input/CubeInputComponent.h"
 #include "P_Cube/Interaction/EnemyInterface.h"
@@ -24,6 +26,7 @@ void ACubePlayerController::PlayerTick(float DeltaTime)
     Super::PlayerTick(DeltaTime);
     CursorTrace();
     AutoRun();
+    UpdateDecalEffectActorLocation();
 }
 
 void ACubePlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bCriticalHit, bool bPhysicalHit, bool bMagicalHit, bool bPureHit, bool bHealHit)
@@ -35,6 +38,26 @@ void ACubePlayerController::ShowDamageNumber_Implementation(float DamageAmount, 
         DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); // 컴포넌트를 루트 컴포넌트 자식으로 설정. 루트 컴포넌트의 트랜스폼으로 위치가 수정됨.
         DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); // 월드 좌표를 유지한 상태로, 컴포넌트를 분리.
         DamageText->SetDamageText(DamageAmount, bCriticalHit, bPhysicalHit, bMagicalHit, bPureHit, bHealHit); // 데미지 양을 표시하도록 데미지 텍스트 설정
+    }
+}
+
+void ACubePlayerController::ShowDecalEffectActor(UMaterialInterface* DecalMaterial)
+{
+    if ( !IsValid(DecalEffectActor) )
+    {
+        DecalEffectActor = GetWorld()->SpawnActor<ADecalEffectActor>(DecalEffectActorClass);
+        if ( DecalMaterial )
+        {
+            DecalEffectActor->DecalComp->SetMaterial(0, DecalMaterial);
+        }
+    }
+}
+
+void ACubePlayerController::HideDecalEffectActor()
+{
+    if ( IsValid(DecalEffectActor) )
+    {
+        DecalEffectActor->Destroy();
     }
 }
 
@@ -92,6 +115,7 @@ void ACubePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
         bTargeting = ThisActor ? true : false; // ThisActor가 존재하면 T, 아니면 F 를 bTargeting에 할당.
         bAutoRunning = false;
     }
+    if ( GetASC() ) GetASC()->AbilityInputTagPressed(InputTag);
 }
 
 void ACubePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
@@ -105,6 +129,8 @@ void ACubePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
         if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
         return;
     }
+
+    if ( GetASC() ) GetASC()->AbilityInputTagReleased(InputTag);
 
     if (bTargeting)
     {
@@ -137,7 +163,6 @@ void ACubePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
         FollowTime = 0.f;
         bTargeting = false;
     }
-    if ( GetASC() ) GetASC()->AbilityInputTagPressed(InputTag);
 }
 
 void ACubePlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
@@ -193,6 +218,14 @@ void ACubePlayerController::AutoRun()
         {
             bAutoRunning = false;
         }
+    }
+}
+
+void ACubePlayerController::UpdateDecalEffectActorLocation()
+{
+    if ( IsValid(DecalEffectActor) )
+    {
+        DecalEffectActor->SetActorLocation(CursorHit.ImpactPoint);
     }
 }
 

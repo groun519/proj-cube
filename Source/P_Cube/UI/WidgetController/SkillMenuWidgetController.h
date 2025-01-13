@@ -47,6 +47,6 @@ protected:
 	//void OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot);
 
 private:
-	FSelectedAbility SelectedAbility = { FCubeGameplayTags::Get().Abilities_None,  FCubeGameplayTags::Get().Abilities_Status_UnEquipped };
+	FSelectedAbility SelectedAbility = { FCubeGameplayTags::Get().Abilities_None,  FCubeGameplayTags::Get().Abilities_Status_Locked };
 	int32 CurrentSkillPoints = 0;
 };

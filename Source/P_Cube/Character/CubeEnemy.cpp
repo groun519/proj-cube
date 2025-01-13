@@ -148,6 +148,8 @@ void ACubeEnemy::InitAbilityActorInfo()
 	{
 		InitializeDefaultAttributes(); // 몬스터 attribute 초기화. (CubeCharacterBase 함수.)
 	}
+
+	OnAscRegistered.Broadcast(AbilitySystemComponent);
 }
 
 void ACubeEnemy::InitializeDefaultAttributes() const

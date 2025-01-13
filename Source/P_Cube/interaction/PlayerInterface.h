@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -55,4 +55,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void LevelUp();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ShowDecalEffectActor(UMaterialInterface* DecalMaterial = nullptr);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void HideDecalEffectActor();
 };

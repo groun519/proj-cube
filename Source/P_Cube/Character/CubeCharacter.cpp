@@ -183,6 +183,24 @@ int32 ACubeCharacter::GetSkillPoints_Implementation() const
 	return CubePlayerState->GetSkillPoints();
 }
 
+void ACubeCharacter::ShowDecalEffectActor_Implementation(UMaterialInterface* DecalMaterial)
+{
+	if ( ACubePlayerController* CubePlayerController = Cast<ACubePlayerController>(GetController()) )
+	{
+		CubePlayerController->ShowDecalEffectActor(DecalMaterial);
+		CubePlayerController->bShowMouseCursor = false;
+	}
+}
+
+void ACubeCharacter::HideDecalEffectActor_Implementation()
+{
+	if ( ACubePlayerController* CubePlayerController = Cast<ACubePlayerController>(GetController()) )
+	{
+		CubePlayerController->HideDecalEffectActor();
+		CubePlayerController->bShowMouseCursor = true;
+	}
+}
+
 int32 ACubeCharacter::GetPlayerLevel_Implementation()
 {
 	const ACubePlayerState* CubePlayerState = GetPlayerState<ACubePlayerState>(); // state를 가져오고,
@@ -208,7 +226,7 @@ void ACubeCharacter::InitAbilityActorInfo() // 어빌리티 시스템 컴포넌�
 	Cast<UCubeAbilitySystemComponent>(CubePlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
 	AbilitySystemComponent = CubePlayerState->GetAbilitySystemComponent();
 	AttributeSet = CubePlayerState->GetAttributeSet();
-	//OnAscRegistered.Broadcast(AbilitySystemComponent); <- 이게뭘까 . .
+	OnAscRegistered.Broadcast(AbilitySystemComponent);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FCubeGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACubeCharacter::StunTagChanged);
 
 	if (ACubePlayerController* CubePlayerController = Cast<ACubePlayerController>(GetController()))

@@ -9,6 +9,32 @@
 
 class UGameplayAbility;
 
+UENUM(BlueprintType) 
+enum class EGemType : uint8 
+{
+	Red UMETA(DisplayName = "Red"),
+	Blue UMETA(DisplayName = "Blue"),
+	Green UMETA(DisplayName = "Green"),
+	Yellow UMETA(DisplayName = "Yellow"),
+	Orange UMETA(DisplayName = "Orange"),
+	Purple UMETA(DisplayName = "Purple")
+};
+
+USTRUCT(BlueprintType)
+struct FGemToValue
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	EGemType GemType = EGemType();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int Requirement = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int Value = 0;
+};
+
 USTRUCT(BlueprintType)
 struct FCubeAbilityInfo
 {
@@ -34,6 +60,9 @@ struct FCubeAbilityInfo
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 LevelRequirement = 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FGemToValue> EquipRequirement;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayAbility> Ability;

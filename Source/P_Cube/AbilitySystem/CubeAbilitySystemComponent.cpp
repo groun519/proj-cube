@@ -26,16 +26,7 @@ void UCubeAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 		if (const UCubeGameplayAbility* CubeAbility = Cast<UCubeGameplayAbility>(AbilitySpec.Ability))
 		{
 			AbilitySpec.DynamicAbilityTags.AddTag(CubeAbility->StartupInputTag);
-
-			if ( CubeAbility->StartupInputTag == FCubeGameplayTags::Get().InputTag_Q ) // Q스킬이면 고정.
-			{
-				AbilitySpec.DynamicAbilityTags.AddTag(FCubeGameplayTags::Get().Abilities_Status_Fixed);
-			}
-			else
-			{
-				AbilitySpec.DynamicAbilityTags.AddTag(FCubeGameplayTags::Get().Abilities_Status_UnEquipped);
-			}
-			
+			AbilitySpec.DynamicAbilityTags.AddTag(FCubeGameplayTags::Get().Abilities_Status_Equipped);
 			GiveAbility(AbilitySpec);
 		}
 	}
@@ -55,6 +46,7 @@ void UCubeAbilitySystemComponent::AddCharacterPassiveAbilities(const TArray<TSub
 void UCubeAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
 {
 	if ( !InputTag.IsValid() ) return;
+	FScopedAbilityListLock ActiveScopeLoc(*this);
 	for ( FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities() )
 	{
 		if ( AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag) )
@@ -71,7 +63,7 @@ void UCubeAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& Inp
 void UCubeAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid()) return;
-
+	FScopedAbilityListLock ActiveScopeLoc(*this);
 	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
@@ -88,7 +80,7 @@ void UCubeAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputT
 void UCubeAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid()) return;
-
+	FScopedAbilityListLock ActiveScopeLoc(*this);
 	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag) && AbilitySpec.IsActive() )
@@ -159,13 +151,69 @@ FGameplayTag UCubeAbilitySystemComponent::GetStatusFromAbilityTag(const FGamepla
 	return FGameplayTag();
 }
 
-FGameplayTag UCubeAbilitySystemComponent::GetInputTagFromAbilityTag(const FGameplayTag& AbilityTag)
+FGameplayTag UCubeAbilitySystemComponent::GetSlotFromAbilityTag(const FGameplayTag& AbilityTag)
 {
 	if ( const FGameplayAbilitySpec* Spec = GetSpecFromAbilityTag(AbilityTag) )
 	{
 		return GetInputTagFromSpec(*Spec);
 	}
 	return FGameplayTag();
+}
+
+bool UCubeAbilitySystemComponent::SlotIsEmpty(const FGameplayTag& Slot)
+{
+	FScopedAbilityListLock ActiveScopeLoc(*this);
+	for ( FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities() )
+	{
+		if ( AbilityHasSlot(AbilitySpec, Slot) )
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+bool UCubeAbilitySystemComponent::AbilityHasSlot(const FGameplayAbilitySpec& Spec, const FGameplayTag& Slot)
+{
+	return Spec.DynamicAbilityTags.HasTagExact(Slot);
+}
+
+bool UCubeAbilitySystemComponent::AbilityHasAnySlot(const FGameplayAbilitySpec& Spec)
+{
+	return Spec.DynamicAbilityTags.HasTag(FGameplayTag::RequestGameplayTag(FName("InputTag")));
+}
+
+FGameplayAbilitySpec* UCubeAbilitySystemComponent::GetSpecWithSlot(const FGameplayTag& Slot)
+{
+	FScopedAbilityListLock ActiveScopeLock(*this);
+	for ( FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities() )
+	{
+		if ( AbilitySpec.DynamicAbilityTags.HasTagExact(Slot) )
+		{
+			return &AbilitySpec;
+		}
+	}
+	return nullptr;
+}
+
+bool UCubeAbilitySystemComponent::IsPassiveAbility(const FGameplayAbilitySpec& Spec) const
+{
+	const UAbilityInfo* AbilityInfo = UCubeAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
+	const FGameplayTag AbilityTag = GetAbilityTagFromSpec(Spec);
+	const FCubeAbilityInfo& Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+	const FGameplayTag AbilityType = Info.AbilityType;
+	return AbilityType.MatchesTagExact(FCubeGameplayTags::Get().Abilities_Type_Passive);
+}
+
+void UCubeAbilitySystemComponent::AssignSlotToAbility(FGameplayAbilitySpec& Spec, const FGameplayTag& Slot)
+{
+	ClearSlot(&Spec);
+	Spec.DynamicAbilityTags.AddTag(Slot);
+}
+
+void UCubeAbilitySystemComponent::MulticastActivatePassiveEffect_Implementation(const FGameplayTag& AbilityTag, bool bActivate)
+{
+	ActivatePassiveEffect.Broadcast(AbilityTag, bActivate);
 }
 
 FGameplayAbilitySpec* UCubeAbilitySystemComponent::GetSpecFromAbilityTag(const FGameplayTag& AbilityTag)
@@ -213,15 +261,65 @@ void UCubeAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 	for (const FCubeAbilityInfo& Info : AbilityInfo->AbilityInformation) // 스킬 정보들을 foreach함.
 	{
 		if (!Info.AbilityTag.IsValid()) continue; // 어빌리티 태그도 없는 스킬이면 넘어감.
-		if (Level < Info.LevelRequirement) continue; // 요구 레벨보다 낮으면 넘어감.
-		if (GetSpecFromAbilityTag(Info.AbilityTag) == nullptr) // 어빌리티 태그로 스펙을 받아옴.
+
+		// 스킬이 처음 추가될 경우: Level로 초기화
+		if (GetSpecFromAbilityTag(Info.AbilityTag) == nullptr)
 		{
-			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Info.Ability, 1); 
-			AbilitySpec.DynamicAbilityTags.AddTag(FCubeGameplayTags::Get().Abilities_Status_UnEquipped);
+			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Info.Ability, Level); 
+			AbilitySpec.DynamicAbilityTags.AddTag(FCubeGameplayTags::Get().Abilities_Status_UnLocked);
 			GiveAbility(AbilitySpec);
 			MarkAbilitySpecDirty(AbilitySpec);
-			ClientUpdateAbilityStatus(Info.AbilityTag, FCubeGameplayTags::Get().Abilities_Status_UnEquipped, Level); // 스킬 레벨도 레벨로 설정.
+
+			// 클라이언트에 스킬 상태 전송 (UnLocked 상태로)
+			ClientUpdateAbilityStatus(Info.AbilityTag, FCubeGameplayTags::Get().Abilities_Status_UnLocked, Level); // 스킬 레벨도 레벨로 설정.
+			continue;
 		}
+
+		// 스킬이 이미 존재할 경우: 요구 조건 체크
+		bool canEquip = true;
+		for ( const FGemToValue& GemMap : Info.EquipRequirement )
+		{
+			if ( GemMap.Requirement != GemMap.Value )
+			{
+				canEquip = false;
+				break;
+			}
+		}
+		if ( canEquip )
+		{
+			// 요구치를 모두 충족한 경우: 스킬 활성화
+			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Info.Ability, Level);
+			AbilitySpec.DynamicAbilityTags.AddTag(FCubeGameplayTags::Get().Abilities_Status_Equipped);
+			GiveAbility(AbilitySpec);
+			MarkAbilitySpecDirty(AbilitySpec);
+
+			// 클라이언트에 스킬 상태 전송 (Equipped 상태로)
+			ClientUpdateAbilityStatus(Info.AbilityTag, FCubeGameplayTags::Get().Abilities_Status_Equipped, Level);
+		}
+		else
+		{
+			// 요구치를 충족하지 못한 경우: 상태 유지
+			ClientUpdateAbilityStatus(Info.AbilityTag, FCubeGameplayTags::Get().Abilities_Status_UnLocked, Level);
+		}
+	}
+}
+
+void UCubeAbilitySystemComponent::ServerAddAbility_Implementation(FGameplayTag AbilityTag)
+{
+	UAbilityInfo* AbilityInfo = UCubeAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor()); // 캐릭터가 가진 스킬정보를 받아옴
+
+	const FCubeAbilityInfo& Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+	TSubclassOf<UGameplayAbility> Ability = Info.Ability;
+
+	if ( GetSpecFromAbilityTag(AbilityTag) == nullptr )
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Ability, 1);
+		AbilitySpec.DynamicAbilityTags.AddTag(FCubeGameplayTags::Get().Abilities_Status_UnLocked);
+		GiveAbility(AbilitySpec);
+		MarkAbilitySpecDirty(AbilitySpec);
+
+		// 클라이언트에 스킬 상태 전송 (UnLocked 상태로)
+		ClientUpdateAbilityStatus(AbilityTag, FCubeGameplayTags::Get().Abilities_Status_UnLocked, 1); // 스킬 레벨도 레벨로 설정.
 	}
 }
 
@@ -269,34 +367,49 @@ void UCubeAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 		const FGameplayTag& Status = GetStatusFromSpec(*AbilitySpec); // 해당 스킬의 상태를 받아옴. (장착중인지, 아닌지)
 
 
+		
 
-		bool bStatusValid =  // 스킬이 이미 장착되었거나, 고정 상태이면 유효하지 않음.
-			Status == GameplayTags.Abilities_Status_UnEquipped;	
 
-		if ( bAllowFixed && Status == GameplayTags.Abilities_Status_Fixed)
-		{
-			bStatusValid = true;
-		}
+		bool bStatusValid =  // 스킬을 이미 획득했거나, 획득 중인 상태이면 유효하지 않음.
+			Status == GameplayTags.Abilities_Status_Equipped || Status == GameplayTags.Abilities_Status_UnLocked;	
 
 		if ( bStatusValid )
 		{
-			// Remove this InputTag (slot) from any Ability that has it.
-			ClearAbilitiesOfSlot(Slot);
-			// Clear this ability's slot, just in case, it's a different slot
-			ClearSlot(AbilitySpec);
-			// Now, assign this ability to this slot
-			AbilitySpec->DynamicAbilityTags.AddTag(Slot);
 
-			if ( Status.MatchesTagExact(GameplayTags.Abilities_Status_UnEquipped) )
+			// Handle activation/deactivation for passive abilities
+
+			if ( !SlotIsEmpty(Slot) ) // 이미 슬롯을 가지고 있다면, 슬롯을 제거
 			{
-				AbilitySpec->DynamicAbilityTags.RemoveTag(GameplayTags.Abilities_Status_UnEquipped);
-				AbilitySpec->DynamicAbilityTags.AddTag(GameplayTags.Abilities_Status_Equipped);
+				FGameplayAbilitySpec* SpecWithSlot = GetSpecWithSlot(Slot);
+				if ( SpecWithSlot )
+				{
+					// 능력이 같다면, 리턴
+					if ( AbilityTag.MatchesTagExact(GetAbilityTagFromSpec(*SpecWithSlot)) )
+					{
+						ClientEquipAbility(AbilityTag, GameplayTags.Abilities_Status_Equipped, Slot, PrevSlot);
+						return;
+					}
+					if ( IsPassiveAbility(*SpecWithSlot) )
+					{
+						MulticastActivatePassiveEffect(GetAbilityTagFromSpec(*SpecWithSlot), false);
+						DeactivatePassiveAbility.Broadcast(GetAbilityTagFromSpec(*SpecWithSlot));
+					}
+					ClearSlot(SpecWithSlot);
+				}
 			}
+
+			if ( !AbilityHasAnySlot(*AbilitySpec) ) // 아직 슬롯이 없다면(활성화되지 않았다면).
+			{
+				if ( IsPassiveAbility(*AbilitySpec) )
+				{
+					TryActivateAbility(AbilitySpec->Handle);
+					MulticastActivatePassiveEffect(AbilityTag, true);
+				}
+			}
+			AssignSlotToAbility(*AbilitySpec, Slot);
 			MarkAbilitySpecDirty(*AbilitySpec);
-
-			ClientEquipAbility(AbilityTag, GameplayTags.Abilities_Status_Equipped, Slot, PrevSlot);
 		}
-
+		ClientEquipAbility(AbilityTag, GameplayTags.Abilities_Status_Equipped, Slot, PrevSlot);
 	}
 }
 
@@ -337,8 +450,7 @@ bool UCubeAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag
 void UCubeAbilitySystemComponent::ClearSlot(FGameplayAbilitySpec* Spec)
 {
 	const FGameplayTag Slot = GetInputTagFromSpec(*Spec);
-	Spec->DynamicAbilityTags.RemoveTag(Slot); // 슬롯을 비움
-	MarkAbilitySpecDirty(*Spec); 
+	Spec->DynamicAbilityTags.RemoveTag(Slot);
 }
 
 void UCubeAbilitySystemComponent::ClearAbilitiesOfSlot(const FGameplayTag & Slot)
