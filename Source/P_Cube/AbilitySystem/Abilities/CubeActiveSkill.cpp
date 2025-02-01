@@ -208,6 +208,7 @@ void UCubeActiveSkill::SpawnHitBox(const FName HitboxName, const FName DamageNam
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(HitboxTransform.GetLocation());
 	SpawnTransform.SetRotation(HitboxTransform.GetRotation());
+	SpawnTransform.SetScale3D(HitboxTransform.GetScale3D());
 
 	ACubeHitbox* Hitbox = GetWorld()->SpawnActorDeferred<ACubeHitbox>(
 		HitboxClassMap[ HitboxName ],

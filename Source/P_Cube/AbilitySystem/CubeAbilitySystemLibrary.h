@@ -7,6 +7,7 @@
 #include "Data/CharacterClassInfo.h"
 #include "CubeAbilitySystemLibrary.generated.h"
 
+class ULootTiers;
 class UAbilityInfo;
 class USkillMenuWidgetController;
 class UAbilitySystemComponent;
@@ -45,6 +46,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="CubeAbilitySystemLibrary|CharacterClassDefaults")
 	static UAbilityInfo* GetAbilityInfo(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category="AuraAbilitySystemLibrary|CharacterClassDefaults", meta = (DefaultToSelf = "WorldContextObject"))
+	static ULootTiers* GetLootTiers(const UObject* WorldContextObject);
+
 
 
 	UFUNCTION(BlueprintPure, Category = "CubeAbilitySystemLibrary|GameplayEffects")

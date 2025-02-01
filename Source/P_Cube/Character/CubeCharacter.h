@@ -37,7 +37,7 @@ public:
 	virtual void AddToSkillPoints_Implementation(int32 InSkillPoints) override;
 	virtual int32 GetMoney_Implementation() const override;
 	virtual int32 GetSkillPoints_Implementation() const override;
-	virtual void ShowDecalEffectActor_Implementation(UMaterialInterface* DecalMaterial) override;
+	virtual void ShowDecalEffectActor_Implementation(FVector Scale, UMaterialInterface* DecalMaterial) override;
 	virtual void HideDecalEffectActor_Implementation() override;
 	/** end Player Interface */
 

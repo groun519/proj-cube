@@ -8,11 +8,13 @@
 #include "NiagaraFunctionLibrary.h"
 #include "P_Cube/AbilitySystem/CubeAbilitySystemComponent.h"
 #include "P_Cube/Actor/DecalEffectActor.h"
+#include "P_Cube/P_Cube.h"
 #include "Components/DecalComponent.h"
 #include "Components/SplineComponent.h"
 #include "P_Cube/Input/CubeInputComponent.h"
 #include "P_Cube/Interaction/EnemyInterface.h"
 #include "GameFramework/Character.h"
+#include "P_Cube/Interaction/HighlightInterface.h"
 #include "P_Cube/UI/Widget/DamageTextComponent.h"
 
 ACubePlayerController::ACubePlayerController()
@@ -41,11 +43,12 @@ void ACubePlayerController::ShowDamageNumber_Implementation(float DamageAmount, 
     }
 }
 
-void ACubePlayerController::ShowDecalEffectActor(UMaterialInterface* DecalMaterial)
+void ACubePlayerController::ShowDecalEffectActor(FVector Scale, UMaterialInterface* DecalMaterial)
 {
     if ( !IsValid(DecalEffectActor) )
     {
         DecalEffectActor = GetWorld()->SpawnActor<ADecalEffectActor>(DecalEffectActorClass);
+        DecalEffectActor->SetActorRelativeScale3D(Scale);
         if ( DecalMaterial )
         {
             DecalEffectActor->DecalComp->SetMaterial(0, DecalMaterial);
@@ -81,26 +84,53 @@ void ACubePlayerController::BeginPlay()
     SetInputMode(InputModeData); // 위의 인풋 세팅을 활성화함.
 }
 
+void ACubePlayerController::HighlightActor(AActor* InActor)
+{
+    if ( IsValid(InActor) && InActor->Implements<UHighlightInterface>() )
+    {
+        IHighlightInterface::Execute_HighlightActor(InActor);
+    }
+}
+
+void ACubePlayerController::UnHighlightActor(AActor * InActor)
+{
+    if ( IsValid(InActor) && InActor->Implements<UHighlightInterface>() )
+    {
+        IHighlightInterface::Execute_UnHighlightActor(InActor);
+    }
+}
+
 void ACubePlayerController::CursorTrace()
 {
     if ( GetASC() && GetASC()->HasMatchingGameplayTag(FCubeGameplayTags::Get().Player_Block_CursorTrace) )
     {
-        if ( LastActor ) LastActor->UnHighlightActor();
-        if ( ThisActor ) ThisActor->UnHighlightActor();
+        UnHighlightActor(LastActor);
+		UnHighlightActor(ThisActor);
+		if (IsValid(ThisActor) && ThisActor->Implements<UHighlightInterface>())
+
         LastActor = nullptr;
         ThisActor = nullptr;
         return;
     }
-    GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
-    if (!CursorHit.bBlockingHit) return;
+
+    const ECollisionChannel TraceChannel = IsValid(DecalEffectActor) ? ECC_ExcludePlayers : ECC_Visibility;
+    GetHitResultUnderCursor(TraceChannel, false, CursorHit);
+    if ( !CursorHit.bBlockingHit ) return;
 
     LastActor = ThisActor;
-    ThisActor = CursorHit.GetActor();
-
-    if (LastActor != ThisActor)
+    if ( IsValid(CursorHit.GetActor()) && CursorHit.GetActor()->Implements<UHighlightInterface>() )
     {
-        if (LastActor) LastActor->UnHighlightActor();
-        if (ThisActor) ThisActor->HighlightActor();
+        ThisActor = CursorHit.GetActor();
+    }
+    else
+    {
+        ThisActor = nullptr;
+    }
+
+    if ( LastActor != ThisActor )
+    {
+        UnHighlightActor(LastActor);
+        HighlightActor(ThisActor);
     }
 }
 
@@ -112,7 +142,14 @@ void ACubePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
     }
     if (InputTag.MatchesTagExact(FCubeGameplayTags::Get().InputTag_RMB)) // RMB와 키가 일치하면, 태그 부여
     {
-        bTargeting = ThisActor ? true : false; // ThisActor가 존재하면 T, 아니면 F 를 bTargeting에 할당.
+        if ( IsValid(ThisActor) )
+        {
+            TargetingStatus = ThisActor->Implements<UEnemyInterface>() ? ETargetingStatus::TargetingEnemy : ETargetingStatus::TargetingNonEnemy;
+        }
+        else
+        {
+            TargetingStatus = ETargetingStatus::NotTargeting;
+        }
         bAutoRunning = false;
     }
     if ( GetASC() ) GetASC()->AbilityInputTagPressed(InputTag);
@@ -132,36 +169,36 @@ void ACubePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
     if ( GetASC() ) GetASC()->AbilityInputTagReleased(InputTag);
 
-    if (bTargeting)
-    {
-        if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
-    }
-    else
+    if ( TargetingStatus != ETargetingStatus::TargetingEnemy )
     {
         const APawn* ControlledPawn = GetPawn();
-        if (FollowTime <= ShortPressThreshold && ControlledPawn)
+        if ( FollowTime <= ShortPressThreshold && ControlledPawn )
         {
-            if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
+            if ( IsValid(ThisActor) && ThisActor->Implements<UHighlightInterface>() )
             {
-                Spline->ClearSplinePoints();
-                for (const FVector& PointLoc : NavPath->PathPoints)
-                {
-                    Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
-                    //DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
-                }
-                if (NavPath->PathPoints.Num() > 0)
-                {
-                    CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
-                    bAutoRunning = true;
-                }
+                IHighlightInterface::Execute_SetMoveToLocation(ThisActor, CachedDestination);
             }
-            if ( GetASC() && !GetASC()->HasMatchingGameplayTag(FCubeGameplayTags::Get().Player_Block_InputPressed) )
+            else if ( GetASC() && !GetASC()->HasMatchingGameplayTag(FCubeGameplayTags::Get().Player_Block_InputPressed) )
             {
                 UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
             }
+            if ( UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination) )
+            {
+                Spline->ClearSplinePoints();
+                for ( const FVector& PointLoc : NavPath->PathPoints )
+                {
+                    Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
+                    //DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 3.f);
+                }
+                if ( NavPath->PathPoints.Num() > 0 )
+                {
+                    CachedDestination = NavPath->PathPoints[ NavPath->PathPoints.Num() - 1 ];
+                    bAutoRunning = true;
+                }
+            }
         }
         FollowTime = 0.f;
-        bTargeting = false;
+        TargetingStatus = ETargetingStatus::NotTargeting;
     }
 }
 
@@ -177,7 +214,7 @@ void ACubePlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
         return; // 나가
     }
 
-    if (bTargeting) // 아까 Pressed에서 받은 bTargeting bool이 T면, (대상 클릭 안하고 대상 위로 마우스 누른 채 호버링 하는 것 방지)
+    if ( TargetingStatus == ETargetingStatus::TargetingEnemy ) // 아까 Pressed에서 받은 bTargeting bool이 T면, (대상 클릭 안하고 대상 위로 마우스 누른 채 호버링 하는 것 방지)
     {
         if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
     }

@@ -57,7 +57,7 @@ public:
 	void LevelUp();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void ShowDecalEffectActor(UMaterialInterface* DecalMaterial = nullptr);
+	void ShowDecalEffectActor(FVector Scale, UMaterialInterface* DecalMaterial = nullptr);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void HideDecalEffectActor();

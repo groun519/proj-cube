@@ -53,7 +53,7 @@ ACubeCharacter::ACubeCharacter()
 	LevelUpNiagaraComponent->bAutoActivate = false;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 640.0f, 0.0f);
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
 
@@ -183,11 +183,11 @@ int32 ACubeCharacter::GetSkillPoints_Implementation() const
 	return CubePlayerState->GetSkillPoints();
 }
 
-void ACubeCharacter::ShowDecalEffectActor_Implementation(UMaterialInterface* DecalMaterial)
+void ACubeCharacter::ShowDecalEffectActor_Implementation(FVector Scale, UMaterialInterface* DecalMaterial)
 {
 	if ( ACubePlayerController* CubePlayerController = Cast<ACubePlayerController>(GetController()) )
 	{
-		CubePlayerController->ShowDecalEffectActor(DecalMaterial);
+		CubePlayerController->ShowDecalEffectActor(Scale, DecalMaterial);
 		CubePlayerController->bShowMouseCursor = false;
 	}
 }

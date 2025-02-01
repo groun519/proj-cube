@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CubeCharacterBase.h"
 #include "P_Cube/Interaction/EnemyInterface.h"
+#include "P_Cube/Interaction/HighlightInterface.h"
 #include "P_Cube/UI/WidgetController/OverlayWidgetController.h"
 #include "CubeEnemy.generated.h"
 
@@ -16,7 +17,7 @@ class ACubeAIController;
  * 
  */
 UCLASS()
-class P_CUBE_API ACubeEnemy : public ACubeCharacterBase, public IEnemyInterface
+class P_CUBE_API ACubeEnemy : public ACubeCharacterBase, public IEnemyInterface, public	IHighlightInterface
 {
 	GENERATED_BODY()
 
@@ -24,10 +25,11 @@ public:
 	ACubeEnemy();
 	virtual void PossessedBy(AController* NewController) override;
 
-	/** Enemy Interface */
-	virtual void HighlightActor() override;
-	virtual void UnHighlightActor() override;
-	/** end Enemy Interface */
+	/** Highlight Interface */
+	virtual void HighlightActor_Implementation() override;
+	virtual void UnHighlightActor_Implementation() override;
+	virtual void SetMoveToLocation_Implementation(FVector& OutDestination) override;
+	/** end Highlight Interface */
 
 	/** Combat Interface */
 	virtual int32 GetPlayerLevel_Implementation() override;
@@ -70,4 +72,7 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<ACubeAIController> CubeAIController;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SpawnLoot();
 };

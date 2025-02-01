@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 
-#define CUSTOM_DEPTH_RED 250.f
+#define CUSTOM_DEPTH_RED 250
+#define CUSTOM_DEPTH_BLUE 251
+#define CUSTOM_DEPTH_WHITE 252
 #define ECC_Projectile ECollisionChannel::ECC_GameTraceChannel1 // Projectile 채널 (1)
 #define ECC_Hitbox ECollisionChannel::ECC_GameTraceChannel2 // (2)
-#define ECC_Target ECollisionChannel::ECC_GameTraceChannel3 // (2)
+#define ECC_Target ECollisionChannel::ECC_GameTraceChannel3 // (3)
+#define ECC_ExcludePlayers ECollisionChannel::ECC_GameTraceChannel4 // (4)

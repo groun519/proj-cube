@@ -33,6 +33,11 @@ ACubeEnemy::ACubeEnemy()
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar"); // 체력바 위젯 생성
 	HealthBar->SetupAttachment(GetRootComponent()); 
 
+	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+	GetMesh()->MarkRenderStateDirty();
+	Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+	Weapon->MarkRenderStateDirty();
+
 	BaseSpeed = 250.f;
 }
 
@@ -48,18 +53,21 @@ void ACubeEnemy::PossessedBy(AController* NewController)
 	CubeAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), CharacterClass != ECharacterClass::MeleeEnemy || CharacterClass != ECharacterClass::TankEnemy || CharacterClass != ECharacterClass::AncientGolem);
 }
 
-void ACubeEnemy::HighlightActor()
+void ACubeEnemy::HighlightActor_Implementation()
 {
 	GetMesh()->SetRenderCustomDepth(true);
-	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
 	Weapon->SetRenderCustomDepth(true);
-	Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
 }
 
-void ACubeEnemy::UnHighlightActor()
+void ACubeEnemy::UnHighlightActor_Implementation()
 {
 	GetMesh()->SetRenderCustomDepth(false);
 	Weapon->SetRenderCustomDepth(false);
+}
+
+void ACubeEnemy::SetMoveToLocation_Implementation(FVector& OutDestination)
+{
+
 }
 
 int32 ACubeEnemy::GetPlayerLevel_Implementation()
@@ -72,6 +80,7 @@ void ACubeEnemy::Die()
 	SetLifeSpan(LifeSpan);
 	if (CubeAIController) CubeAIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), true);
 
+	SpawnLoot();
 	Super::Die();
 }
 

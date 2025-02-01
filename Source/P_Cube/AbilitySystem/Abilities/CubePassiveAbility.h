@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "P_Cube/AbilitySystem/Passive/PassiveNiagaraComponent.h"
-#include "P_Cube/AbilitySystem/Abilities/CubeDamageGameplayAbility.h"
+#include "P_Cube/AbilitySystem/Abilities/CubeActiveSkill.h"
 
 #include "CubePassiveAbility.generated.h"
 
@@ -12,7 +12,7 @@
  * 
  */
 UCLASS()
-class P_CUBE_API UCubePassiveAbility : public UCubeDamageGameplayAbility
+class P_CUBE_API UCubePassiveAbility : public UCubeActiveSkill
 {
 	GENERATED_BODY()
 	

@@ -134,6 +134,13 @@ UAbilityInfo* UCubeAbilitySystemLibrary::GetAbilityInfo(const UObject* WorldCont
 	return CubeGameMode->AbilityInfo;
 }
 
+ULootTiers* UCubeAbilitySystemLibrary::GetLootTiers(const UObject* WorldContextObject)
+{
+	const ACubeGameModeBase* CubeGameMode = Cast<ACubeGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if ( CubeGameMode == nullptr ) return nullptr;
+	return CubeGameMode->LootTiers;
+}
+
 FVector UCubeAbilitySystemLibrary::GetKnockbackForce(const FGameplayEffectContextHandle& EffectContextHandle)
 {
 	if ( const FCubeGameplayEffectContext* CubeEffectContext = static_cast< const FCubeGameplayEffectContext* >( EffectContextHandle.Get() ) )
