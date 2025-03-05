@@ -78,6 +78,11 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FString("Increases Cooldown Reduction")
 	);
 
+	GameplayTags.Attributes_Primary_Range = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Primary.Range"),
+		FString("Increases Attack Action Range")
+	);
+
 	/*
 	 * Secondary Attributes
 	 */
@@ -241,6 +246,12 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 		FString("Heal Damage Type")
 	);
 
+	// Block Critical
+	GameplayTags.BlockCritical = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("BlockCritical"),
+		FString("Block Critical Chance in Damage")
+	);
+
 	/*
 	 * Meta Attributes
 	 */
@@ -299,6 +310,7 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_CriticalChance);
 	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_CriticalDamage);
 	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_MovementSpeed);
+	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Primary_Range);
 	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Vital_Health);
 	GameplayTags.DamageCoeffAttributes.Add(GameplayTags.Attributes_Secondary_MaxHealth);
 
@@ -894,6 +906,35 @@ void FCubeGameplayTags::InitializeNativeGameplayTags()
 
 	/** end Passive Abilities **/
 
+
+
+
+	/** Weapon Tags **/
+	GameplayTags.Weapon_FireStaff = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Weapon.FireStaff"),
+		FString("Fire Staff Weapon Tag")
+	);
+
+	GameplayTags.Weapon_VoidWand = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Weapon.VoidWand"),
+		FString("Void Wand Weapon Tag")
+	);
+
+	GameplayTags.Weapon_DoubleHammer = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Weapon.DoubleHammer"),
+		FString("Double Hammer Weapon Tag")
+	);
+
+	GameplayTags.Weapon_Broadsword = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Weapon.Broadsword"),
+		FString("Broadsword Weapon Tag")
+	);
+
+	GameplayTags.Weapon_Longbow = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Weapon.LongBow"),
+		FString("LongBow Weapon Tag")
+	);
+	/** end Weapon Tags **/
 
 
 

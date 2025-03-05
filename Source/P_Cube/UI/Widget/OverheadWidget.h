@@ -14,6 +14,7 @@ UCLASS()
 class P_CUBE_API UOverheadWidget : public UCubeUserWidget
 {
 	GENERATED_BODY()
+
 public:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* DisplayText;

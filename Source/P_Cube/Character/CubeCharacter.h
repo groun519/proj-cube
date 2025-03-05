@@ -7,7 +7,6 @@
 #include "P_Cube/UI/WidgetController/OverlayWidgetController.h"
 
 #include "P_Cube/Interaction/PlayerInterface.h"
-#include "P_Cube/Weapon.h"
 #include "CubeCharacter.generated.h"
 
 class UNiagaraComponent;
@@ -60,22 +59,15 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnMaxHealthChanged;
 
-
-
-	UPROPERTY(EditAnywhere)
-	bool HaveWeapon;
-	UPROPERTY(EditAnywhere)
-	int32 WeaponNum;
-
-	void SetWeaponVisibility();
-
-	void Attack();
 	void MoveDest(const FVector Destination);
 
 	bool IsPlayingMontage(int _n);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animations")
 	TArray<UAnimMontage*> BagicAttackMontages;
+
+	UPROPERTY(BlueprintReadWrite)
+	AActor* AttackTarget = nullptr;
 
 protected:
 	// Called when the game starts or when spawned
@@ -114,8 +106,6 @@ private:
 
 
 
-	AWeapon* CurWeapon;
-	int n;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

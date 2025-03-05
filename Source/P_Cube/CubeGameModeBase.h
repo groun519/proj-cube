@@ -8,6 +8,7 @@
 
 class ULootTiers;
 class UAbilityInfo;
+class UWeaponInfo;
 class UCharacterClassInfo;
 /**
  * 
@@ -22,6 +23,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Ability Info")
 	TObjectPtr<UAbilityInfo> AbilityInfo;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Info")
+	TObjectPtr<UWeaponInfo> WeaponInfo;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Loot Tiers")
 	TObjectPtr<ULootTiers> LootTiers;

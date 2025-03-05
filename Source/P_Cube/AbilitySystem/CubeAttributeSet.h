@@ -150,6 +150,10 @@ public:
 	FGameplayAttributeData CooldownReduction;
 	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, CooldownReduction);
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Range, Category = "Primary Attributes")
+	FGameplayAttributeData Range;
+	ATTRIBUTE_ACCESSORS(UCubeAttributeSet, Range);
+
 	/*
 	 * Secondary Attributes
 	 */
@@ -263,6 +267,9 @@ public:
 
 	UFUNCTION()
 	void OnRep_CooldownReduction(const FGameplayAttributeData& OldCooldownReduction) const;
+
+	UFUNCTION()
+	void OnRep_Range(const FGameplayAttributeData& OldRange) const;
 
 	// Secondary
 

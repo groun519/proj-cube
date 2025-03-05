@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "P_Cube/AbilitySystem/Data/CharacterClassInfo.h"
 #include "P_Cube/Interaction/CombatInterface.h"
+#include "P_Cube/AbilitySystem/Data/WeaponInfo.h"
 #include "CubeCharacterBase.generated.h"
 
 class UPassiveNiagaraComponent;
@@ -52,8 +53,8 @@ public:
 	virtual void IncremenetMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
-	virtual void SetBaseWeapon_Implementation(USkeletalMesh* NewMesh, FTransform Offset) override;
-	virtual void ChangeWeapon_Implementation(USkeletalMesh* NewMesh, FTransform Offset) override;
+	virtual void SetBaseWeapon_Implementation(FGameplayTag NewWeaponTag) override;
+	virtual void ChangeWeapon_Implementation(FGameplayTag NewWeaponTag) override;
 	virtual void ResetWeapon_Implementation() override;
 	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override;
 	/** end Combat Interface */
@@ -87,6 +88,15 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USceneComponent> EffectAttachComponent;
 
+	UPROPERTY(EditAnywhere, Category = "Interact")
+	TObjectPtr<UAnimMontage> InteractMontage;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Interact")
+	void PlayInteractMontage(FGameplayTag InteractTag);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Abilities")
+	TSubclassOf<UGameplayAbility> AttackAbility;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -115,8 +125,21 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Speed")
 	float BaseSpeed = 500.f;
 
+	UPROPERTY(ReplicatedUsing = OnRep_MaxWalkSpeed)
+	float ReplicatedMaxWalkSpeed;
+
+	UFUNCTION()
+	void OnRep_MaxWalkSpeed();
+
+	UFUNCTION(Server, Reliable)
+	void Server_UpdateMovementSpeed(UCharacterMovementComponent* CharacterMovementComp);
+
+	UFUNCTION()
+	void UpdateMovementSpeed(UCharacterMovementComponent* CharacterMovementComp);
+
+
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastUpdateMovementSpeed(float NewSpeed);
+	void Multicast_UpdateMovementSpeed(float NewSpeed);
 	/** Movement Speed **/
 
 	UPROPERTY()
@@ -162,6 +185,31 @@ protected:
 	UNiagaraSystem* BloodEffect;
 
 
+	/** weapon settings **/
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon DataAsset")
+	TObjectPtr<UWeaponInfo> WeaponInfo;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Settings")
+	FGameplayTag WeaponTag = FGameplayTag();
+
+public:
+	UFUNCTION()
+	void SetWeaponTag(FGameplayTag NewTag);
+
+private:
+	UFUNCTION(Server, Reliable)
+	void Server_SetWeaponMesh(USkeletalMesh* NewMesh, FTransform NewTransform);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetWeaponMesh(USkeletalMesh* NewMesh, FTransform NewTransform);
+
+	UFUNCTION(Server, Reliable)
+	void Server_ApplyWeaponEffect(float Range, float MovementSpeed_Coef, float AttackSpeed_Coef);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ApplyWeaponEffect(float Range, float MovementSpeed_Coef, float AttackSpeed_Coef);
+
+	/** end weapon settings **/
 
 private:
 
@@ -175,5 +223,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
 
+	
 	
 };

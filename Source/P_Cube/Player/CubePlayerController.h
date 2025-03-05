@@ -52,6 +52,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void HideDecalEffectActor();
+
+	void SetPathAndRun(FVector Destination);
+
 protected:
 	virtual void BeginPlay();
 	virtual void SetupInputComponent() override;
@@ -90,6 +93,7 @@ private:
 	float FollowTime = 0.f; //
 	float ShortPressThreshold = 0.5f; 
 	bool bAutoRunning = false; // 
+	bool bAutoAttack = false; // 
 	ETargetingStatus TargetingStatus = ETargetingStatus::NotTargeting;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -102,6 +106,12 @@ private:
 	TObjectPtr<UNiagaraSystem> ClickNiagaraSystem;
 
 	void AutoRun();
+
+	void MoveToInteractable(AActor* InteractableActor);
+	void CheckInteraction();
+	FTimerHandle CheckInteractionHandle;  
+	AActor* TargetInteractable = nullptr;  
+
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;

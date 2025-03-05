@@ -37,6 +37,9 @@ struct CubeDamageStatics
 	FGameplayEffectAttributeCaptureDefinition TargetAttackSpeedDef;
 	FGameplayEffectAttributeCaptureDefinition SourceAttackSpeedDef;
 
+	FGameplayEffectAttributeCaptureDefinition TargetRangeDef;
+	FGameplayEffectAttributeCaptureDefinition SourceRangeDef;
+
 
 	//DECLARE_ATTRIBUTE_CAPTUREDEF(Armor);
 	FGameplayEffectAttributeCaptureDefinition TargetArmorDef;
@@ -124,6 +127,13 @@ struct CubeDamageStatics
 			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetAttackSpeedAttribute(),
 				EGameplayEffectAttributeCaptureSource::Target, false);
 
+		SourceRangeDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetRangeAttribute(),
+				EGameplayEffectAttributeCaptureSource::Source, false);
+		TargetRangeDef =
+			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetRangeAttribute(),
+				EGameplayEffectAttributeCaptureSource::Target, false);
+
 
 		//DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, Armor, Target, false);
 		SourceArmorDef =
@@ -170,10 +180,10 @@ struct CubeDamageStatics
 				EGameplayEffectAttributeCaptureSource::Target, false);
 
 		//DEFINE_ATTRIBUTE_CAPTUREDEF(UCubeAttributeSet, CriticalDamage, Source, false);
-		SourceCriticalChanceDef =
+		SourceCriticalDamageDef =
 			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetCriticalDamageAttribute(),
 				EGameplayEffectAttributeCaptureSource::Source, false);
-		TargetCriticalChanceDef =
+		TargetCriticalDamageDef =
 			FGameplayEffectAttributeCaptureDefinition(UCubeAttributeSet::GetCriticalDamageAttribute(),
 				EGameplayEffectAttributeCaptureSource::Target, false);
 	}
@@ -195,6 +205,7 @@ UExecCalc_Damage::UExecCalc_Damage()
 	RelevantAttributesToCapture.Add(DamageStatics().SourceMaxManaDef);
 	RelevantAttributesToCapture.Add(DamageStatics().SourceMovementSpeedDef);
 	RelevantAttributesToCapture.Add(DamageStatics().SourceAttackSpeedDef);
+	RelevantAttributesToCapture.Add(DamageStatics().SourceRangeDef);
 	RelevantAttributesToCapture.Add(DamageStatics().SourceArmorDef);
 	RelevantAttributesToCapture.Add(DamageStatics().SourceArmorPenetrationDef);
 	RelevantAttributesToCapture.Add(DamageStatics().SourceMagicResistanceDef);
@@ -210,6 +221,7 @@ UExecCalc_Damage::UExecCalc_Damage()
 	RelevantAttributesToCapture.Add(DamageStatics().TargetMaxManaDef);
 	RelevantAttributesToCapture.Add(DamageStatics().TargetMovementSpeedDef);
 	RelevantAttributesToCapture.Add(DamageStatics().TargetAttackSpeedDef);
+	RelevantAttributesToCapture.Add(DamageStatics().TargetRangeDef);
 	RelevantAttributesToCapture.Add(DamageStatics().TargetArmorDef);
 	RelevantAttributesToCapture.Add(DamageStatics().TargetArmorPenetrationDef);
 	RelevantAttributesToCapture.Add(DamageStatics().TargetMagicResistanceDef);
@@ -329,6 +341,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.AttackSpeed") )
 				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetAttackSpeedDef, EvaluationParameters, DamageCoeffAttribute);
+			
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.Range") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetRangeDef, EvaluationParameters, DamageCoeffAttribute);
 
 			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.Armor") )
 				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().TargetArmorDef, EvaluationParameters, DamageCoeffAttribute);
@@ -375,6 +390,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.AttackSpeed") )
 				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceAttackSpeedDef, EvaluationParameters, DamageCoeffAttribute);
+
+			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.Range") )
+				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceRangeDef, EvaluationParameters, DamageCoeffAttribute);
 
 			else if ( CoeffAttTag.GetTagName() == TEXT("Attributes.Primary.Armor") )
 				ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceArmorDef, EvaluationParameters, DamageCoeffAttribute);
@@ -482,18 +500,24 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	/*
 	 * Critical
 	 */
+
+	const float BlockCriticalMagnitude = Spec.GetSetByCallerMagnitude(FCubeGameplayTags::Get().BlockCritical, false);
+	const bool bBlockCritical = ( BlockCriticalMagnitude > 0.0f ); // 0보다 크다면 true이기에.
+
 	float SourceCriticalChance = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceCriticalChanceDef, EvaluationParameters, SourceCriticalChance);
+	
 	SourceCriticalChance = FMath::Max<float>(SourceCriticalChance, 0.f);
 
 	float SourceCriticalDamage = 0.f;
-	if ( DamageType == 0 ) // PhysicalDamage만 치명타 적용.
-	{
-		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceCriticalDamageDef, EvaluationParameters, SourceCriticalDamage);
-		SourceCriticalDamage = FMath::Max<float>(SourceCriticalDamage, 0.f);
-	}
+	
+	// 다 치명타 적용
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().SourceCriticalDamageDef, EvaluationParameters, SourceCriticalDamage);
+	SourceCriticalDamage = FMath::Max<float>(SourceCriticalDamage, 0.f);
 
-	const bool bCriticalHit = FMath::RandRange(1, 100) < SourceCriticalChance;
+	bool bCriticalHit = FMath::RandRange(1, 100) < SourceCriticalChance;
+
+	if ( bBlockCritical ) bCriticalHit = false;
 
 	UCubeAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bCriticalHit);
 

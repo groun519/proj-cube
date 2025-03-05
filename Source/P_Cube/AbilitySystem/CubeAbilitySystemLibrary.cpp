@@ -134,6 +134,13 @@ UAbilityInfo* UCubeAbilitySystemLibrary::GetAbilityInfo(const UObject* WorldCont
 	return CubeGameMode->AbilityInfo;
 }
 
+UWeaponInfo* UCubeAbilitySystemLibrary::GetWeaponInfo(const UObject* WorldContextObject)
+{
+	const ACubeGameModeBase* CubeGameMode = Cast<ACubeGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (CubeGameMode == nullptr) return nullptr;
+	return CubeGameMode->WeaponInfo;
+}
+
 ULootTiers* UCubeAbilitySystemLibrary::GetLootTiers(const UObject* WorldContextObject)
 {
 	const ACubeGameModeBase* CubeGameMode = Cast<ACubeGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
@@ -365,6 +372,7 @@ FGameplayEffectContextHandle UCubeAbilitySystemLibrary::ApplyDamageEffect(const 
 
 	const FGameplayEffectSpecHandle SpecHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContexthandle);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.DamageType, DamageEffectParams.BaseDamage);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, FCubeGameplayTags::Get().BlockCritical, DamageEffectParams.bBlockCritical ? 1.0f : 0.f);
 
 	for ( FCoeffs Coeffs : DamageEffectParams.AttributeCoeffs )
 	{

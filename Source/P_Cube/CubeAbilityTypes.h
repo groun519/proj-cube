@@ -52,6 +52,9 @@ struct FDamageEffectParams
 	float BaseDamage = 0.f;
 
 	UPROPERTY(BlueprintReadWrite)
+	bool bBlockCritical = false;
+
+	UPROPERTY(BlueprintReadWrite)
 	TArray<FCoeffs> AttributeCoeffs;
 
 

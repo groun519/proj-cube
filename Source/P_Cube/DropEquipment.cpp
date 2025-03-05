@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DropEquipment.h"
@@ -38,12 +38,12 @@ ADropEquipment::ADropEquipment()
 
 	MySpotLight = CreateDefaultSubobject<USpotLightComponent>(TEXT("MySpotLight"));
 	MySpotLight->SetupAttachment(RootComponent);
-	MySpotLight->SetIntensity(2000.0f); // ¶óÀÌÆ®ÀÇ °­µµ
-	MySpotLight->SetOuterConeAngle(45.0f); // ¿ÜºÎ ÄÜ °¢µµ
-	MySpotLight->SetAttenuationRadius(1000.0f); // ¶óÀÌÆ®ÀÇ ¿µÇâ ¹üÀ§
+	MySpotLight->SetIntensity(2000.0f); // ë¼ì´íŠ¸ì˜ ê°•ë„
+	MySpotLight->SetOuterConeAngle(45.0f); // ì™¸ë¶€ ì½˜ ê°ë„
+	MySpotLight->SetAttenuationRadius(1000.0f); // ë¼ì´íŠ¸ì˜ ì˜í–¥ ë²”ìœ„
 
 	// Set Spotlight Rotation
-	FRotator NewRotation = FRotator(90.0f, 0.0f, 0.0f); // pitch°ªÀ» 90À¸·Î ¼³Á¤
+	FRotator NewRotation = FRotator(90.0f, 0.0f, 0.0f); // pitchê°’ì„ 90ìœ¼ë¡œ ì„¤ì •
 	MySpotLight->SetRelativeRotation(NewRotation);
 
 
@@ -79,7 +79,7 @@ void ADropEquipment::TriggerBeginOverlap(
 	bool bFromSweep,
 	const FHitResult& SweepResult)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("ÄÝ¸®Àü ¹ß»ý!"));
+	//UE_LOG(LogTemp, Warning, TEXT("ì½œë¦¬ì „ ë°œìƒ!"));
 
 	//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Choongdol SeongGong!"), true, true, FLinearColor::Green, 2.0f);
 
@@ -89,18 +89,18 @@ void ADropEquipment::TriggerBeginOverlap(
 	if (OtherActorAsSpecificType)
 	{
 		// Check if the HaveWeapon variable is false
-		if (!OtherActorAsSpecificType->HaveWeapon)
-		{
+		//if (!OtherActorAsSpecificType->HaveWeapon)
+		//{
 			// Set the Weapon variable to 1
-			OtherActorAsSpecificType->WeaponNum = Key;
-			OtherActorAsSpecificType->HaveWeapon = true;
-			OtherActorAsSpecificType->SetWeaponVisibility();
+			//OtherActorAsSpecificType->WeaponNum = Key;
+			//OtherActorAsSpecificType->HaveWeapon = true;
+			//OtherActorAsSpecificType->SetWeaponVisibility();
 
 			// Now you can do additional logic if needed
 
 			//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Moo-Gi Oiisii!"), true, true, FLinearColor::Green, 2.0f);
 			Destroy();
-		}
+		//}
 	}
 }
 

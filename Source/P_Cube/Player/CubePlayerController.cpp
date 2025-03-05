@@ -13,6 +13,7 @@
 #include "Components/SplineComponent.h"
 #include "P_Cube/Input/CubeInputComponent.h"
 #include "P_Cube/Interaction/EnemyInterface.h"
+#include "P_Cube/Interaction/InteractableInterface.h"
 #include "GameFramework/Character.h"
 #include "P_Cube/Interaction/HighlightInterface.h"
 #include "P_Cube/UI/Widget/DamageTextComponent.h"
@@ -155,12 +156,56 @@ void ACubePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
     if ( GetASC() ) GetASC()->AbilityInputTagPressed(InputTag);
 }
 
+void ACubePlayerController::SetPathAndRun(FVector Destination)
+{
+    const APawn* ControlledPawn = GetPawn();
+    CachedDestination = Destination;
+    if ( FollowTime <= ShortPressThreshold && ControlledPawn )
+    {
+        if ( UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination) )
+        {
+            Spline->ClearSplinePoints();
+            for ( const FVector& PointLoc : NavPath->PathPoints )
+            {
+                Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
+                //DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 3.f);
+            }
+            if ( NavPath->PathPoints.Num() > 0 )
+            {
+                CachedDestination = NavPath->PathPoints[ NavPath->PathPoints.Num() - 1 ];
+                bAutoRunning = true;
+            }
+        }
+    }
+    FollowTime = 0.f;
+}
+
 void ACubePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
     if ( GetASC() && GetASC()->HasMatchingGameplayTag(FCubeGameplayTags::Get().Player_Block_InputReleased) )
     {
         return;
     }
+
+    if ( InputTag.MatchesTagExact(FCubeGameplayTags::Get().InputTag_LMB) )
+    {
+        if ( GetASC() ) GetASC()->AbilityInputTagReleased(InputTag);
+
+        FHitResult HitResult;
+        GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
+
+        if ( HitResult.bBlockingHit )
+        {
+            AActor* ClickedActor = HitResult.GetActor();
+            if ( ClickedActor && ClickedActor->Implements<UInteractableInterface>() )
+            {
+                TargetInteractable = ClickedActor;
+                MoveToInteractable(ClickedActor);
+                return;
+            }
+        }
+    }
+
     if (!InputTag.MatchesTagExact(FCubeGameplayTags::Get().InputTag_RMB))
     {
         if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
@@ -255,6 +300,70 @@ void ACubePlayerController::AutoRun()
         {
             bAutoRunning = false;
         }
+    }
+}
+
+void ACubePlayerController::MoveToInteractable(AActor* InteractableActor)
+{
+    if ( !InteractableActor )
+    {
+        return;
+    }
+
+    APawn* ControlledPawn = GetPawn();
+    if ( !ControlledPawn )
+    {
+        return;
+    }
+
+    FVector TargetLocation = InteractableActor->GetActorLocation();
+    CachedDestination = TargetLocation;  // 📌 이동할 목표 위치 저장
+
+    if ( UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(
+        this, ControlledPawn->GetActorLocation(), TargetLocation) )
+    {
+        Spline->ClearSplinePoints();
+        for ( const FVector& PointLoc : NavPath->PathPoints )
+        {
+            Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
+        }
+        if ( NavPath->PathPoints.Num() > 0 )
+        {
+            CachedDestination = NavPath->PathPoints[ NavPath->PathPoints.Num() - 1 ];
+            bAutoRunning = true;
+        }
+    }
+
+    // 📌 거리 체크 타이머 실행 (0.1초마다 CheckInteraction() 실행)
+    GetWorldTimerManager().SetTimer(CheckInteractionHandle, this, &ACubePlayerController::CheckInteraction, 0.1f, true);
+}
+
+void ACubePlayerController::CheckInteraction()
+{
+    APawn* ControlledPawn = GetPawn();
+    if ( !ControlledPawn || !bAutoRunning )
+    {
+        GetWorldTimerManager().ClearTimer(CheckInteractionHandle);
+        TargetInteractable = nullptr;  // 📌 타겟 초기화
+        return;
+    }
+
+    float Distance = FVector::Dist(ControlledPawn->GetActorLocation(), CachedDestination);
+
+    // 📌 도착 후 거리 5 이하이면 상호작용 실행
+    if ( Distance <= 200.0f && TargetInteractable )
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Reached target! Interacting with %s"), *TargetInteractable->GetName());
+
+        if ( TargetInteractable->Implements<UInteractableInterface>() )
+        {
+            IInteractableInterface::Execute_Interact(TargetInteractable, ControlledPawn);
+        }
+
+        // 📌 이동 중지 및 타이머 삭제
+        GetWorldTimerManager().ClearTimer(CheckInteractionHandle);
+        TargetInteractable = nullptr;  // 📌 상호작용 후 초기화
+        bAutoRunning = false;
     }
 }
 

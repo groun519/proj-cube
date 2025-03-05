@@ -35,6 +35,7 @@ public:
 
 
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
+	void AddCharacterAbility(const TSubclassOf<UGameplayAbility>& StartupAbility);
 	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities);
 	bool bStartupAbilitiesGiven = false;
 
@@ -72,6 +73,8 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerAddAbility(FGameplayTag AbilityTag);
+	UFUNCTION(Server, Reliable)
+	void ServerAddAttackAbility(FGameplayTag AttackAbilityTag);
 
 	UFUNCTION(Server, Reliable)
 	void ServerSpendSkillPoint(const FGameplayTag& AbilityTag, const FGameplayTag& Slot);

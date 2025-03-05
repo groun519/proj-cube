@@ -18,7 +18,6 @@
 #include "P_Cube/UI/Widget/CubeUserWidget.h"
 #include "Components/WidgetComponent.h"
 
-#include "P_Cube/Weapon.h"
 #include <Components/CapsuleComponent.h>
 #include <Camera/CameraComponent.h>
 #include <GameFramework/SpringArmComponent.h>
@@ -70,10 +69,6 @@ ACubeCharacter::ACubeCharacter()
 	// 머리 위 위젯.
 	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidget"));
 	OverheadWidget->SetupAttachment(RootComponent);
-
-	HaveWeapon = false;
-	WeaponNum = 0;
-	n = 0;
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar"); // 체력바 위젯 생성
 	HealthBar->SetupAttachment(GetRootComponent());
@@ -251,14 +246,6 @@ void ACubeCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FName WeaponSocket = TEXT("RightHand");
-	CurWeapon = GetWorld()->SpawnActor<AWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
-	if (nullptr != CurWeapon)
-	{
-		CurWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, WeaponSocket);
-		CurWeapon->Weapon->SetVisibility(HaveWeapon);
-	}
-
 	// 체력이 변경될때마다 업데이트하는 로직
 	if ( UCubeUserWidget* CubeUserWidget = Cast<UCubeUserWidget>(HealthBar->GetUserWidgetObject()) )
 	{
@@ -304,22 +291,6 @@ void ACubeCharacter::OnRep_Stunned()
 			CubeASC->RemoveLooseGameplayTags(BlockedTags);
 			//StunDebuffComponent->Deactivate();
 		}
-	}
-}
-
-void ACubeCharacter::SetWeaponVisibility()
-{
-	CurWeapon->Weapon->SetVisibility(HaveWeapon);
-	CurWeapon->ChangeWeaponMesh(WeaponNum);
-	// 바뀐 AWeapon의 메쉬는 자동적으로 적용됨
-}
-
-void ACubeCharacter::Attack()
-{
-	if (!IsPlayingMontage(n))
-	{
-		float PlayRate = 0.7f;
-		PlayAnimMontage(BagicAttackMontages[n], PlayRate);
 	}
 }
 

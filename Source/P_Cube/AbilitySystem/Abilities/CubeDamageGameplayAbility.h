@@ -113,6 +113,9 @@ struct FDamageInfo // 피해 정보 구조체
 	FScalableFloat BaseDamage;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bBlockCritical = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FDamageCoeff> Coeffs; // 계수 배열 (여러 계수를 한 피해에 넣을 수 있게 하기 위함.)
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

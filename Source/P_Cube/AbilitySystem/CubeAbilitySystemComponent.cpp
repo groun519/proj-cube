@@ -8,6 +8,7 @@
 #include "P_Cube/AbilitySystem/CubeAbilitySystemLibrary.h"
 #include "P_Cube/AbilitySystem/Abilities/CubeGameplayAbility.h"
 #include "P_Cube/AbilitySystem/Data/AbilityInfo.h"
+#include "P_Cube/AbilitySystem/Data/WeaponInfo.h"
 #include "P_Cube/CubeLogChannels.h"
 #include "P_Cube/Interaction/PlayerInterface.h"
 
@@ -31,6 +32,18 @@ void UCubeAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 		}
 	}
 	bStartupAbilitiesGiven = true;
+	AbilitiesGivenDelegate.Broadcast();
+}
+
+void UCubeAbilitySystemComponent::AddCharacterAbility(const TSubclassOf<UGameplayAbility>& StartupAbility)
+{
+	FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(StartupAbility, 1);
+	if ( const UCubeGameplayAbility* CubeAbility = Cast<UCubeGameplayAbility>(AbilitySpec.Ability) )
+	{
+		AbilitySpec.DynamicAbilityTags.AddTag(FCubeGameplayTags::Get().InputTag_RMB);
+		AbilitySpec.DynamicAbilityTags.AddTag(FCubeGameplayTags::Get().Abilities_Status_Equipped);
+		GiveAbility(AbilitySpec);
+	}
 	AbilitiesGivenDelegate.Broadcast();
 }
 
@@ -320,6 +333,27 @@ void UCubeAbilitySystemComponent::ServerAddAbility_Implementation(FGameplayTag A
 
 		// 클라이언트에 스킬 상태 전송 (UnLocked 상태로)
 		ClientUpdateAbilityStatus(AbilityTag, FCubeGameplayTags::Get().Abilities_Status_UnLocked, 1); // 스킬 레벨도 레벨로 설정.
+	}
+}
+
+void UCubeAbilitySystemComponent::ServerAddAttackAbility_Implementation(FGameplayTag AttackAbilityTag)
+{
+	UWeaponInfo* WeaponInfo = UCubeAbilitySystemLibrary::GetWeaponInfo(GetAvatarActor()); // 캐릭터가 가진 스킬정보를 받아옴
+
+	const FWeaponInformation& Info = WeaponInfo->FindWeaponInfoForTag(AttackAbilityTag);
+	TSubclassOf<UGameplayAbility> AttackAbility = Info.AttackAbility;
+
+	if ( GetSpecFromAbilityTag(AttackAbilityTag) == nullptr )
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AttackAbility, 1);
+
+		AbilitySpec.DynamicAbilityTags.AddTag(FCubeGameplayTags::Get().InputTag_RMB);
+		AbilitySpec.DynamicAbilityTags.AddTag(FCubeGameplayTags::Get().Abilities_Status_Equipped);
+		GiveAbility(AbilitySpec);
+		MarkAbilitySpecDirty(AbilitySpec);
+
+		// 클라이언트에 스킬 상태 전송 (UnLocked 상태로)
+		ClientUpdateAbilityStatus(AttackAbilityTag, FCubeGameplayTags::Get().Abilities_Status_Equipped, 1); // 스킬 레벨도 레벨로 설정.
 	}
 }
 

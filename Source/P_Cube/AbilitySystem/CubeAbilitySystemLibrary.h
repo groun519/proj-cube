@@ -9,6 +9,7 @@
 
 class ULootTiers;
 class UAbilityInfo;
+class UWeaponInfo;
 class USkillMenuWidgetController;
 class UAbilitySystemComponent;
 class UAttributeMenuWidgetController;
@@ -47,7 +48,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category="CubeAbilitySystemLibrary|CharacterClassDefaults")
 	static UAbilityInfo* GetAbilityInfo(const UObject* WorldContextObject);
 
-	UFUNCTION(BlueprintCallable, Category="AuraAbilitySystemLibrary|CharacterClassDefaults", meta = (DefaultToSelf = "WorldContextObject"))
+	UFUNCTION(BlueprintCallable, Category = "CubeAbilitySystemLibrary|CharacterClassDefaults")
+	static UWeaponInfo* GetWeaponInfo(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category="CubeAbilitySystemLibrary|CharacterClassDefaults", meta = (DefaultToSelf = "WorldContextObject"))
 	static ULootTiers* GetLootTiers(const UObject* WorldContextObject);
 
 

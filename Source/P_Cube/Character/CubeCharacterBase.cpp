@@ -29,6 +29,12 @@ ACubeCharacterBase::ACubeCharacterBase()
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	GetCharacterMovement()->SetIsReplicated(true);
+	bReplicates = true;
+	bAlwaysRelevant = true;
+	//GetCharacterMovement()->bUseControllerDesiredRotation = false;
+	//GetCharacterMovement()->bOrientRotationToMovement = true;
+
 	/*StunDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>("StunDebuffComponent");
 	StunDebuffComponent->SetupAttachment(GetRootComponent());
 	StunDebuffComponent->DebuffTag = GameplayTags.Debuff_Stun;*/
@@ -48,6 +54,7 @@ void ACubeCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ACubeCharacterBase, bIsStunned);
+	DOREPLIFETIME_CONDITION(ACubeCharacterBase, ReplicatedMaxWalkSpeed, COND_None);
 }
 
 UAbilitySystemComponent* ACubeCharacterBase::GetAbilitySystemComponent() const
@@ -105,10 +112,33 @@ void ACubeCharacterBase::BeginPlay()
 			[ this ] (const FOnAttributeChangeData& Data)
 			{
 				const float NewSpeed = BaseSpeed * Data.NewValue;
-				GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
-				MulticastUpdateMovementSpeed(NewSpeed);
+				//ReplicatedMaxWalkSpeed = NewSpeed;
+
+				//Server_UpdateMovementSpeed(GetCharacterMovement());
+
+				/*UE_LOG(LogTemp, Log, TEXT("MovementSpeed Changed (Server), NewSpeed : %f, RepSpeed : %f"), NewSpeed, ReplicatedMaxWalkSpeed);
+				UE_LOG(LogTemp, Log, TEXT("BaseSpeed : %f"), BaseSpeed);
+				UE_LOG(LogTemp, Log, TEXT("NewValue : %f"), Data.NewValue);
+				UE_LOG(LogTemp, Log, TEXT("NewSpeed : %f"), NewSpeed);
+				UE_LOG(LogTemp, Log, TEXT("RepSpeed : %f"), ReplicatedMaxWalkSpeed);*/
+
+				/*if ( HasAuthority() )
+				{
+					UE_LOG(LogTemp, Log, TEXT("Server MovementSpeed Changed"));
+					UpdateMovementSpeed(GetCharacterMovement());
+				}
+				else
+				{
+					UE_LOG(LogTemp, Log, TEXT("Client MovementSpeed Changed"));
+					Server_UpdateMovementSpeed(GetCharacterMovement());
+				}*/
 			}
 		);
+	}
+
+	if (WeaponTag.IsValid())
+	{
+		Execute_SetBaseWeapon(this, WeaponTag);
 	}
 }
 
@@ -186,23 +216,57 @@ USkeletalMeshComponent* ACubeCharacterBase::GetWeapon_Implementation()
 	return Weapon;
 }
 
-void ACubeCharacterBase::SetBaseWeapon_Implementation(USkeletalMesh* NewMesh, FTransform Offset)
+void ACubeCharacterBase::SetBaseWeapon_Implementation(FGameplayTag NewWeaponTag)
 {
-	if ( Weapon && NewMesh )
+	if ( Weapon )
 	{
 		BaseWeaponMesh = Weapon->SkeletalMesh;
-		Weapon->SetSkeletalMesh(NewMesh);
-		BaseWeaponOffset = Offset;
-		Weapon->SetRelativeTransform(Offset);
+
+		if ( WeaponInfo->FindWeaponInfoForTag(NewWeaponTag).WeaponMesh )
+		{
+			FWeaponInformation Info = WeaponInfo->FindWeaponInfoForTag(NewWeaponTag);
+			Weapon->SetSkeletalMesh(Info.WeaponMesh);
+			BaseWeaponOffset = Info.WeaponOffset;
+			Weapon->SetRelativeTransform(Info.WeaponOffset);
+		}
 	}
 }
 
-void ACubeCharacterBase::ChangeWeapon_Implementation(USkeletalMesh* NewMesh, FTransform Offset)
+void ACubeCharacterBase::ChangeWeapon_Implementation(FGameplayTag NewWeaponTag)
 {
-	if ( Weapon && NewMesh )
+	if ( Weapon )
 	{
-		Weapon->SetSkeletalMesh(NewMesh);
-		Weapon->SetRelativeTransform(Offset);
+		if ( WeaponInfo->FindWeaponInfoForTag(NewWeaponTag).WeaponMesh )
+		{
+			const FCubeGameplayTags& GameplayTags = FCubeGameplayTags::Get();
+			FGameplayTag AttackInputTag = GameplayTags.InputTag_RMB;
+
+			FWeaponInformation Info = WeaponInfo->FindWeaponInfoForTag(NewWeaponTag);
+
+			Server_SetWeaponMesh(Info.WeaponMesh, Info.WeaponOffset);
+
+			UCubeAbilitySystemComponent* CubeASC = CastChecked<UCubeAbilitySystemComponent>(AbilitySystemComponent);
+			if ( CubeASC /*&& AttackAbility*/ )
+			{
+				//CubeASC->RemoveCharacterAbility(AttackAbility);
+				CubeASC->ClearAbilitiesOfSlot(AttackInputTag);
+				//AttackAbility = Info.AttackAbility;
+				//CubeASC->AddCharacterAbility(AttackAbility);
+				CubeASC->ServerAddAttackAbility(NewWeaponTag);
+				//CubeASC->ServerEquipAbility(NewWeaponTag, AttackInputTag, true);
+
+				/*CubeASC->SetNumericAttributeBase(UCubeAttributeSet::GetRangeAttribute(), Info.Range);
+				CubeASC->SetNumericAttributeBase(UCubeAttributeSet::GetMovementSpeedAttribute(), 160.0f * Info.MovementSpeed_Coef);
+				CubeASC->SetNumericAttributeBase(UCubeAttributeSet::GetAttackSpeedAttribute(), 1.0f * Info.AttackSpeed_Coef);*/
+			
+				Server_ApplyWeaponEffect(Info.Range, Info.MovementSpeed_Coef, Info.AttackSpeed_Coef);
+			}
+			//else if ( CubeASC && !AttackAbility )
+			//{
+			//	CubeASC->AddCharacterAbility(Info.AttackAbility);
+			//	//CubeASC->ServerEquipAbility(Info.AttackAbilityTag, AttackInputTag, true);
+			//}
+		}
 	}
 }
 
@@ -223,14 +287,35 @@ FOnASCRegistered ACubeCharacterBase::GetOnASCRegisteredDelegate()
 void ACubeCharacterBase::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	bIsStunned = NewCount > 0;
-	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : BaseSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : ReplicatedMaxWalkSpeed;
 }
 
-void ACubeCharacterBase::MulticastUpdateMovementSpeed_Implementation(float NewSpeed)
+void ACubeCharacterBase::OnRep_MaxWalkSpeed()
 {
-	if ( UCharacterMovementComponent* MovementComp = GetCharacterMovement() )
+	if ( GetCharacterMovement() )
 	{
-		MovementComp->MaxWalkSpeed = NewSpeed;
+		UE_LOG(LogTemp, Warning, TEXT("[OnRep] 이동 속도 변경: %f"), ReplicatedMaxWalkSpeed);
+		GetCharacterMovement()->MaxWalkSpeed = ReplicatedMaxWalkSpeed;
+	}
+}
+
+void ACubeCharacterBase::UpdateMovementSpeed(UCharacterMovementComponent* CharacterMovementComp)
+{
+	UE_LOG(LogTemp, Log, TEXT("UpdateMovementSpeed Linked"));
+	CharacterMovementComp->MaxWalkSpeed = ReplicatedMaxWalkSpeed;
+}
+
+void ACubeCharacterBase::Server_UpdateMovementSpeed_Implementation(UCharacterMovementComponent* CharacterMovementComp)
+{
+	UE_LOG(LogTemp, Log, TEXT("Server_UpdateMovementSpeed Linked"));
+	UpdateMovementSpeed(CharacterMovementComp);
+}
+
+void ACubeCharacterBase::Multicast_UpdateMovementSpeed_Implementation(float NewSpeed)
+{
+	if ( GetCharacterMovement() )
+	{
+		GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
 	}
 }
 
@@ -298,5 +383,80 @@ void ACubeCharacterBase::Dissolve()
 		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
 		Weapon->SetMaterial(0, DynamicMatInst);
 		StartWeaponDissolveTimeline(DynamicMatInst);
+	}
+}
+
+void ACubeCharacterBase::SetWeaponTag(FGameplayTag NewTag)
+{
+	if (WeaponTag.IsValid())
+	{
+		WeaponTag = NewTag;
+		Execute_SetBaseWeapon(this, NewTag); // TODO : if baseweapon is not useable, remove this
+		Execute_ChangeWeapon(this, NewTag);
+	}
+}
+
+void ACubeCharacterBase::Server_ApplyWeaponEffect_Implementation(float Range, float MovementSpeed_Coef, float AttackSpeed_Coef)
+{
+	if ( HasAuthority() )
+	{
+		Multicast_ApplyWeaponEffect(Range, MovementSpeed_Coef, AttackSpeed_Coef);
+	}
+}
+
+void ACubeCharacterBase::Multicast_ApplyWeaponEffect_Implementation(float Range, float MovementSpeed_Coef, float AttackSpeed_Coef)
+{
+	if ( AbilitySystemComponent )
+	{
+		// 새로운 GameplayEffect 동적 생성
+		UGameplayEffect* NewEffect = NewObject<UGameplayEffect>(GetTransientPackage(), FName("Dynamic_WeaponStatEffect"));
+		NewEffect->DurationPolicy = EGameplayEffectDurationType::Instant;
+
+		FGameplayModifierInfo RangeModifier;
+		RangeModifier.Attribute = UCubeAttributeSet::GetRangeAttribute(); // Range 속성 지정
+		RangeModifier.ModifierOp = EGameplayModOp::Override; // 기존 값 덮어쓰기
+		RangeModifier.ModifierMagnitude = FScalableFloat(Range);
+		NewEffect->Modifiers.Add(RangeModifier);
+
+		//FGameplayModifierInfo MovementSpeedModifier;
+		//MovementSpeedModifier.Attribute = UCubeAttributeSet::GetMovementSpeedAttribute(); // Range 속성 지정
+		//MovementSpeedModifier.ModifierOp = EGameplayModOp::Override; // 기존 값 덮어쓰기
+		//MovementSpeedModifier.ModifierMagnitude = FScalableFloat(160.f * MovementSpeed_Coef);
+		//NewEffect->Modifiers.Add(MovementSpeedModifier);
+
+		FGameplayModifierInfo AttackSpeedModifier;
+		AttackSpeedModifier.Attribute = UCubeAttributeSet::GetAttackSpeedAttribute(); // Range 속성 지정
+		AttackSpeedModifier.ModifierOp = EGameplayModOp::Override; // 기존 값 덮어쓰기
+		AttackSpeedModifier.ModifierMagnitude = FScalableFloat(1.0f * AttackSpeed_Coef);
+		NewEffect->Modifiers.Add(AttackSpeedModifier);
+
+
+		FGameplayEffectSpec Spec(NewEffect, AbilitySystemComponent->MakeEffectContext(), 1.f);
+		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(Spec);
+
+		// GameplayEffectSpec 생성 후 적용
+		/*FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(NewEffect->GetClass(), 1.f, AbilitySystemComponent->MakeEffectContext());
+
+		if ( SpecHandle.IsValid() )
+		{
+			AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+		}*/
+	}
+}
+
+void ACubeCharacterBase::Server_SetWeaponMesh_Implementation(USkeletalMesh* NewMesh, FTransform NewTransform)
+{
+	if ( HasAuthority() )
+	{
+		Multicast_SetWeaponMesh(NewMesh, NewTransform);
+	}
+}
+
+void ACubeCharacterBase::Multicast_SetWeaponMesh_Implementation(USkeletalMesh* NewMesh, FTransform NewTransform)
+{
+	if ( Weapon )
+	{
+		Weapon->SetSkeletalMesh(NewMesh);
+		Weapon->SetRelativeTransform(NewTransform);
 	}
 }

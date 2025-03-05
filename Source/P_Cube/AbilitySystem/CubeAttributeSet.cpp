@@ -34,6 +34,7 @@ UCubeAttributeSet::UCubeAttributeSet()
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_CriticalDamage, GetCriticalChanceAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_MovementSpeed, GetMovementSpeedAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_CooldownReduction, GetCooldownReductionAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Range, GetRangeAttribute);
 
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_ArmorRate, GetArmorRateAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MagicResistanceRate, GetMagicResistanceRateAttribute);
@@ -66,6 +67,7 @@ void UCubeAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, MagicResistancePenetration, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, MagicResistancePenetrationRate, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, CooldownReduction, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, Range, COND_None, REPNOTIFY_Always);
 
 	// Secondary
 	DOREPLIFETIME_CONDITION_NOTIFY(UCubeAttributeSet, ArmorRate, COND_None, REPNOTIFY_Always);
@@ -289,6 +291,11 @@ void UCubeAttributeSet::OnRep_MagicResistancePenetrationRate(const FGameplayAttr
 void UCubeAttributeSet::OnRep_CooldownReduction(const FGameplayAttributeData& OldCooldownReduction) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UCubeAttributeSet, CooldownReduction, OldCooldownReduction);
+}
+
+void UCubeAttributeSet::OnRep_Range(const FGameplayAttributeData& OldRange) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCubeAttributeSet, Range, OldRange);
 }
 
 //Secondary

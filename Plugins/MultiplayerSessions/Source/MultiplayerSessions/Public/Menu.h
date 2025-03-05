@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,7 +23,7 @@ protected:
 	virtual void NativeDestruct() override;
 
 	// 
-	// MultiplayerSessionsSubsystemÀÇ Ä¿½ºÅÒ µ¨¸®°ÔÀÌÆ® Äİ¹é
+	// MultiplayerSessionsSubsystemì˜ ì»¤ìŠ¤í…€ ë¸ë¦¬ê²Œì´íŠ¸ ì½œë°±
 	// 
 	UFUNCTION()
 	void OnCreateSession(bool bWasSuccessful);
@@ -50,7 +50,7 @@ private:
 
 	void MenuTearDown();
 
-	// ¸ğµç ¿Â¶óÀÎ ¼¼¼Ç ±â´ÉÀ» Ã³¸®ÇÏµµ·Ï ¼³°èµÈ ¼­ºê½Ã½ºÅÛ
+	// ëª¨ë“  ì˜¨ë¼ì¸ ì„¸ì…˜ ê¸°ëŠ¥ì„ ì²˜ë¦¬í•˜ë„ë¡ ì„¤ê³„ëœ ì„œë¸Œì‹œìŠ¤í…œ
 	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
 
 	int32 NumPublicConnections{5};

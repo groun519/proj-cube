@@ -1,36 +1,50 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameplayTagContainer.h"
+#include "P_Cube/Interaction/InteractableInterface.h"
+#include "P_Cube/Interaction/HighlightInterface.h"
+#include "P_Cube/Character/CubeCharacterBase.h"
+#include "P_Cube/AbilitySystem/Data/WeaponInfo.h"
 #include "Weapon.generated.h"
 
+class UWidgetComponent;
+
 UCLASS()
-class P_CUBE_API AWeapon : public AActor
+class P_CUBE_API AWeapon : public AActor, public IInteractableInterface, public IHighlightInterface
 {
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AWeapon();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION()
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 public:  
-	UPROPERTY(VisibleAnyWhere)
-		UStaticMeshComponent* Weapon;
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon DataAsset")
+	TObjectPtr<UWeaponInfo> WeaponInfo;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapons")
-		TArray<UStaticMesh*> WeaponMeshes;
+	UPROPERTY(EditAnywhere, Category = "Weapon Settings")
+	FGameplayTag WeaponTag = FGameplayTag();
 
-	// π´±‚ ∏ﬁΩ¨∏¶ ∫Ø∞Ê«“ «‘ºˆ
-	UFUNCTION(BlueprintCallable)
-		void ChangeWeaponMesh(int32 WeaponIndex);
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Settings")
+	float InteractionDistance = 5.f;
+
+	/** Interactable Interface **/
+	virtual void Interact_Implementation(AActor* InteractingActor) override;
+	/** end Interactable Interface **/
+
+	// ÌÉúÍ∑∏ Í∏∞Î∞òÏúºÎ°ú WeaponInfoÏóêÏÑú Î∞õÏïÑÏò¨ Ïä§ÏºàÎ†àÌÉà Î©îÏâ¨
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
+
+private:
+	
+
+	void ChangeWeaponMesh(FGameplayTag NewWeaponTag);
 };

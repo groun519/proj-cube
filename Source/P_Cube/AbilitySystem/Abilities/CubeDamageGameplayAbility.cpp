@@ -30,10 +30,7 @@ void UCubeDamageGameplayAbility::CauseDamage(AActor* TargetActor, FName Index) /
 		const FGameplayTag DamageType = Pair.Value.Type;
 		const float BaseDamage = Pair.Value.BaseDamage.GetValueAtLevel(GetAbilityLevel());
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageSpecHandle, DamageType, BaseDamage);
-			//	DamageType.GetTagName() == TEXT("Damage.Physical")	?	0  // 0 -> 물리피해
-			//:	DamageType.GetTagName() == TEXT("Damage.Magical")	?	1  // 1 -> 마법피해
-			//:	DamageType.GetTagName() == TEXT("Damage.Pure")		?	2  // 2 -> 순수피해 (고정피해)
-			//:															3);// 3 -> 에러값. TODO : 만약 3이 들어온다면, check()를 통해 오류 문구를 출력할 것.
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageSpecHandle, FCubeGameplayTags::Get().BlockCritical, Pair.Value.bBlockCritical ? 1.0f : 0.0f);
 	}
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
 }
@@ -54,6 +51,7 @@ FDamageEffectParams UCubeDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 		Params.BaseDamage = DamageInfo.BaseDamage.GetValueAtLevel(GetAbilityLevel());
 		Params.AbilityLevel = GetAbilityLevel();
 		Params.DamageType = DamageInfo.Type;
+		Params.bBlockCritical = DamageInfo.bBlockCritical;
 		/*Params.Duration = DamageInfo.Duration;
 		Params.Frequency = DamageInfo.Frequency;*/
 		

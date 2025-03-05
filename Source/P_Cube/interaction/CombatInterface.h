@@ -104,13 +104,13 @@ public:
 
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	USkeletalMeshComponent* GetWeapon();
+	USkeletalMeshComponent* GetWeapon(); // ?
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void SetBaseWeapon(USkeletalMesh* NewMesh, FTransform Offset);
+	void SetBaseWeapon(FGameplayTag NewWeaponTag);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void ChangeWeapon(USkeletalMesh* NewMesh, FTransform Offset);
+	void ChangeWeapon(FGameplayTag NewWeaponTag);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void ResetWeapon();
