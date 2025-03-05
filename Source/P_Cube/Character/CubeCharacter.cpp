@@ -52,14 +52,15 @@ ACubeCharacter::ACubeCharacter()
 	LevelUpNiagaraComponent->SetupAttachment(GetRootComponent());
 	LevelUpNiagaraComponent->bAutoActivate = false;
 
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
-	GetCharacterMovement()->bConstrainToPlane = true;
-	GetCharacterMovement()->bSnapToPlaneAtStart = true;
+	GetCharacterMovement()->bOrientRotationToMovement = true; // 캐릭터가 이동하는 방향으로 자동으로 화전하도록 설정
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f); // 초당 최대 720도로화전가능, 부드럽게 만드는 것
+	GetCharacterMovement()->bConstrainToPlane = true; // 캐릭터의 움직임을 평면으로만
+	GetCharacterMovement()->bSnapToPlaneAtStart = true; // 게임이 시작될때 지정된 평면에 맞추어 배치
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
+	// 컨트롤러의 회전을 캐릭터에 반영 x -> bOrientRotationToMovement = true; 가 있어서 이동방향으로 자동 회전 가능
 
 	CharacterClass = ECharacterClass::Default;
 
