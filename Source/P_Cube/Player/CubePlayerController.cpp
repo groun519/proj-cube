@@ -19,7 +19,7 @@
 
 ACubePlayerController::ACubePlayerController()
 {
-    bReplicates = true;
+    bReplicates = true; //컨트롤러의 상태가 서버와 클라이언트 간 동기화됨
     Spline = CreateDefaultSubobject<USplineComponent>("Spline");
 }
 
@@ -68,15 +68,17 @@ void ACubePlayerController::BeginPlay()
 {
     Super::BeginPlay();
     check(CubeContext);
+    // CubeContext는 이 컨트롤러에서사용할 입력 매핑을 정의한 객체로, 여기에는 키 바인딩과 액션 매핑 정보가 포함됨
 
     UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+    // 현재 로컬 플레이어의 입력 서브시스템
     if (Subsystem)
     {
-        Subsystem->AddMappingContext(CubeContext, 0);
+        Subsystem->AddMappingContext(CubeContext, 0); //지정된 입력 매핑 컨텍스트(CubeContext)를 추가
     }
 
-    bShowMouseCursor = true;
-    DefaultMouseCursor = EMouseCursor::Default;
+    bShowMouseCursor = true; // 마우스 커서 보기
+    DefaultMouseCursor = EMouseCursor::Default; // 마우스 커서 모양?
 
     FInputModeGameAndUI InputModeData;
     InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock); // 뷰포트에 마우스를 고정시키지 않게 함.
