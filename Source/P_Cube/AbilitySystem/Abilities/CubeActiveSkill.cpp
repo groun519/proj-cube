@@ -15,6 +15,9 @@
 #include "P_Cube/Interaction/CombatInterface.h"
 #include "P_Cube/AbilitySystem/CubeAbilitySystemLibrary.h"
 
+#include "Engine/OverlapResult.h"
+
+
 void UCubeActiveSkill::StoreMouseDataInfo(const FHitResult& HitResult)
 {
 	if ( HitResult.bBlockingHit )

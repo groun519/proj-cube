@@ -25,7 +25,7 @@ FString UCubeFireStaff::GetBasicDescription(int32 Level)
 			"<Default>Launches a bolt of fire, "
 			"exploding on impact and dealing: </>"
 			// Damage
-			"<Damage>%d</><Default> fire damage with"
+			"<Damage>%f</><Default> fire damage with"
 			" a chance to burn</>"),
 			// Values
 			Level,
@@ -48,7 +48,7 @@ FString UCubeFireStaff::GetBasicDescription(int32 Level)
 			"<Default>Launches bolts of fire, "
 			"exploding on impact and dealing: </>"
 			// Damage
-			"<Damage>%d</><Default> fire damage with"
+			"<Damage>%f</><Default> fire damage with"
 			" a chance to burn</>"),
 			// Values
 			Level,

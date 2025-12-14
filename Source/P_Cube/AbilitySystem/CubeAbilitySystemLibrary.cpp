@@ -12,6 +12,7 @@
 #include "P_Cube/Player/CubePlayerState.h"
 #include "P_Cube/UI/HUD/CubeHUD.h"
 #include "P_Cube/UI/WidgetController/CubeWidgetController.h"
+#include "Engine/OverlapResult.h"
 
 bool UCubeAbilitySystemLibrary::MakeWidgetControllerParams(const UObject* WorldContextObject, FWidgetControllerParams& OutWCParams, ACubeHUD*& OutCubeHUD)
 {

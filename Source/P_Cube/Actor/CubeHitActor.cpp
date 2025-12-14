@@ -9,6 +9,7 @@
 #include "P_Cube/AbilitySystem/CubeAbilitySystemLibrary.h"
 #include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/OverlapResult.h"
 
 ACubeHitActor::ACubeHitActor()
 {
