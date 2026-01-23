@@ -16,8 +16,5 @@ class P_CUBE_API UCubeFireStaff : public UCubeProjectileSkill
 	
 public:
 
-	virtual FString GetBasicDescription(int32 Level) override;
-	virtual FString GetDetailedBasicDescription(int32 Level) override;
-	virtual FString GetUniqueDescription(int32 Level) override;
-	virtual FString GetDetailedUniqueDescription(int32 Level) override;
+	virtual FString GetDescription(int32 Level, bool  bIsDetailed) override;
 };

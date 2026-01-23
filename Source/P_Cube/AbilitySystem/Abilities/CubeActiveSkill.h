@@ -4,51 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "CubeDamageGameplayAbility.h"
+
+#include "P_Cube/GAS/Data/QVProjectileTypes.h"
+
 #include "CubeActiveSkill.generated.h"
 
 class ACubeProjectile;
 class ACubeHitbox;
 class UGameplayEffect;
 struct FGameplayTag;
-
-USTRUCT(BlueprintType)
-struct FMultipleProjectilesFeacher
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bUseMultipleProjectilesFeacher = false;
-
-	UPROPERTY(BlueprintReadWrite)
-	float ProjectileSpread = 90.f;
-
-	UPROPERTY(BlueprintReadWrite)
-	int32 NumProjectiles = 1;
-
-	UPROPERTY(BlueprintReadWrite)
-	int32 MaxNumProjectiles = 1;
-
-	UPROPERTY(BlueprintReadWrite)
-	int32 UpgradeProjectiles = 1;
-};
-
-USTRUCT(BlueprintType)
-struct FHomingFeacher
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bUseHomingFeacher = false;
-
-	UPROPERTY(BlueprintReadWrite)
-	float HomingAccelerationMin = 1600.f;
-
-	UPROPERTY(BlueprintReadWrite)
-	float HomingAccelerationMax = 3200.f;
-
-	UPROPERTY(BlueprintReadWrite)
-	AActor* HomingTarget = nullptr;
-};
 
 /**
  * 

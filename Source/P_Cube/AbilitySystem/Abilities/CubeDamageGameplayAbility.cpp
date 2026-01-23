@@ -85,7 +85,7 @@ FDamageEffectParams UCubeDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 		{
 			for ( FCCEffect CCEffect : DamageInfo.CrowdControlEffects )
 			{
-				if ( CCEffect.Type == ECCType::Knockback )
+				if ( CCEffect.Type == EBindType::Knockback )
 				{
 					Params.Knockback_ForceMagnitude = CCEffect.Knockback_ForceMagnitude;
 					if ( IsValid(TargetActor) )
@@ -96,7 +96,7 @@ FDamageEffectParams UCubeDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 						Params.Knockback_Force = ToTarget * CCEffect.Knockback_ForceMagnitude;
 					}
 				}
-				else if ( CCEffect.Type == ECCType::Grab )
+				else if ( CCEffect.Type == EBindType::Grab )
 				{
 					Params.Grab_ForceMagnitude = CCEffect.Grab_ForceMagnitude;
 					if ( IsValid(TargetActor) )
@@ -107,7 +107,7 @@ FDamageEffectParams UCubeDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 						Params.Grab_Force = ToTarget * CCEffect.Grab_ForceMagnitude;
 					}
 				}
-				else if ( CCEffect.Type == ECCType::Airborne )
+				else if ( CCEffect.Type == EBindType::Airborne )
 				{
 					Params.Airborne_ForceMagnitude = CCEffect.Airborne_ForceMagnitude;
 					if ( IsValid(TargetActor) )
@@ -118,7 +118,7 @@ FDamageEffectParams UCubeDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 						Params.Airborne_Force = ToTarget * CCEffect.Airborne_ForceMagnitude;
 					}
 				}
-				else if ( CCEffect.Type == ECCType::Stun )
+				else if ( CCEffect.Type == EBindType::Stun )
 				{
 					Params.Stun_Time = CCEffect.Stun_Time;
 				}
@@ -131,21 +131,6 @@ FDamageEffectParams UCubeDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	}
 
 	return Params;
-}
-
-void UCubeDamageGameplayAbility::SetRuneValues(FGameplayTag RuneTag, ERunes& Runes)
-{
-			if (RuneTag.GetTagName() == FName("Rune.Specialization"		))	{ Runes = ERunes::Rune_Specialization;		}
-	else	if (RuneTag.GetTagName() == FName("Rune.Size.Increase"		))	{ Runes = ERunes::Rune_Size_Increase;		}
-	else	if (RuneTag.GetTagName() == FName("Rune.Count.Increase"		))	{ Runes = ERunes::Rune_Count_Increase;		}
-	else	if (RuneTag.GetTagName() == FName("Rune.Repeat"				))	{ Runes = ERunes::Rune_Repeat;				}
-	else	if (RuneTag.GetTagName() == FName("Rune.Damage.Increase"	))	{ Runes = ERunes::Rune_Damage_Increase;		}
-	else	if (RuneTag.GetTagName() == FName("Rune.Speed.Increase"		))	{ Runes = ERunes::Rune_Speed_Increase;		}
-	else	if (RuneTag.GetTagName() == FName("Rune.Duration.Increase"	))	{ Runes = ERunes::Rune_Duration_Increase;	}
-	else
-			{
-				Runes = ERunes::None;
-			}
 }
 
 FTaggedMontage UCubeDamageGameplayAbility::GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const

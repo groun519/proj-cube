@@ -16,8 +16,7 @@ class P_CUBE_API ULongbow_Basic : public UCubeActiveSkill
 	
 public:
 
-	virtual FString GetBasicDescription(int32 Level) override;
-	virtual FString GetDetailedBasicDescription(int32 Level) override;
+	virtual FString GetDescription(int32 Level, bool bIsDetailed) override;
 
 	/*UFUNCTION(BlueprintCallable)
 	void SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, AActor* HomingTarget);*/

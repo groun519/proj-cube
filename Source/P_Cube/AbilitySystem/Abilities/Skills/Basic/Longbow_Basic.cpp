@@ -5,7 +5,7 @@
 
 #include "Kismet/KismetSystemLibrary.h"
 
-FString ULongbow_Basic::GetBasicDescription(int32 Level)
+FString ULongbow_Basic::GetDescription(int32 Level, bool bIsDetailed)
 {
 	const float BaseDamage = DamageInfoMap[ "Projectile" ].BaseDamage.GetValueAtLevel(GetAbilityLevel());
 	const float ManaCost = FMath::Abs(GetManaCost(Level));
@@ -58,58 +58,58 @@ FString ULongbow_Basic::GetBasicDescription(int32 Level)
 	}
 }
 
-FString ULongbow_Basic::GetDetailedBasicDescription(int32 Level)
-{
-	const int32 BaseDamage = DamageInfoMap[ "Projectile" ].BaseDamage.GetValueAtLevel(GetAbilityLevel());
-	const float ManaCost = FMath::Abs(GetManaCost(Level));
-	const float Cooldown = GetCooldown(Level);
-	if ( Level == 1 )
-	{
-		return FString::Printf(TEXT(
-			// Title
-			"<Title>불 스태프</>\n\n"
-			// Level
-			"<Small>Level: </><Level>%d</>\n"
-			// ManaCost
-			"<Small>ManaCost: </><ManaCost>%.1f</>\n"
-			// Cooldown
-			"<Small>Cooldown: </><Cooldown>%.1f</>\n\n"
-
-			"<Default>Launches a bolt of fire, "
-			"exploding on impact and dealing: </>"
-			// Damage
-			"<Damage>%d</><Default> fire damage with"
-			" a chance to burn</>"),
-			// Values
-			Level,
-			ManaCost,
-			Cooldown,
-			BaseDamage);
-	}
-	else
-	{
-		return FString::Printf(TEXT(
-			// Title
-			"<Title>FIRE BOLT</>\n\n"
-			// Level
-			"<Small>Level: </><Level>%d</>\n"
-			// ManaCost
-			"<Small>ManaCost: </><ManaCost>%.1f</>\n"
-			// Cooldown
-			"<Small>Cooldown: </><Cooldown>%.1f</>\n\n"
-			// Number of FireBolts
-			"<Default>Launches bolts of fire, "
-			"exploding on impact and dealing: </>"
-			// Damage
-			"<Damage>%d</><Default> fire damage with"
-			" a chance to burn</>"),
-			// Values
-			Level,
-			ManaCost,
-			Cooldown,
-			BaseDamage);
-	}
-}
+// FString ULongbow_Basic::GetDetailedDescription(int32 Level)
+// {
+// 	const int32 BaseDamage = DamageInfoMap[ "Projectile" ].BaseDamage.GetValueAtLevel(GetAbilityLevel());
+// 	const float ManaCost = FMath::Abs(GetManaCost(Level));
+// 	const float Cooldown = GetCooldown(Level);
+// 	if ( Level == 1 )
+// 	{
+// 		return FString::Printf(TEXT(
+// 			// Title
+// 			"<Title>불 스태프</>\n\n"
+// 			// Level
+// 			"<Small>Level: </><Level>%d</>\n"
+// 			// ManaCost
+// 			"<Small>ManaCost: </><ManaCost>%.1f</>\n"
+// 			// Cooldown
+// 			"<Small>Cooldown: </><Cooldown>%.1f</>\n\n"
+//
+// 			"<Default>Launches a bolt of fire, "
+// 			"exploding on impact and dealing: </>"
+// 			// Damage
+// 			"<Damage>%d</><Default> fire damage with"
+// 			" a chance to burn</>"),
+// 			// Values
+// 			Level,
+// 			ManaCost,
+// 			Cooldown,
+// 			BaseDamage);
+// 	}
+// 	else
+// 	{
+// 		return FString::Printf(TEXT(
+// 			// Title
+// 			"<Title>FIRE BOLT</>\n\n"
+// 			// Level
+// 			"<Small>Level: </><Level>%d</>\n"
+// 			// ManaCost
+// 			"<Small>ManaCost: </><ManaCost>%.1f</>\n"
+// 			// Cooldown
+// 			"<Small>Cooldown: </><Cooldown>%.1f</>\n\n"
+// 			// Number of FireBolts
+// 			"<Default>Launches bolts of fire, "
+// 			"exploding on impact and dealing: </>"
+// 			// Damage
+// 			"<Damage>%d</><Default> fire damage with"
+// 			" a chance to burn</>"),
+// 			// Values
+// 			Level,
+// 			ManaCost,
+// 			Cooldown,
+// 			BaseDamage);
+// 	}
+// }
 
 //void ULongbow_Basic::SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, AActor* HomingTarget)
 //{

@@ -5,22 +5,7 @@
 
 #include "P_Cube/AbilitySystem/CubeAttributeSet.h"
 
-FString UCubeGameplayAbility::GetBasicDescription(int32 Level)
-{
-	return FString::Printf(TEXT("<Default>%s, </><Level>%d</>"), L"Default Ability Name - LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum", Level);
-}
-
-FString UCubeGameplayAbility::GetUniqueDescription(int32 Level)
-{
-	return FString::Printf(TEXT("<Default>Next Level: </><Level>%d</> \n<Default>Causes much more damage. </>"), Level);
-}
-
-FString UCubeGameplayAbility::GetDetailedBasicDescription(int32 Level)
-{
-	return FString::Printf(TEXT("<Default>%s, </><Level>%d</>"), L"Default Ability Name - LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum", Level);
-}
-
-FString UCubeGameplayAbility::GetDetailedUniqueDescription(int32 Level)
+FString UCubeGameplayAbility::GetDescription(int32 Level, bool bIsDetailed)
 {
 	return FString::Printf(TEXT("<Default>%s, </><Level>%d</>"), L"Default Ability Name - LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum LoremIpsum", Level);
 }

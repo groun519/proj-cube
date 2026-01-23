@@ -24,10 +24,11 @@ void USkillMenuWidgetController::BindCallbacksToDependencies()
 				bool bEnableSpendPoints = false;
 				bool bEnableEquip = false;
 
-				FString BasicDescription;
-				FString UniqueDescription;
-				GetCubeASC()->GetDescriptionsByAbilityTag(AbilityTag, BasicDescription, UniqueDescription, true);
-				SkillMenuBoxSelectedDelegate.Broadcast(BasicDescription, UniqueDescription);
+				FString Description;
+				FString DetailedDescription;
+				GetCubeASC()->GetDescriptionsByAbilityTag(AbilityTag, Description, false);
+				GetCubeASC()->GetDescriptionsByAbilityTag(AbilityTag, DetailedDescription, true);
+				SkillMenuBoxSelectedDelegate.Broadcast(Description, DetailedDescription);
 			}
 			
 			if (AbilityInfo)
@@ -42,10 +43,11 @@ void USkillMenuWidgetController::BindCallbacksToDependencies()
 		{
 			SkillPointsChanged.Broadcast(SkillPoints);
 
-			FString BasicDescription;
-			FString UniqueDescription;
-			GetCubeASC()->GetDescriptionsByAbilityTag(SelectedAbility.Ability, BasicDescription, UniqueDescription, true);
-			SkillMenuBoxSelectedDelegate.Broadcast(BasicDescription, UniqueDescription);
+			FString Description;
+			FString DetailedDescription;
+			GetCubeASC()->GetDescriptionsByAbilityTag(SelectedAbility.Ability, Description, false);
+			GetCubeASC()->GetDescriptionsByAbilityTag(SelectedAbility.Ability, DetailedDescription, true);
+			SkillMenuBoxSelectedDelegate.Broadcast(Description, DetailedDescription);
 		});
 }
 
@@ -70,10 +72,10 @@ void USkillMenuWidgetController::SkillBoxSelected(const FGameplayTag& AbilityTag
 	bool bEnableSpendPoints = false;
 	bool bEnableEquip = false;
 
-	FString BasicDescription;
-	FString UniqueDescription;
-	GetCubeASC()->GetDescriptionsByAbilityTag(AbilityTag, BasicDescription, UniqueDescription, true);
-	SkillMenuBoxSelectedDelegate.Broadcast(BasicDescription, UniqueDescription);
+	FString Description;
+	FString DetailedDescription;
+	GetCubeASC()->GetDescriptionsByAbilityTag(AbilityTag, Description, false);
+	SkillMenuBoxSelectedDelegate.Broadcast(Description, DetailedDescription);
 }
 
 void USkillMenuWidgetController::BoxDeselect()

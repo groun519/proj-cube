@@ -401,8 +401,6 @@ void UCubeAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 		const FGameplayTag& Status = GetStatusFromSpec(*AbilitySpec); // 해당 스킬의 상태를 받아옴. (장착중인지, 아닌지)
 
 
-		
-
 
 		bool bStatusValid =  // 스킬을 이미 획득했거나, 획득 중인 상태이면 유효하지 않음.
 			Status == GameplayTags.Abilities_Status_Equipped || Status == GameplayTags.Abilities_Status_UnLocked;	
@@ -452,32 +450,19 @@ void UCubeAbilitySystemComponent::ClientEquipAbility_Implementation(const FGamep
 	AbilityEquipped.Broadcast(AbilityTag, Status, Slot, PreviousSlot); // 클라이언트에 반영될 수 있도록 call
 }
 
-bool UCubeAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutBasicDescription, FString& OutUniqueDescription, bool bIsDetail)
+bool UCubeAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription, bool bIsDetail)
 {
-	if (const FGameplayAbilitySpec* BasicAbilitySpec = GetSpecFromAbilityTag(AbilityTag))
+	OutDescription = FString();
+	const FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag);
+	if (!AbilitySpec) return false;
+	
+	if (UCubeGameplayAbility* QVAbility = Cast<UCubeGameplayAbility>(AbilitySpec->Ability))
 	{
-		if (UCubeGameplayAbility* CubeAbility = Cast<UCubeGameplayAbility>(BasicAbilitySpec->Ability))
-		{
-			bIsDetail ? 
-				OutBasicDescription = CubeAbility->GetDetailedBasicDescription(BasicAbilitySpec->Level)
-				:
-				OutBasicDescription = CubeAbility->GetBasicDescription(BasicAbilitySpec->Level);
-
-			if (const FGameplayAbilitySpec* UniqueAbilitySpec = GetSpecFromAbilityTag(GetUniqueTagFromBasicTag(AbilityTag)))
-			{
-				bIsDetail ?
-					OutUniqueDescription = CubeAbility->GetDetailedUniqueDescription(UniqueAbilitySpec->Level)
-					:
-					OutUniqueDescription = CubeAbility->GetUniqueDescription(UniqueAbilitySpec->Level);
-			}
-
-			return true;
-		}
-	}
-
-	OutBasicDescription = FString();
-	OutUniqueDescription = FString();
-
+		OutDescription =
+			QVAbility->GetDescription(AbilitySpec->Level, bIsDetail);
+			
+		return true;
+	}	
 	return false;
 }
 
